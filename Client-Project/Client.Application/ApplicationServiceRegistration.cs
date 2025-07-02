@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Client.Application
 {
+
     internal class ApplicationServiceRegistration
     {
     }
