@@ -13,14 +13,19 @@ namespace Client.Domain.Models
     {
         [Key]
         public int Id { get; set; }
+        [NotNull, MaxLength(255, ErrorMessage = "Description length exceeding max length 255")]
         public string Description { get; set; }
+        [NotNull]
         public decimal UnitPrice { get; set; }
+        [NotNull]
         public int CreatedBy { get; set; }
+        [NotNull]
         public DateTime CreatedAt { get; set; }
-        public int UpdatedBy { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public int? UpdatedBy { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        [NotNull]
         public int IsActive { get; set; } = 1;
+        [NotNull]
         public int IsDeleted { get; set; } = 0;
-
     }
 }
