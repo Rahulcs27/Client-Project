@@ -6,7 +6,7 @@ using System.Numerics;
 
 namespace Client.Domain.Models
 {
-    public class companyMaster
+    public class CompanyMaster
     {
         [Key]
         public int Id { get; set; }
