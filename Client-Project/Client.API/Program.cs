@@ -1,8 +1,10 @@
 
+using System.Data;
 using Client.Application;
 using Client.Application.Profiles;
 using Client.Persistence;
 using Client.Persistence.Context;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace Client.API
@@ -18,6 +20,9 @@ namespace Client.API
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(connString),
                 ServiceLifetime.Scoped);
+            builder.Services.AddScoped<IDbConnection>(sp => new SqlConnection(connString));
+
+
 
             // Add services to the container.
             builder.Services.AddApplicationServices();
