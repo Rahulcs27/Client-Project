@@ -17,13 +17,13 @@ namespace Client.Persistence.Context
 
         // DbSet properties for your entities
         public DbSet<CompanyDto> Companies { get; set; } 
-        public DbSet<GetAllProductDto> GetAllProducts { get; set; } 
+        public DbSet<ProductDto> GetAllProducts { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<CompanyDto>().HasNoKey();
-            modelBuilder.Entity<GetAllProductDto>().HasNoKey();
+            modelBuilder.Entity<ProductDto>().HasNoKey();
             modelBuilder.Entity<CompanyMaster>().ToTable("sbs_companyMaster");
             modelBuilder.Entity<Product>().ToTable("sbs_productMaster");
 

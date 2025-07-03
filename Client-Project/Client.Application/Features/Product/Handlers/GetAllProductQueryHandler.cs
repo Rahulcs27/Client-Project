@@ -11,7 +11,7 @@ using MediatR;
 
 namespace Client.Application.Features.Product.Handlers
 {
-    public class GetAllProductQueryHandler : IRequestHandler<GetAllProductQuery, List<GetAllProductDto>>
+    public class GetAllProductQueryHandler : IRequestHandler<GetAllProductQuery, List<ProductDto>>
     {
         private readonly IProductRepository _productRepository;
         public GetAllProductQueryHandler(IProductRepository productRepository)
@@ -19,7 +19,7 @@ namespace Client.Application.Features.Product.Handlers
             _productRepository = productRepository;
         }
 
-        public async Task<List<GetAllProductDto>> Handle(GetAllProductQuery request, CancellationToken cancellationToken)
+        public async Task<List<ProductDto>> Handle(GetAllProductQuery request, CancellationToken cancellationToken)
         {
             var result = await _productRepository.GetAllProductsAsync();
             return result;

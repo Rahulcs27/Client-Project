@@ -17,7 +17,9 @@ namespace Client.Application.Profiles
             CreateMap<CreateCompanyDto, CompanyMaster>().ReverseMap();
             CreateMap<UpdateCompanyDto, CompanyMaster>().ReverseMap();
             CreateMap<CompanyDto, CompanyMaster>().ReverseMap();
-           CreateMap<GetAllProductDto,Product>().ReverseMap();
+           CreateMap<ProductDto,Product>().ReverseMap();
+            CreateMap<CreateProductDto, Product>().ReverseMap();
+            CreateMap<UpdateProductDto, Product>().ReverseMap();
 
 
         }
