@@ -10,8 +10,8 @@ namespace Client.Application.Interfaces
 {
     public interface ICompanyRepository
     {
-        Task<List<CompanyMaster>> GetAllCompaniesAsync();
-        Task<CompanyMaster> GetCompanyByIdAsync(int Id);
+        Task<List<CompanyDto>> GetAllCompaniesAsync();
+        Task<CompanyDto> GetCompanyByIdAsync(int Id);
 
     }
 }

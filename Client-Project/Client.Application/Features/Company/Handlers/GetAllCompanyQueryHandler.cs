@@ -11,7 +11,7 @@ using MediatR;
 
 namespace Client.Application.Features.Product.Handlers
 {
-    public class GetAllCompanyQueryHandler : IRequestHandler<GetAllCompanyQuery, List<GetAllCompanyDto>>
+    public class GetAllCompanyQueryHandler : IRequestHandler<GetAllCompanyQuery, List<CompanyDto>>
     {
         private readonly ICompanyRepository _companyRepository;
         private readonly IMapper _mapper;
@@ -20,11 +20,10 @@ namespace Client.Application.Features.Product.Handlers
             _companyRepository = companyRepository;
         }
 
-        public async Task<List<GetAllCompanyDto>> Handle(GetAllCompanyQuery request, CancellationToken cancellationToken)
+        public async Task<List<CompanyDto>> Handle(GetAllCompanyQuery request, CancellationToken cancellationToken)
         {
             var result =  await _companyRepository.GetAllCompaniesAsync();
-            var output = _mapper.Map<List<GetAllCompanyDto>>(result);
-            return output;
+            return result;
 
         }
     }

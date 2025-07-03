@@ -13,9 +13,9 @@ namespace Client.Domain.Models
         [NotNull]
         public string Name { get; set; }
         [NotNull,MaxLength(4000,ErrorMessage = "Address length exceeding max length 4000")]
-        public string Addresss { get; set; }
+        public string Address { get; set; }
         [NotNull,RegularExpression("^[0-9]{10}$")]
-        public string PhoneNumber { get; set; }
+        public string Phone { get; set; }
         [NotNull,EmailAddress]
         public string Email { get; set; }
         [NotNull]

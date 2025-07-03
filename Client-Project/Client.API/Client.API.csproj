@@ -7,7 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Client.Application\Client.Application.csproj" />
+    <ProjectReference Include="..\Client.Domain\Client.Domain.csproj" />
+    <ProjectReference Include="..\Client.Persistence\Client.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

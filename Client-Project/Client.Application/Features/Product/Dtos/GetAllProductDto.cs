@@ -8,12 +8,11 @@ using System.Threading.Tasks;
 
 namespace Client.Application.Features.Product.Dtos
 {
-    public class GetAllCompanyDto
+    public class GetAllProductDto
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Email { get; set; }
-        public int IsActive { get; set; }
+        public int R_id { get; set; }
+        public string R_description { get; set; }
+        public decimal R_unitPrice { get; set; }
+
     }
 }
