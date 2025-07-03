@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using Client.Application.Features.Company.Dtos;
 using Client.Application.Features.Product.Dtos;
 using Client.Domain.Models;
 
@@ -13,7 +14,9 @@ namespace Client.Application.Profiles
     {
         public MappingProfile()
         {
-           CreateMap<CompanyDto, CompanyMaster>().ReverseMap();
+            CreateMap<CreateCompanyDto, CompanyMaster>().ReverseMap();
+            CreateMap<UpdateCompanyDto, CompanyMaster>().ReverseMap();
+            CreateMap<CompanyDto, CompanyMaster>().ReverseMap();
            CreateMap<GetAllProductDto,Product>().ReverseMap();
 
 
