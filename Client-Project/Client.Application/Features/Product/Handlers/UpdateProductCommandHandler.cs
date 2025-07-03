@@ -11,21 +11,21 @@ using MediatR;
 
 namespace Client.Application.Features.Product.Handlers
 {
-    public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, ProductDto>
+    public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, ProductDto>
     {
         private readonly IProductRepository _repo;
         private readonly IMapper _mapper;
 
-        public CreateProductCommandHandler(IProductRepository repo, IMapper mapper)
+        public UpdateProductCommandHandler(IProductRepository repo, IMapper mapper)
         {
             _repo = repo;
             _mapper = mapper;
         }
 
-        public async Task<ProductDto> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+        public async Task<ProductDto> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
-            var product = await _repo.CreateProductAsync(request.Product);
-            return _mapper.Map<ProductDto>(product);
+            var updated = await _repo.UpdateProductAsync(request.Product);
+            return _mapper.Map<ProductDto>(updated);
         }
     }
 
