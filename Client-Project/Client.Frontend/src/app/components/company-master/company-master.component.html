@@ -1,0 +1,9 @@
+<app-table [data]="data" [displayedColumns]="displayedColumns" [columnsInfo]="columnsInfo">
+</app-table>
+
+<ng-template #actionTemplateRef let-row>
+  <i class="fa-regular fa-pen-to-square icon" data-bs-toggle="modal" data-bs-target="#approval-matrix-contract-modal"
+    (click)="EditCompanyMasterGetDto()"></i>
+  <i class="fa-regular fa-eye icon" data-bs-toggle="modal" data-bs-target="#approval-matrix-contract-modal"
+    (click)="viewCompanyMasterGetDto()"></i>
+</ng-template>
