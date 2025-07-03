@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Client.Application.Features.Product.Dtos;
+using MediatR;
 
 namespace Client.Application.Features.Product.Commands
 {
-    internal class CreateProductCommand
-    {
-    }
+    public record CreateProductCommand(CreateProductDto Product) : IRequest<ProductDto>;
+
 }

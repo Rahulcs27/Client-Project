@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 using Client.Application.Features.Product.Dtos;
 using MediatR;
 
-namespace Client.Application.Features.Product.Queries
-{
-    public record GetAllProductQuery : IRequest<List<ProductDto>>;
-    
+namespace Client.Application.Features.Product.Commands
+{ 
+    public record UpdateProductCommand(UpdateProductDto Product) : IRequest<ProductDto>;
 
- }
+}

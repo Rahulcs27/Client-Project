@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Client.Application.Features.Product.Dtos
 {
-    public class GetAllProductDto
+    public class ProductDto
     {
         public int R_id { get; set; }
         public string R_description { get; set; }
