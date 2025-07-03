@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Client.Application.Features.Product.Dtos;
 using Client.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,14 +16,16 @@ namespace Client.Persistence.Context
         }
 
         // DbSet properties for your entities
-        public DbSet<CompanyMaster> Companies { get; set; } 
-        public DbSet<Product> Products { get; set; }
+        public DbSet<CompanyDto> Companies { get; set; } 
+        public DbSet<GetAllProductDto> GetAllProducts { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<CompanyMaster>().ToTable("");
-            modelBuilder.Entity<Product>().ToTable("");
+            modelBuilder.Entity<CompanyDto>().HasNoKey();
+            modelBuilder.Entity<GetAllProductDto>().HasNoKey();
+            modelBuilder.Entity<CompanyMaster>().ToTable("sbs_companyMaster");
+            modelBuilder.Entity<Product>().ToTable("sbs_productMaster");
 
         }
     }

@@ -13,9 +13,9 @@ namespace Client.Application.Profiles
     {
         public MappingProfile()
         {
-           CreateMap<GetAllCompanyDto, CompanyMaster>().ReverseMap();
-           CreateMap<GetByIdCompanyDto, CompanyMaster>().ReverseMap();
-          
+           CreateMap<CompanyDto, CompanyMaster>().ReverseMap();
+           CreateMap<GetAllProductDto,Product>().ReverseMap();
+
 
         }
     }
