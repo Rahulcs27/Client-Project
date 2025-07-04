@@ -7,6 +7,7 @@ using AutoMapper;
 using Client.Application.Features.Company.Dtos;
 using Client.Application.Features.Invoice.Dtos;
 using Client.Application.Features.Product.Dtos;
+using Client.Application.Features.Role.Dtos;
 using Client.Domain.Models;
 
 namespace Client.Application.Profiles
@@ -25,6 +26,7 @@ namespace Client.Application.Profiles
             CreateMap<InvoiceDetailsDto, InvoiceDetails>().ReverseMap();
             CreateMap<CreateInvoiceDto, InvoiceDetails>().ReverseMap();
             CreateMap<UpdateInvoiceDto, InvoiceDetails>().ReverseMap();
+            CreateMap<RoleDto,RoleMaster>().ReverseMap();
 
 
         }
