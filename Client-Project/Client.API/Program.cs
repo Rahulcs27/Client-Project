@@ -52,13 +52,13 @@ namespace Client.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAllOrigins",
-                    builder => builder.AllowAnyOrigin()
-                                      .AllowAnyMethod()
-                                      .AllowAnyHeader());
-            });
+            //builder.Services.AddCors(options =>
+            //{
+            //    options.AddPolicy("AllowAllOrigins",
+            //        builder => builder.WithOrigins("http://localhost:4200")
+            //                          .AllowAnyMethod()
+            //                          .AllowAnyHeader());
+            //});
 
             var app = builder.Build();
 
@@ -70,6 +70,10 @@ namespace Client.API
             }
 
             app.UseHttpsRedirection();
+            app.UseCors(x => x
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
 
             app.UseAuthorization();
 
