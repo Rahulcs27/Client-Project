@@ -1,7 +1,8 @@
 <h2 class="pt-4 fs-1">Invoice</h2>
 
 <div class="pt-md-5 pt-3 px-md-5 px-3 pb-2">
-    <button data-bs-toggle="modal" data-bs-target="#invoice-modal" class="add-btn btn btn-outline-primary">Add
+    <button data-bs-toggle="modal" data-bs-target="#invoice-modal" class="add-btn btn btn-outline-primary"
+    (click)="addInvoiceGetDto()">Add
     </button>
 </div>
 <app-table [data]="data" [displayedColumns]="displayedColumns" [columnsInfo]="columnsInfo">
@@ -18,8 +19,8 @@
     {{row.r_invoiceDate.split('T')[0]}}
 </ng-template>
 
-<div class="modal fade" [formGroup]="invoiceForm" id="invoice-modal" data-bs-backdrop="static"
-    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" [formGroup]="invoiceForm" id="invoice-modal" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <form class="modal-content">
             <div class="modal-header d-flex justify-content-between">
@@ -30,9 +31,9 @@
                     (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
-                <div class="mb-3">
-                    <label for="companyId" class="mb-1">Company <span *ngIf="modalMode === 'edit' || modalMode === 'add'"
-                            style="color: red;">*</span>
+                <div class="mb-3" *ngIf="modalMode !== 'edit'">
+                    <label for="companyId" class="mb-1">Company <span
+                            *ngIf="modalMode === 'add'" style="color: red;">*</span>
                         <span *ngIf="
                     modalMode !== 'view' &&
                     this.invoiceForm.get('companyId')?.hasError('required') &&
@@ -42,11 +43,12 @@
                     </label>
                     <select id="companyId" class="form-control" formControlName="companyId">
                         <option value="">--Select--</option>
+                        <option *ngFor="let company of companies" value="{{company.id}}">{{company.name}}</option>
                     </select>
                 </div>
-                <div class="mb-3">
-                    <label for="subcontractorId" class="mb-1">Sub-Contractor <span *ngIf="modalMode === 'edit' || modalMode === 'add'"
-                            style="color: red;">*</span>
+                <div class="mb-3" *ngIf="modalMode !== 'edit'">
+                    <label for="subcontractorId" class="mb-1">Sub-Contractor <span
+                            *ngIf="modalMode === 'add'" style="color: red;">*</span>
                         <span *ngIf="
                     modalMode !== 'view' &&
                     this.invoiceForm.get('subcontractorId')?.hasError('required') &&
@@ -59,8 +61,8 @@
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="productId" class="mb-1">Product <span *ngIf="modalMode === 'edit' || modalMode === 'add'"
-                            style="color: red;">*</span>
+                    <label for="productId" class="mb-1">Product <span
+                            *ngIf="modalMode === 'edit' || modalMode === 'add'" style="color: red;">*</span>
                         <span *ngIf="
                     modalMode !== 'view' &&
                     this.invoiceForm.get('productId')?.hasError('required') &&
@@ -70,11 +72,12 @@
                     </label>
                     <select id="productId" class="form-control" formControlName="productId">
                         <option value="">--Select--</option>
+                        <option *ngFor="let product of products" value="{{product.r_id}}">{{product.r_description}}</option>
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="invoiceDate" class="mb-1">Invoice Date <span *ngIf="modalMode === 'edit' || modalMode === 'add'"
-                            style="color: red;">*</span>
+                    <label for="invoiceDate" class="mb-1">Invoice Date <span
+                            *ngIf="modalMode !== 'view'" style="color: red;">*</span>
                         <span *ngIf="
                     modalMode !== 'view' &&
                     this.invoiceForm.get('invoiceDate')?.hasError('required') &&
@@ -83,6 +86,23 @@
                   " style="color: red">Required</span>
                     </label>
                     <input type="date" id="invoiceDate" class="form-control" formControlName="invoiceDate">
+                </div>
+                <div class="mb-3" *ngIf="modalMode !== 'add'">
+                    <label for="status" class="mb-1">Product <span
+                            *ngIf="modalMode === 'edit'" style="color: red;">*</span>
+                        <span *ngIf="
+                    modalMode !== 'view' &&
+                    this.invoiceForm.get('status')?.hasError('required') &&
+                    (this.invoiceForm.get('status')?.dirty ||
+                      this.invoiceForm.get('status')?.touched)
+                  " style="color: red">Required</span>
+                    </label>
+                    <select id="status" class="form-control" formControlName="status">
+                        <option value="">--Select--</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Partially Paid">Partially Paid</option>
+                        <option value="Pending">Pending</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label for="quantity" class="mb-1">Quantity <span *ngIf="modalMode !== 'view'"
@@ -97,8 +117,8 @@
                     <input type="text" id="quantity" class="form-control" formControlName="quantity">
                 </div>
                 <div class="mb-3">
-                    <label for="totalAmount" class="mb-1">Total Amount <span *ngIf="modalMode === 'edit' || modalMode === 'add'"
-                            style="color: red;">*</span>
+                    <label for="totalAmount" class="mb-1">Total Amount <span
+                            *ngIf="modalMode === 'edit' || modalMode === 'add'" style="color: red;">*</span>
                         <span *ngIf="
                     modalMode !== 'view' &&
                     this.invoiceForm.get('totalAmount')?.hasError('required') &&
@@ -109,7 +129,7 @@
                     <input type="text" id="totalAmount" class="form-control" formControlName="totalAmount">
                 </div>
                 <div class="mb-3">
-                    <label for="paymentMode" class="mb-1">Product <span *ngIf="modalMode !== 'view'"
+                    <label for="paymentMode" class="mb-1">Payment Mode <span *ngIf="modalMode !== 'view'"
                             style="color: red;">*</span>
                         <span *ngIf="
                     modalMode !== 'view' &&
@@ -118,12 +138,17 @@
                       this.invoiceForm.get('paymentMode')?.touched)
                   " style="color: red">Required</span>
                     </label>
-                    <input type="date" class="form-control" formControlName="paymentMode">
+                    <select id="paymentMode" class="form-control" formControlName="paymentMode">
+                        <option value="">--Select--</option>
+                        <option value="Cash">Cash</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                    </select>
                 </div>
             </div>
             <div class="modal-footer">
                 <button *ngIf="modalMode !== 'view'" class="add-btn btn btn-outline-primary" type="button"
-                    >Save</button>
+                (click)="saveInvoiceGetDto()">Save</button>
                 <button class="btn btn-outline-danger" data-bs-dismiss="modal" aria-label="Close" type="reset"
                     (click)="closeModal()">
                     {{(modalMode === 'view'?'Close':'Cancel')}}</button>
