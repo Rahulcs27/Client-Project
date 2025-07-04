@@ -1,6 +1,7 @@
 ﻿using Client.Application.Features.User.Commands;
 using Client.Application.Features.User.Dtos;
 using Client.Application.Features.User.Queries;
+using Client.Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,12 @@ namespace Client.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IUserRepository _userRepository;
 
-        public UserController(IMediator mediator)
+        public UserController(IMediator mediator , IUserRepository userRepository)
         {
             _mediator = mediator;
+            _userRepository = userRepository;
         }
 
         [HttpPost]
@@ -43,7 +46,19 @@ namespace Client.API.Controllers
 
             return BadRequest(new { message = result });
         }
-
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginDto)
+        {
+            try
+            {
+                var token = await _userRepository.LoginAsync(loginDto.Username, loginDto.Password);
+                return Ok(new { token });
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized("Invalid username or password");
+            }
+        }
 
 
         [HttpGet]
