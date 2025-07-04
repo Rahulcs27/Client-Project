@@ -22,6 +22,7 @@ namespace Client.Persistence
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             return services;
         }
 

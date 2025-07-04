@@ -16,10 +16,14 @@ namespace Client.Domain.Models
         public int Id { get; set; }
         [NotNull]
         public int CompanyId { get; set; }
+        public string CompanyName { get; set; }
+
         [NotNull]
         public int SubcontractorId { get; set; }
+        public string SubcontractorName { get; set; }
         [NotNull]
         public int ProductId { get; set; }
+        public string ProductName { get; set; }
         [NotNull]
         public DateTime InvoiceDate { get; set; }
         [NotNull, MaxLength(20, ErrorMessage = "Status length exceeding max length 20")]
