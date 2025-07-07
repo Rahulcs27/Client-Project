@@ -26,6 +26,7 @@ namespace Client.Persistence
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<ISubContractorRepository, SubContractorRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
+            services.AddScoped<IReportRepository, ReportRepository>();
             return services;
         }
 
