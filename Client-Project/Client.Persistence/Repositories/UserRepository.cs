@@ -53,7 +53,7 @@ namespace Client.Persistence.Repositories
         //    };
         //}
 
-    public async Task<UserDto> CreateUserAsync(CreateUserDto userDto)
+    public async Task<List<UserDto>> CreateUserAsync(CreateUserDto userDto)
     {
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
 
@@ -72,12 +72,7 @@ namespace Client.Persistence.Repositories
         if (result == null || result.Status != "SUCCESS")
             throw new Exception($"Insert Failed: {result?.ErrorMessage ?? "Unknown error"}");
 
-        return new UserDto
-        {
-            Id = result.InsertedID,
-            RoleMasterId = userDto.RoleMasterId,
-            Username = userDto.Username
-        };
+            return await GetUsersAsync(null, null);
     }
         public async Task<string> LoginAsync(string username, string password)
         {
@@ -102,7 +97,10 @@ namespace Client.Persistence.Repositories
             {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Role, user.RoleMasterId.ToString())
+            new Claim(ClaimTypes.Role, user.RoleMasterId.ToString()),
+            new Claim("user", user.Username),
+            new Claim("userId",user.Id.ToString()),
+            new Claim("role",user.RoleMasterId.ToString())
         };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));

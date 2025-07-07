@@ -1,10 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CompanyMasterGetDto } from '../components/company-master/Modals/company-master-get-dto';
 import { apiUrl } from '../../constant';
 import { Observable } from 'rxjs';
-import { CompanyMasterUpdateDto } from '../components/company-master/Modals/company-master-update-dto';
-import { CompanyMasterCreateDto } from '../components/company-master/Modals/company-master-create-dto';
+import { CompanyMasterCreateDto, CompanyMasterGetDto, CompanyMasterUpdateDto } from '../components/company-master/company-master-dtos';
 
 @Injectable({
   providedIn: 'root'

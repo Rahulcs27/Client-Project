@@ -2,9 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { apiUrl } from '../../constant';
-import { InvoiceGetDto } from '../components/invoice/Modals/invoice-get-dto';
-import { InvoiceUpdateDto } from '../components/invoice/Modals/invoice-update-dto';
-import { InvoiceCreateDto } from '../components/invoice/Modals/invoice-create-dto';
+import { InvoiceCreateDto, InvoiceGetDto, InvoiceUpdateDto } from '../components/invoice/invoice-dtos';
 
 @Injectable({
   providedIn: 'root'

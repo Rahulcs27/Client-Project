@@ -10,7 +10,7 @@ namespace Client.Application.Interfaces
     public interface ISubContractorRepository
     {
         Task<List<SubContractorDto>> GetSubContractorsAsync(int? id, string? search);
-        Task<SubContractorDto> CreateSubContractorAsync(CreateSubContractorDto dto);
+        Task<List<SubContractorDto>> CreateSubContractorAsync(CreateSubContractorDto dto);
         Task<List<SubContractorDto>> UpdateSubContractorAsync(UpdateSubContractorDto dto);
         Task<List<SubContractorDto>> DeleteSubContractorAsync(int id);
 

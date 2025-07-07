@@ -8,6 +8,6 @@ using MediatR;
 
 namespace Client.Application.Features.Role.Commands
 {
-    public record CreateRoleCommand(CreateRoleDto Role) : IRequest<RoleDto>;
+    public record CreateRoleCommand(CreateRoleDto Role) : IRequest<List<RoleDto>>;
 
 }

@@ -3,18 +3,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 :root {
-  --table-header-color: #5f5fee;
-  --table-side-border-color: #5f5fee;
-  --table-strip-odd-color: #ffffff;
+  --color-5f5fee : #5f5fee;
+  --color-ffffff : #ffffff;
+  --color-f2f2f2 : #f2f2f2;
+  --color-000000 : #000000;
+  --color-f5f5f5 : #f5f5f5;
+  --color-e9e7e5 : #e9e7e5;
+  --color-a5dc86 : #a5dc86;
+  --color-f27474 : #f27474;
+  --color-8888f3 : #8888f3;
+  --color-f8f9fa : #f8f9fa;
+  /* --table-strip-odd-color: #ffffff;
   --table-strip-even-color: #f2f2f2;
   --table-font-color: #000000;
   --heading-font-color: #5f5fee;
   --bg-color: #e9e7e5;
-  --nav-footer-bg-color: #f8f9fa;
+  --nav-footer-bg-color: #;
   --btn-theme-toggle-color: #5f5fee;
   --filter-theme-toggle-color: #ffffff;
   --pagenation-hover: #8888f3;
-  --icon-color: #8888f3;
+  --icon-color: #8888f3; */
 }
 
 * {
@@ -38,13 +46,13 @@ body {
 body {
     margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
-    background-color: var(--bg-color) !important;
+    background-color: var(--color-e9e7e5) !important;
 }
 
 .colored-toast.swal2-icon-success {
-  background-color: #a5dc86 !important;
+  background-color: var(--color-a5dc86) !important;
 }
 
 .colored-toast.swal2-icon-error {
-  background-color: #f27474 !important;
+  background-color: var(--color-f27474) !important;
 }

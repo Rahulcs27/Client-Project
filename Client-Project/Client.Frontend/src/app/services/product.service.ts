@@ -2,9 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { apiUrl } from '../../constant';
-import { ProductGetDto } from '../components/product/Modals/product-get-dto';
-import { ProductCreateDto } from '../components/product/Modals/product-create-dto';
-import { ProductUpdateDto } from '../components/product/Modals/product-update-dto';
+import { ProductCreateDto, ProductGetDto, ProductUpdateDto } from '../components/product/product-dtos';
 
 @Injectable({
   providedIn: 'root'

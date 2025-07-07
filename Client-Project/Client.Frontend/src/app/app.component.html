@@ -1,1 +1,11 @@
+@if(checkLogin()){
+<nav #navbar class="navbar">
+  <div class="container-fluid">
+    <button routerLink="/home" class="btn userName" ><i class="fa-solid fa-user"></i> {{userName}}</button>
+    <a class="btn logout-btn" (click)="logoutUser()">
+        <i class="fa-solid fa-power-off"></i> Logout
+    </a>
+  </div>
+</nav>
+}
 <router-outlet />

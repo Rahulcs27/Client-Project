@@ -10,7 +10,7 @@ using MediatR;
 
 namespace Client.Application.Features.SubContractor.Handlers
 {
-    public class CreateSubContractorCommandHandler : IRequestHandler<CreateSubContractorCommand, SubContractorDto>
+    public class CreateSubContractorCommandHandler : IRequestHandler<CreateSubContractorCommand, List<SubContractorDto>>
     {
         private readonly ISubContractorRepository _repository;
 
@@ -19,7 +19,7 @@ namespace Client.Application.Features.SubContractor.Handlers
             _repository = repository;
         }
 
-        public async Task<SubContractorDto> Handle(CreateSubContractorCommand request, CancellationToken cancellationToken)
+        public async Task<List<SubContractorDto>> Handle(CreateSubContractorCommand request, CancellationToken cancellationToken)
         {
             return await _repository.CreateSubContractorAsync(request.SubContractor);
         }

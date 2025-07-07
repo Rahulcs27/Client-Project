@@ -34,7 +34,7 @@ namespace Client.Persistence.Repositories
 
             return result.ToList();
         }
-        public async Task<SubContractorDto> CreateSubContractorAsync(CreateSubContractorDto dto)
+        public async Task<List<SubContractorDto>> CreateSubContractorAsync(CreateSubContractorDto dto)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@p_companyId", dto.CompanyId);
@@ -49,12 +49,7 @@ namespace Client.Persistence.Repositories
 
             if (result?.Status == "SUCCESS" && result?.InsertedID != null)
             {
-                return new SubContractorDto
-                {
-                    Id = result.InsertedID,
-                    CompanyId = dto.CompanyId,
-                    Name = dto.Name
-                };
+                return await GetSubContractorsAsync(null, null);
             }
 
             throw new Exception($"Insert Failed: {result?.ErrorMessage ?? "Unknown error"}");
@@ -75,17 +70,7 @@ namespace Client.Persistence.Repositories
 
             if (result == "SUCCESS")
             {
-                var getParams = new DynamicParameters();
-                getParams.Add("@p_id", null);
-                getParams.Add("@p_search", null);
-
-                var updatedList = await _db.QueryAsync<SubContractorDto>(
-                    "sp_sbs_subContractor_get",
-                    getParams,
-                    commandType: CommandType.StoredProcedure
-                );
-
-                return updatedList.ToList();
+                return await GetSubContractorsAsync(null, null);
             }
 
             throw new Exception("SubContractor update failed.");
@@ -104,13 +89,7 @@ namespace Client.Persistence.Repositories
             if (result != "SUCCESS")
                 throw new Exception(result ?? "Failed to delete subcontractor.");
 
-            var getResult = await _db.QueryAsync<SubContractorDto>(
-                "sp_sbs_subContractor_get",
-                new DynamicParameters(),  
-                commandType: CommandType.StoredProcedure
-            );
-
-            return getResult.ToList();
+            return await GetSubContractorsAsync(null, null);
         }
 
 

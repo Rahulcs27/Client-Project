@@ -18,7 +18,7 @@ namespace Client.Persistence.Repositories
         {
             _db = db;
         }
-        public async Task<RoleDto> CreateRoleAsync(CreateRoleDto dto)
+        public async Task<List<RoleDto>> CreateRoleAsync(CreateRoleDto dto)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@p_roleName", dto.RoleName);
@@ -33,12 +33,7 @@ namespace Client.Persistence.Repositories
 
             if (result.status == "Success" && result.inserted_id.HasValue)
             {
-                return new RoleDto
-                {
-                    Id = result.inserted_id.Value,
-                    RoleName = dto.RoleName,
-                    Description = dto.Description
-                };
+                return await GetRolesAsync(null);
             }
 
             throw new Exception("Role creation failed.");

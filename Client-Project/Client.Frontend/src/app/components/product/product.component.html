@@ -1,6 +1,6 @@
 <h2 class="pt-4 fs-1">Product</h2>
 
-<div class="pt-md-5 pt-3 px-md-5 px-3 pb-2">
+<div class="pt-md-5 pt-3 px-md-5 px-3 pb-2" *ngIf="!checkViewer()">
     <button data-bs-toggle="modal" data-bs-target="#product-modal" class="add-btn btn btn-outline-primary"
     (click)="addProductGetDto()">Add</button>
 </div>
@@ -10,6 +10,7 @@
 <ng-template #actionTemplateRef let-row>
     <i class="fa-regular fa-pen-to-square icon" data-bs-toggle="modal" data-bs-target="#product-modal"
     (click)="editProductGetDto(row)"></i>
+    <i class="fa-solid fa-trash icon" (click)="deleteRowData(row.r_id)"></i>
 </ng-template>
 
 <div class="modal fade" [formGroup]="productForm" id="product-modal" data-bs-backdrop="static"
@@ -26,22 +27,22 @@
                 <div class="mb-3">
                     <label for="description" class="mb-1">Description <span style="color: red;">*</span>
                         <span *ngIf="
-                    this.productForm.get('R_description')?.hasError('required') &&
-                    (this.productForm.get('R_description')?.dirty ||
-                      this.productForm.get('R_description')?.touched)
+                    this.productForm.get('description')?.hasError('required') &&
+                    (this.productForm.get('description')?.dirty ||
+                      this.productForm.get('description')?.touched)
                   " style="color: red">Required</span>
                     </label>
-                    <input type="text" id="description" class="form-control" formControlName="R_description" placeholder="Description">
+                    <input type="text" id="description" class="form-control" formControlName="description" placeholder="Description">
                 </div>
                 <div class="mb-3">
                     <label for="unitPrice" class="mb-1">Unit Price <span style="color: red;">*</span>
                         <span *ngIf="
-                    this.productForm.get('R_unitPrice')?.hasError('required') &&
-                    (this.productForm.get('R_unitPrice')?.dirty ||
-                      this.productForm.get('R_unitPrice')?.touched)
+                    this.productForm.get('unitPrice')?.hasError('required') &&
+                    (this.productForm.get('unitPrice')?.dirty ||
+                      this.productForm.get('unitPrice')?.touched)
                   " style="color: red">Required</span>
                     </label>
-                    <input type="text" id="unitPrice" class="form-control" formControlName="R_unitPrice" placeholder="Unit Price">
+                    <input type="text" id="unitPrice" class="form-control" formControlName="unitPrice" placeholder="Unit Price">
                 </div>
             </div>
             <div class="modal-footer">
