@@ -21,7 +21,7 @@ public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, List<UserDto>
 
         public async Task<List<UserDto>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
         {
-            return await _repository.GetUsersAsync(request.Id, request.Search);
+            return await _repository.GetUsersAsync(request.Id, request.Search,request.companyId);
         }
     }
 

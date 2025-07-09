@@ -10,6 +10,7 @@ namespace Client.Application.Features.User.Dtos
     {
         public int Id { get; set; }
         public int RoleMasterId { get; set; }
+        public int CompanyId { get; set; }
         public string Username { get; set; }
     }
 

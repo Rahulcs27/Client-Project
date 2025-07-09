@@ -62,9 +62,9 @@ namespace Client.API.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers([FromQuery] int? id, [FromQuery] string? search)
+        public async Task<IActionResult> GetUsers([FromQuery] int companyId,[FromQuery] int? id, [FromQuery] string? search)
         {
-            var result = await _mediator.Send(new GetUsersQuery(id, search));
+            var result = await _mediator.Send(new GetUsersQuery(companyId,id, search ));
             return Ok(result);
         }
     }

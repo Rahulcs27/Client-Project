@@ -59,7 +59,8 @@ namespace Client.Persistence.Repositories
 
         var parameters = new DynamicParameters();
         parameters.Add("@p_roleMasterId", userDto.RoleMasterId);
-        parameters.Add("@p_username", userDto.Username);
+        parameters.Add("@p_companyId", userDto.CompanyId);
+            parameters.Add("@p_username", userDto.Username);
         parameters.Add("@p_password", hashedPassword);
         parameters.Add("@p_createdBy", userDto.CreatedBy);
 
@@ -76,6 +77,7 @@ namespace Client.Persistence.Repositories
         {
             Id = result.InsertedID,
             RoleMasterId = userDto.RoleMasterId,
+            CompanyId = userDto.CompanyId,
             Username = userDto.Username
         };
     }
@@ -137,16 +139,17 @@ namespace Client.Persistence.Repositories
             if (result != "SUCCESS")
                 throw new Exception($"Update failed: {result}");
 
-            return await GetUsersAsync(null,null);
+            return await GetUsersAsync(null,null,2);
         }
 
 
 
-        public async Task<List<UserDto>> GetUsersAsync(int? id, string? search)
+        public async Task<List<UserDto>> GetUsersAsync(int? id, string? search,int companyId)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@p_id", id);
             parameters.Add("@p_search", search);
+            parameters.Add("@p_companyID", companyId);
 
             var result = await _db.QueryAsync<UserDto>(
                 "sp_sbs_userMaster_get",
