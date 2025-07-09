@@ -53,27 +53,31 @@ namespace Client.Persistence.Repositories
         //    };
         //}
 
-    public async Task<List<UserDto>> CreateUserAsync(CreateUserDto userDto)
-    {
-        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
+        public async Task<UserDto> CreateUserAsync(CreateUserDto userDto)
+        {
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
 
-        var parameters = new DynamicParameters();
-        parameters.Add("@p_roleMasterId", userDto.RoleMasterId);
-        parameters.Add("@p_username", userDto.Username);
-        parameters.Add("@p_password", hashedPassword);
-        parameters.Add("@p_createdBy", userDto.CreatedBy);
+            var parameters = new DynamicParameters();
+            parameters.Add("@p_roleMasterId", userDto.RoleMasterId);
+            parameters.Add("@p_companyId", userDto.CompanyId);
+            parameters.Add("@p_username", userDto.Username);
+            parameters.Add("@p_password", hashedPassword);
+            parameters.Add("@p_createdBy", userDto.CreatedBy);
 
-        var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
-            "sp_sbs_userMaster_insert",
-            parameters,
-            commandType: CommandType.StoredProcedure
-        );
+            var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
+                "sp_sbs_userMaster_insert",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
 
-        if (result == null || result.Status != "SUCCESS")
-            throw new Exception($"Insert Failed: {result?.ErrorMessage ?? "Unknown error"}");
+            if (result == null || result.R_Status != "SUCCESS")
+                throw new Exception($"Insert Failed: {result?.R_ErrorMessage ?? "Unknown error"}");
 
-            return await GetUsersAsync(null, null);
-    }
+            int insertedId = result.R_InsertedID; 
+            int companyId = userDto.CompanyId;   
+
+            return (await GetUsersAsync(null, null, companyId)).FirstOrDefault();
+        }
         public async Task<string> LoginAsync(string username, string password)
         {
             var parameters = new DynamicParameters();
@@ -97,10 +101,10 @@ namespace Client.Persistence.Repositories
             {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Role, user.RoleMasterId.ToString()),
             new Claim("user", user.Username),
             new Claim("userId",user.Id.ToString()),
-            new Claim("role",user.RoleMasterId.ToString())
+            new Claim("role",user.RoleMasterId.ToString()),
+            new Claim(ClaimTypes.Role,user.RoleName),
         };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
@@ -122,29 +126,33 @@ namespace Client.Persistence.Repositories
             var parameters = new DynamicParameters();
             parameters.Add("@p_id", userDto.Id);
             parameters.Add("@p_roleMasterId", userDto.RoleMasterId);
+            parameters.Add("@p_companyId", userDto.CompanyId);
             parameters.Add("@p_username", userDto.Username);
             parameters.Add("@p_password", userDto.Password);
             parameters.Add("@p_updatedBy", userDto.UpdatedBy);
 
-            var result = await _db.QueryFirstOrDefaultAsync<string>(
+            var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
                 "sp_sbs_userMaster_update",
                 parameters,
                 commandType: CommandType.StoredProcedure
             );
 
-            if (result != "SUCCESS")
-                throw new Exception($"Update failed: {result}");
+            if (result == null || result.R_Status != "SUCCESS")
+                throw new Exception($"Update failed: {result?.R_ErrorMessage ?? "Unknown error"}");
 
-            return await GetUsersAsync(null,null);
+            int updatedId = result.R_UpdatedID;
+
+            return await GetUsersAsync(null, null, userDto.CompanyId);
         }
 
 
 
-        public async Task<List<UserDto>> GetUsersAsync(int? id, string? search)
+        public async Task<List<UserDto>> GetUsersAsync(int? id, string? search,int? companyId)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@p_id", id);
             parameters.Add("@p_search", search);
+            parameters.Add("@p_companyID", companyId);
 
             var result = await _db.QueryAsync<UserDto>(
                 "sp_sbs_userMaster_get",

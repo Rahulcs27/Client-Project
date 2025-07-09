@@ -29,10 +29,9 @@ namespace Client.API.Controllers
             return Ok(result);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDto dto)
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto dto)
         {
-            dto.Id = id;
             var allUsers = await _mediator.Send(new UpdateUserCommand(dto));
             return Ok(allUsers);
         }
@@ -62,9 +61,9 @@ namespace Client.API.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers([FromQuery] int? id, [FromQuery] string? search)
+        public async Task<IActionResult> GetUsers([FromQuery] int? companyId,[FromQuery] int? id, [FromQuery] string? search)
         {
-            var result = await _mediator.Send(new GetUsersQuery(id, search));
+            var result = await _mediator.Send(new GetUsersQuery(companyId,id, search ));
             return Ok(result);
         }
     }

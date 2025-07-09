@@ -9,12 +9,12 @@ namespace Client.Application.Interfaces
 {
     public interface IUserRepository
     {
-        Task<List<UserDto>> CreateUserAsync(CreateUserDto userDto);
+        Task<UserDto> CreateUserAsync(CreateUserDto userDto);
         Task<List<UserDto>> UpdateUserAsync(UpdateUserDto userDto);
         Task<string> DeleteUserAsync(int id);
         Task<string> LoginAsync(string username, string password);
 
 
-        Task<List<UserDto>> GetUsersAsync(int? id, string? search);
+        Task<List<UserDto>> GetUsersAsync(int? id, string? search,int? companyId);
     }
 }
