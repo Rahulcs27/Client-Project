@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { AlertService } from './services/alert.service';
 import { LoginService } from './services/login.service';
+import { SideBarComponent } from "./components/side-bar/side-bar.component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterModule],
+  imports: [RouterOutlet, RouterModule, SideBarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

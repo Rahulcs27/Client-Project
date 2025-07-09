@@ -31,3 +31,6 @@
     </table>
     <h1 class="fs-5" *ngIf="dataSource.data.length === 0">No Records</h1>
 </div>
+<div class="px-md-5 px-3 paginator">
+    <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+</div>

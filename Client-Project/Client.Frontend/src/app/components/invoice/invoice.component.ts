@@ -13,7 +13,6 @@ import { SubContractorGetDto } from '../sub-contractor/sub-contractor-dtos';
 import { SubContractorService } from '../../services/sub-contractor.service';
 import { CompanyMasterGetDto } from '../company-master/company-master-dtos';
 import { LoginService } from '../../services/login.service';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-invoice',
@@ -30,8 +29,14 @@ export class InvoiceComponent {
     private subContractorService: SubContractorService,
     private alert: AlertService
   ) { }
-  modalMode: 'edit' | 'add' = 'edit';
-  displayedColumns: string[] = ['r_id', 'r_companyName', 'r_subcontractorName', 'r_productDescription', 'r_invoiceDate', 'r_status', 'r_quantity', 'r_totalAmount', 'r_paymentMode', 'action'];
+  modalMode: 'view' | 'edit' | 'add' = 'view';
+  displayedColumns: string[] = [
+    // 'r_id', 'r_companyName', 
+    'r_subcontractorName',
+    // 'r_productDescription', 
+    'r_invoiceDate', 'r_status', 'r_quantity', 'r_totalAmount',
+    // 'r_paymentMode', 
+    'action'];
   data: InvoiceGetDto[] = [];
   companies: CompanyMasterGetDto[] = [];
   products: ProductGetDto[] = [];
@@ -53,6 +58,7 @@ export class InvoiceComponent {
       subcontractorId: new FormControl(''),
       productId: new FormControl('', [Validators.required,]),
       invoiceDate: new FormControl('', [Validators.required]),
+      // unitPrice: new FormControl('', [Validators.required]),
       status: new FormControl(''),
       quantity: new FormControl('', [Validators.required]),
       totalAmount: new FormControl('', [Validators.required]),
@@ -63,6 +69,7 @@ export class InvoiceComponent {
   );
 
   ngOnInit(): void {
+    this.invoiceForm.get('totalAmount')?.disable();
     this.companyService.getAllCompanyMasterGetDto().subscribe({
       next: (response: CompanyMasterGetDto[]) => {
         this.companies = response;
@@ -90,26 +97,26 @@ export class InvoiceComponent {
     })
     this.getAllInvoiceGetDto()
     this.columnsInfo = {
-      'r_id': {
-        'title': 'Invoice No.',
-        'isSort': true,
-        'templateRef': null
-      },
-      'r_companyName': {
-        'title': 'Company Name',
-        'isSort': true,
-        'templateRef': null
-      },
+      // 'r_id': {
+      //   'title': 'Invoice No.',
+      //   'isSort': true,
+      //   'templateRef': null
+      // },
+      // 'r_companyName': {
+      //   'title': 'Company Name',
+      //   'isSort': true,
+      //   'templateRef': null
+      // },
       'r_subcontractorName': {
         'title': 'Sub-Contract Name',
         'isSort': true,
         'templateRef': null
       },
-      'r_productDescription': {
-        'title': 'Product Name',
-        'isSort': true,
-        'templateRef': null
-      },
+      // 'r_productDescription': {
+      //   'title': 'Product Name',
+      //   'isSort': true,
+      //   'templateRef': null
+      // },
       'r_invoiceDate': {
         'title': 'Invoice Date',
         'isSort': true,
@@ -130,11 +137,11 @@ export class InvoiceComponent {
         'isSort': true,
         'templateRef': null
       },
-      'r_paymentMode': {
-        'title': 'Payment Mode',
-        'isSort': true,
-        'templateRef': null
-      },
+      // 'r_paymentMode': {
+      //   'title': 'Payment Mode',
+      //   'isSort': true,
+      //   'templateRef': null
+      // },
       'action': {
         'title': 'Action',
         'templateRef': this.checkViewer() ? null : this.actionTemplateRef
@@ -154,6 +161,17 @@ export class InvoiceComponent {
     });
   }
 
+  calculateTotalAmount(){
+    const productId = Number(this.invoiceForm.get('productId')?.value)
+    if(productId && productId > 0){
+      const product = this.products.find(p => p.r_id === productId)
+      const quantity = Number(this.invoiceForm.get('quantity')?.value)
+      if(product && quantity && quantity > 0){
+        this.invoiceForm.get('totalAmount')?.setValue(product.r_unitPrice * quantity)
+      }
+    }
+  }
+
   closeModal() {
     this.invoiceForm.reset({
       id: '',
@@ -168,10 +186,10 @@ export class InvoiceComponent {
       createdBy: '',
       updatedBy: '',
     })
-    this.modalMode = 'edit';
+    this.modalMode = 'view';
   }
 
-  editInvoiceGetDto(obj: InvoiceGetDto) {
+  viewAndEditInvoiceGetDto(obj: InvoiceGetDto, mode: 'view'|'edit') {
     this.invoiceForm.patchValue({
       id: obj.r_id,
       companyId: obj.r_companyId,
@@ -182,16 +200,23 @@ export class InvoiceComponent {
       quantity: obj.r_quantity,
       totalAmount: obj.r_totalAmount,
       paymentMode: obj.r_paymentMode,
-      updatedBy: 1,
+      updatedBy: (mode === 'edit') && this.loginService.userId(),
     })
-    this.modalMode = 'edit';
+    if(mode === 'view'){
+      this.invoiceForm.disable();
+    }
+    else{
+      this.invoiceForm.enable();
+      this.invoiceForm.get('totalAmount')?.disable();
+    }
+    this.modalMode = mode;
   }
 
   addInvoiceGetDto() {
     this.invoiceForm.patchValue({
       companyId: '',
       subcontractorId: '',
-      createdBy: 1,
+      createdBy: this.loginService.userId(),
     })
     this.modalMode = 'add';
   }
@@ -212,9 +237,10 @@ export class InvoiceComponent {
       console.log('Invoice form invalid', this.invoiceForm.value);
     }
     else {
-      console.log(this.invoiceForm.get('subcontractorId')?.value);
       if (this.modalMode === 'edit') {
-        this.invoiceService.editInvoiceUpdateDto(this.invoiceForm.value).subscribe({
+        const formData = this.invoiceForm.value;
+        formData['totalAmount'] = this.invoiceForm.get('totalAmount')?.value
+        this.invoiceService.editInvoiceUpdateDto(formData).subscribe({
           next: (response: InvoiceGetDto) => {
             this.data = this.data.map(d => {
               if (d.r_id === response.r_id) {

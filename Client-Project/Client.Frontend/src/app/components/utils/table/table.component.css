@@ -15,9 +15,9 @@
 .mat-header-cell {
     color: var(--color-ffffff);
 }
-/* .table {
+.table {
     text-wrap: nowrap;
-} */
+}
 table tr.odd-row td {
    background-color: var(--color-ffffff);
    color: var(--color-000000);

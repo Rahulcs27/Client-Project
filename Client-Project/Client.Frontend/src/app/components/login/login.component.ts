@@ -13,7 +13,6 @@ import { AuthResponse } from './login-dtos';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  errorMsg = '';
   loginPasswordEyeOpen = false;
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.required,]),
