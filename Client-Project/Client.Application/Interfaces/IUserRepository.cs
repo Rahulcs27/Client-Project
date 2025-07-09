@@ -15,6 +15,6 @@ namespace Client.Application.Interfaces
         Task<string> LoginAsync(string username, string password);
 
 
-        Task<List<UserDto>> GetUsersAsync(int? id, string? search,int companyId);
+        Task<List<UserDto>> GetUsersAsync(int? id, string? search,int? companyId);
     }
 }
