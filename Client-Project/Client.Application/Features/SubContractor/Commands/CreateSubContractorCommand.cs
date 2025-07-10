@@ -8,6 +8,6 @@ using MediatR;
 
 namespace Client.Application.Features.SubContractor.Commands
 {
-    public record CreateSubContractorCommand(CreateSubContractorDto SubContractor) : IRequest<SubContractorDto>;
+    public record CreateSubContractorCommand(CreateSubContractorDto SubContractor) : IRequest<List<SubContractorDto>>;
 
 }

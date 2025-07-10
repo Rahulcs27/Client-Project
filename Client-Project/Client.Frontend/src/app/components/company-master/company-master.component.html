@@ -13,6 +13,7 @@
         (click)="viewCompanyMasterGetDto(row)"></i>
     <i class="fa-regular fa-pen-to-square icon" data-bs-toggle="modal" data-bs-target="#companyMaster-modal"
         (click)="editCompanyMasterGetDto(row)"></i>
+    <i class="fa-solid fa-trash icon" (click)="deleteRowData(row.id)"></i>
 </ng-template>
 
 <div class="modal fade" [formGroup]="companyMasterForm" id="companyMaster-modal" data-bs-backdrop="static"

@@ -10,7 +10,7 @@ using MediatR;
 
 namespace Client.Application.Features.Role.Handlers
 {
-    public class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand, RoleDto>
+    public class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand, List<RoleDto>>
     {
         private readonly IRoleRepository _repository;
 
@@ -19,7 +19,7 @@ namespace Client.Application.Features.Role.Handlers
             _repository = repository;
         }
 
-        public async Task<RoleDto> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
+        public async Task<List<RoleDto>> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
         {
             return await _repository.CreateRoleAsync(request.Role);
         }

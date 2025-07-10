@@ -1,17 +1,17 @@
-declare var bootstrap:any;
+declare var bootstrap: any;
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { TableComponent } from '../utils/table/table.component';
 import { CompanyMasterServiceService } from '../../services/company-master-service.service';
-import { CompanyMasterGetDto } from './Modals/company-master-get-dto';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AlertService } from '../../services/alert.service';
+import { CompanyMasterGetDto } from './company-master-dtos';
 
 @Component({
   selector: 'app-company-master',
   imports: [TableComponent, CommonModule, ReactiveFormsModule],
   templateUrl: './company-master.component.html',
-  styleUrl: './company-master.component.css'
+  styleUrl: '../../../componentStyle.css'
 })
 export class CompanyMasterComponent implements OnInit {
   constructor(private companyMasterService: CompanyMasterServiceService,
@@ -125,28 +125,32 @@ export class CompanyMasterComponent implements OnInit {
     this.modalMode = 'add';
   }
 
+  deleteRowData(id: number) {
+    
+  }
+
   saveCompanyMasterGetDto() {
-    if(this.companyMasterForm.invalid){
+    if (this.companyMasterForm.invalid) {
       this.companyMasterForm.markAllAsTouched();
       console.log('company master form invalid', this.companyMasterForm.value);
     }
-    else{
+    else {
       if (this.modalMode === 'edit') {
         this.companyMasterService.editCompanyMasterUpdateDto(this.companyMasterForm.value).subscribe({
           next: (response: CompanyMasterGetDto) => {
             this.data = this.data.map(d => {
-              if(d.id === response.id){
+              if (d.id === response.id) {
                 d.name = response.name;
                 d.phone = response.phone;
                 d.email = response.email;
                 d.address = response.address;
                 return d
               }
-              else{
+              else {
                 return d;
               }
             })
-            this.alert.Toast.fire('Updated Successfully','','success')
+            this.alert.Toast.fire('Updated Successfully', '', 'success')
             this.closeModal();
             const modalElement = document.getElementById('companyMaster-modal');
             if (modalElement) {
@@ -164,9 +168,14 @@ export class CompanyMasterComponent implements OnInit {
         this.companyMasterService.addCompanyMasterGetDto(this.companyMasterForm.value).subscribe(
           {
             next: (response: CompanyMasterGetDto) => {
-              this.data = [response,...this.data];
-              this.alert.Toast.fire('Added Successfully','','success')
+              this.data = [response, ...this.data];
+              this.alert.Toast.fire('Added Successfully', '', 'success')
               this.closeModal();
+              const modalElement = document.getElementById('companyMaster-modal');
+              if (modalElement) {
+                const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+                modalInstance.hide();
+              }
             },
             error: (error) => {
               console.log(error);
