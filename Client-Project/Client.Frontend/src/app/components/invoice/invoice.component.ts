@@ -149,7 +149,7 @@ export class InvoiceComponent {
     }
 
   }
-  checkViewer = (): boolean => this.loginService.role() !== null && this.loginService.role() === 5;
+  checkViewer = (): boolean => this.loginService.role() !== null && this.loginService.role() === 'Viewer';
   getAllInvoiceGetDto() {
     this.invoiceService.getAllInvoiceGetDto().subscribe({
       next: (response: InvoiceGetDto[]) => {
@@ -214,7 +214,7 @@ export class InvoiceComponent {
 
   addInvoiceGetDto() {
     this.invoiceForm.patchValue({
-      companyId: '',
+      companyId: this.loginService.companyId(),
       subcontractorId: '',
       createdBy: this.loginService.userId(),
     })

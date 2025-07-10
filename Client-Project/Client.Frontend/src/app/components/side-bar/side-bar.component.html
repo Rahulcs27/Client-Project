@@ -1,6 +1,7 @@
 <aside class="offcanvas offcanvas-start offcanvas-width" tabindex="-1" id="sideBar" aria-labelledby="sideBarLabel">
     <div class="offcanvas-header">
-        <button routerLink="/home" class="btn userName" ><i class="fa-solid fa-user"></i>{{userName}}</button>
+        <div></div>
+        <!-- <button routerLink="/home" class="btn "></button> -->
         <!-- <h5 class="offcanvas-title" id="sideBarLabel">{{username}}!</h5> -->
         <button type="button" class="btn" data-bs-dismiss="offcanvas" aria-label="Close">
             <i class="fa-solid fa-xmark fs-5"></i>
@@ -8,17 +9,33 @@
     </div>
     <div class="offcanvas-body">
         <a class="btn sideBar-nav-links" data-bs-dismiss="offcanvas" routerLink="/home">Home</a>
-        <a class="btn sideBar-nav-links mt-2" *ngIf="userRole === 1" data-bs-dismiss="offcanvas"
+        <a class="btn sideBar-nav-links mt-2" *ngIf="userRole === 'Admin'" data-bs-dismiss="offcanvas"
             routerLink="/userMaster">User Master</a>
-        <a class="btn sideBar-nav-links mt-2" *ngIf="userRole === 1" data-bs-dismiss="offcanvas"
+        <a class="btn sideBar-nav-links mt-2" *ngIf="userRole === 'Admin'" data-bs-dismiss="offcanvas"
             routerLink="/roleMaster">Role Master</a>
-        <a class="btn sideBar-nav-links mt-2" *ngIf="userRole === 1" data-bs-dismiss="offcanvas"
+        <a class="btn sideBar-nav-links mt-2" *ngIf="userRole === 'Admin'" data-bs-dismiss="offcanvas"
             routerLink="/companyMaster">Company Master</a>
-        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas"
-            routerLink="/invoice">Invoice</a>
+        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/invoice">Invoice</a>
         <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/product">Product</a>
-        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas"
-            routerLink="/subContractor">SubContractor</a>
+        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/subContractor">SubContractor</a>
         <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/payment">payment</a>
+    </div>
+    <div class="offcanvas-footer">
+        <div class="accordion" id="profile-accordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="profile">
+                    <button class="accordion-button userName" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <i class="fa-solid fa-user"></i>{{userName}}
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="profile"
+                    data-bs-parent="#profile-accordion">
+                    <div class="accordion-body">
+                        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/invoice">Change Password</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </aside>

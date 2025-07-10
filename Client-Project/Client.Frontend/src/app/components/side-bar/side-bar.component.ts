@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
 })
 export class SideBarComponent {
   userName: string | null = '';
-  userRole: number | null = 0;
+  userRole: string | null = '';
 
   constructor(private loginService: LoginService) { }
   ngOnInit(): void {

@@ -15,7 +15,11 @@ export interface UserCreateDto {
 
 export interface UserUpdateDto {
     id: number;
+    companyId: number;
     roleMasterId: number;
     username: string;
+    password: string;
+    currentPassword: string | null;
+    newPassword: string | null;
     updatedBy: number;
 }

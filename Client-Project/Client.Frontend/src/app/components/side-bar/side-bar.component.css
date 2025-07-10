@@ -21,7 +21,6 @@ display: block;
 text-decoration: none;
 border: 2px solid var(--color-5f5fee);
 color: var(--color-5f5fee);
-width: 100%;
 }
 .sideBar-nav-links:hover{
     color: #f5f5f5;

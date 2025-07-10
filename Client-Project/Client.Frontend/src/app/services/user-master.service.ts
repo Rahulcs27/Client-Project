@@ -15,7 +15,7 @@ export class UserMasterService {
   }
 
   editUserUpdateDto(formData: UserUpdateDto): Observable<UserGetDto[]> {
-    return this.http.put<UserGetDto[]>(`${apiUrl}/User/${formData.id}`, formData);
+    return this.http.put<UserGetDto[]>(`${apiUrl}/User`, formData);
   }
 
   addUserGetDto(formData: UserCreateDto): Observable<UserGetDto[]> {

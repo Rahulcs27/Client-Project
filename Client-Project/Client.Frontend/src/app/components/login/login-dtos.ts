@@ -10,5 +10,6 @@ export interface AuthResponse {
 export interface JwtClaims {
     user: string;
     userId: number;
-    role: number;
+    role: string;
+    companyId: number;
 }

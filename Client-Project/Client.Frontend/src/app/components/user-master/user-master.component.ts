@@ -8,6 +8,7 @@ import { UserGetDto } from './user-dtos';
 import { TableComponent } from "../utils/table/table.component";
 import { RoleGetDto } from '../role/role-dtos';
 import { RoleService } from '../../services/role.service';
+import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-user-master',
@@ -16,7 +17,9 @@ import { RoleService } from '../../services/role.service';
   styleUrl: '../../../componentStyle.css'
 })
 export class UserMasterComponent {
-  constructor(private userService: UserMasterService,
+  constructor(
+    private loginService: LoginService,
+    private userService: UserMasterService,
     private roleService: RoleService,
     private alert: AlertService
   ) { }
@@ -39,6 +42,9 @@ export class UserMasterComponent {
       roleMasterId: new FormControl('', [Validators.required]),
       username: new FormControl('', [Validators.required]),
       password: new FormControl('', [Validators.required]),
+      companyId: new FormControl('', [Validators.required]),
+      currentPassword: new FormControl(''),
+      newPassword: new FormControl(''),
       updatedBy: new FormControl(''),
       createdBy: new FormControl(''),
     }
@@ -90,6 +96,9 @@ export class UserMasterComponent {
       roleMasterId: '',
       username: '',
       password: '',
+      companyId: '',
+      currentPassword: '',
+      newPassword: '',
       createdBy: '',
       updatedBy: '',
     })
@@ -97,6 +106,12 @@ export class UserMasterComponent {
   }
 
   addUserGetDto() {
+    this.userForm.patchValue({
+      companyId: this.loginService.companyId(),
+      currentPassword: '',
+      newPassword: '',
+      createdBy: this.loginService.userId(),
+    })
     this.modalMode = 'add';
   }
 
@@ -106,8 +121,12 @@ export class UserMasterComponent {
       roleMasterId: obj.roleMasterId,
       username: obj.username,
       password: obj.password,
-      updatedBy: 1,
+      companyId: this.loginService.companyId(),
+      currentPassword: '',
+      newPassword: '',
+      updatedBy: this.loginService.userId(),
     })
+    this.modalMode = 'edit'
   }
 
   deleteRowData(id: number) {
@@ -127,7 +146,7 @@ export class UserMasterComponent {
     }
     else {
       if (this.modalMode === 'add') {
-        this.userForm.get('createdBy')?.setValue(1);
+        // this.userForm.get('createdBy')?.setValue(1);
         this.userService.addUserGetDto(this.userForm.value).subscribe(
           {
             next: (response: UserGetDto[]) => {

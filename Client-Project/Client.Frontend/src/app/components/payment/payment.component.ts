@@ -146,7 +146,7 @@ export class PaymentComponent {
 
   }
 
-  checkViewer = (): boolean => this.loginService.role() !== null && this.loginService.role() === 5;
+  checkViewer = (): boolean => this.loginService.role() !== null && this.loginService.role() === 'Viewer';
 
   closeModal() {
     this.paymentForm.reset({

@@ -51,4 +51,15 @@ export class LoginService {
     }
     return null;
   }
+
+  companyId() {
+    const token = sessionStorage.getItem('token')
+    if (token) {
+      const decodedToken: JwtClaims = jwtDecode(token)
+      if (decodedToken.companyId) {
+        return decodedToken.companyId
+      }
+    }
+    return null;
+  }
 }
