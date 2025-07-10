@@ -21,7 +21,7 @@ namespace Client.Application.Features.Product.Handlers
 
         public async Task<List<ProductDto>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
         {
-            return await _repo.GetProductsAsync(request.Id, request.Description);
+            return await _repo.GetProductsAsync(request.CompanyId, request.Id, request.Search);
         }
     }
 

@@ -10,6 +10,7 @@ namespace Client.Application.Features.Product.Dtos
     {
         public string Description { get; set; }
         public decimal UnitPrice { get; set; }
+        public int CompanyId { get; set; }
         public int CreatedBy { get; set; }
     }
 

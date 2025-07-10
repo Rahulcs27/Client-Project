@@ -11,13 +11,16 @@ namespace Client.Application.Features.Product.Queries
 
     public class GetProductsQuery : IRequest<List<ProductDto>>
     {
+        public int CompanyId { get; set; }
         public int? Id { get; }
-        public string Description { get; }
+        public string Search { get; }
 
-        public GetProductsQuery(int? id = null, string description = null)
+        public GetProductsQuery(int companyId,int? id = null, string search = null)
         {
+            CompanyId = companyId;
             Id = id;
-            Description = description;
+            Search = search;
+            
         }
     }
 

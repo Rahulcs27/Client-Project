@@ -11,7 +11,7 @@ using MediatR;
 
 namespace Client.Application.Features.Product.Handlers
 {
-    public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, ProductDto>
+    public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, List<ProductDto>>
     {
         private readonly IProductRepository _repo;
         private readonly IMapper _mapper;
@@ -22,10 +22,9 @@ namespace Client.Application.Features.Product.Handlers
             _mapper = mapper;
         }
 
-        public async Task<ProductDto> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+        public async Task<List<ProductDto>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
-            var updated = await _repo.UpdateProductAsync(request.Product);
-            return _mapper.Map<ProductDto>(updated);
+            return await _repo.UpdateProductAsync(request.Product);
         }
     }
 
