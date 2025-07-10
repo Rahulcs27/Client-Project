@@ -8,6 +8,6 @@ using MediatR;
 
 namespace Client.Application.Features.Product.Commands
 {
-    public record CreateProductCommand(CreateProductDto Product) : IRequest<ProductDto>;
+    public record CreateProductCommand(CreateProductDto Product) : IRequest<List<ProductDto>>;
 
 }

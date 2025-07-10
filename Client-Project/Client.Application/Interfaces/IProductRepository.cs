@@ -10,16 +10,13 @@ namespace Client.Application.Interfaces
 {
     public interface IProductRepository
     {
-        Task<ProductDto> CreateProductAsync(CreateProductDto dto);
-        Task<ProductDto> UpdateProductAsync(UpdateProductDto dto);
+        Task<List<ProductDto>> CreateProductAsync(CreateProductDto dto);
+        Task<List<ProductDto>> UpdateProductAsync(UpdateProductDto dto);
 
 
-        Task<List<ProductDto>> GetAllProductsAsync();
-        Task<List<ProductDto>> GetProductsAsync(int? id, string? description);
-        Task<DeleteProductResultDto> DeleteProductAsync(int id, int updatedBy);
+        Task<List<ProductDto>> GetProductsAsync(int companyId,int? id, string? search);
+        Task<List<ProductDto>> DeleteProductAsync(int id, int updatedBy,int companyId);
 
-
-        //Task<Product> GetProductByIdAsync(int id);
 
     }
 }
