@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Client.Application.Features.Company.Commands;
+using Client.Application.Features.Product.Dtos;
 using Client.Application.Interfaces;
 using MediatR;
 
 namespace Client.Application.Features.Company.Handlers
 {
-    public class DeleteCompanyCommandHandler : IRequestHandler<DeleteCompanyCommand, string>
+    public class DeleteCompanyCommandHandler : IRequestHandler<DeleteCompanyCommand, List<CompanyDto>>
     {
         private readonly ICompanyRepository _repo;
 
@@ -18,9 +19,9 @@ namespace Client.Application.Features.Company.Handlers
             _repo = repo;
         }
 
-        public async Task<string> Handle(DeleteCompanyCommand request, CancellationToken cancellationToken)
+        public async Task<List<CompanyDto>> Handle(DeleteCompanyCommand request, CancellationToken cancellationToken)
         {
-            return await _repo.DeleteCompanyAsync(request.Id);
+            return await _repo.DeleteCompanyAsync(request.Id,request.updatedBy);
         }
     }
 

@@ -9,6 +9,6 @@ using MediatR;
 
 namespace Client.Application.Features.Company.Commands
 {
-    public record UpdateCompanyCommand(UpdateCompanyDto Company) : IRequest<CompanyDto>;
+    public record UpdateCompanyCommand(UpdateCompanyDto Company) : IRequest<List<CompanyDto>>;
  
 }

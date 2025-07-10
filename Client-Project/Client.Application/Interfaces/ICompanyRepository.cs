@@ -11,13 +11,13 @@ namespace Client.Application.Interfaces
 {
     public interface ICompanyRepository
     {
-        Task<CompanyDto> CreateCompanyAsync(CreateCompanyDto companyDto);
-        Task<CompanyDto> UpdateCompanyAsync(UpdateCompanyDto dto);
-        Task<string> DeleteCompanyAsync(int Id);
+        Task<List<CompanyDto>> CreateCompanyAsync(CreateCompanyDto companyDto);
+        Task<List<CompanyDto>> UpdateCompanyAsync(UpdateCompanyDto dto);
+        Task<List<CompanyDto>> DeleteCompanyAsync(int Id,int updatedBy);
 
 
-        Task<List<CompanyDto>> GetAllCompaniesAsync();
-        Task<CompanyDto> GetCompanyByIdAsync(int Id);
+        Task<List<CompanyDto>> GetCompaniesAsync(int? companyId, string? search);
+
 
 
     }

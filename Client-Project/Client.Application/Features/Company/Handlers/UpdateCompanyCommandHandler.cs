@@ -12,21 +12,18 @@ using MediatR;
 namespace Client.Application.Features.Company.Handlers
 {
 
-    public class UpdateCompanyCommandHandler : IRequestHandler<UpdateCompanyCommand, CompanyDto>
+    public class UpdateCompanyCommandHandler : IRequestHandler<UpdateCompanyCommand, List<CompanyDto>>
     {
         private readonly ICompanyRepository _repo;
-        private readonly IMapper _mapper;
 
-        public UpdateCompanyCommandHandler(ICompanyRepository repo, IMapper mapper)
+        public UpdateCompanyCommandHandler(ICompanyRepository repo)
         {
             _repo = repo;
-            _mapper = mapper;
         }
 
-        public async Task<CompanyDto> Handle(UpdateCompanyCommand request, CancellationToken cancellationToken)
+        public async Task<List<CompanyDto>> Handle(UpdateCompanyCommand request, CancellationToken cancellationToken)
         {
-            var updatedEntity = await _repo.UpdateCompanyAsync(request.Company);
-            return _mapper.Map<CompanyDto>(updatedEntity);
+            return await _repo.UpdateCompanyAsync(request.Company);
         }
     }
 

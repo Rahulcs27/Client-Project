@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.ComponentModel.Design;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -24,19 +25,25 @@ namespace Client.Persistence.Repositories
             _context = context;
             _db = db;
         }
-        public async Task<List<CompanyDto>> GetAllCompaniesAsync()
+
+        public async Task<List<CompanyDto>> GetCompaniesAsync(int? companyId, string? search)
         {
-            return await _context.Companies.FromSqlRaw("sp_sbs_companyMaster_get").ToListAsync();
+            var parameters = new DynamicParameters();
+            parameters.Add("@p_searchName", search);
+            parameters.Add("@p_CompanyID", companyId);
+
+            var result = await _db.QueryAsync<CompanyDto>(
+                "sp_sbs_companyMaster_get",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return result.ToList();
         }
 
-        public async Task<CompanyDto> GetCompanyByIdAsync(int Id)
-        {
-            var companies = await _context.Companies.FromSqlRaw("sp_sbs_companyMaster_get {0}", Id).ToListAsync();
-            return companies.FirstOrDefault();
-        }
 
 
-        public async Task<CompanyDto> CreateCompanyAsync(CreateCompanyDto companyDto)
+        public async Task<List<CompanyDto>> CreateCompanyAsync(CreateCompanyDto companyDto)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@p_name", companyDto.Name);
@@ -45,28 +52,29 @@ namespace Client.Persistence.Repositories
             parameters.Add("@p_email", companyDto.Email);
             parameters.Add("@p_createdBy", companyDto.CreatedBy);
 
-            var result = await _db.QueryFirstOrDefaultAsync<(string status, int? inserted_id)>(
+            var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
                 "sp_sbs_companyMaster_insert",
                 parameters,
                 commandType: CommandType.StoredProcedure
             );
-
-            if (result.status == "Success" && result.inserted_id.HasValue)
+            if (result?.R_Status == "SUCCESS" && result?.R_InsertedID != null)
             {
-                return new CompanyDto
-                {
-                    Id = result.inserted_id.Value,
-                    Name = companyDto.Name,
-                    Address = companyDto.Address,
-                    Phone = companyDto.Phone,
-                    Email = companyDto.Email,
-                    
-                };
+                //return new CompanyDto
+                //{
+                //    Id = result.inserted_id.Value,
+                //    Name = companyDto.Name,
+                //    Address = companyDto.Address,
+                //    Phone = companyDto.Phone,
+                //    Email = companyDto.Email,
+
+                //};
+                return await GetCompaniesAsync(null, null);
+
             }
 
             throw new Exception("Company insert failed");
         }
-        public async Task<CompanyDto> UpdateCompanyAsync(UpdateCompanyDto dto)
+        public async Task<List<CompanyDto>> UpdateCompanyAsync(UpdateCompanyDto dto)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@p_id", dto.Id);
@@ -82,10 +90,10 @@ namespace Client.Persistence.Repositories
                 commandType: CommandType.StoredProcedure
             );
 
-            if (result != "Success")
+            if (result != "SUCCESS")
                 throw new Exception("Company update failed: " + result);
 
-            var updatedCompany = await _db.QueryFirstOrDefaultAsync<CompanyMaster>(
+            var updatedCompany = await _db.QueryFirstOrDefaultAsync<dynamic>(
                 @"SELECT TOP 1 * FROM sbs_companyMaster WHERE id = @Id AND isDeleted = 0",
                 new { Id = dto.Id }
             );
@@ -93,27 +101,32 @@ namespace Client.Persistence.Repositories
             if (updatedCompany == null)
                 throw new Exception("Updated company not found.");
 
-            return new CompanyDto
-            {
-                Id = updatedCompany.Id,
-                Name = updatedCompany.Name,
-                Address = updatedCompany.Address,
-                Phone = updatedCompany.Phone,
-                Email = updatedCompany.Email
-            };
+            //return new CompanyDto
+            //{
+            //    Id = updatedCompany.Id,
+            //    Name = updatedCompany.Name,
+            //    Address = updatedCompany.Address,
+            //    Phone = updatedCompany.Phone,
+            //    Email = updatedCompany.Email
+            //};
+            return await GetCompaniesAsync(null, null);
         }
-        public async Task<string> DeleteCompanyAsync(int id)
+        public async Task<List<CompanyDto>> DeleteCompanyAsync(int id,int updatedBy)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@p_id", id);
+            parameters.Add("@p_updatedBy", updatedBy);
 
-            var result = await _db.QueryFirstOrDefaultAsync<string>(
+            var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
                 "sp_sbs_companyMaster_delete",
                 parameters,
                 commandType: CommandType.StoredProcedure
             );
+            if (result == null || result.R_Status != "SUCCESS")
+                throw new Exception($"Update failed: {result?.R_ErrorMessage ?? "Unknown error"}");
 
-            return result ?? "Fail";
+            return await GetCompaniesAsync(null, null);
+
         }
     }
 }
