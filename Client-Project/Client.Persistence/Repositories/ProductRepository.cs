@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -25,15 +26,13 @@ namespace Client.Persistence.Repositories
 
         }
 
-        public async Task<List<ProductDto>> GetAllProductsAsync()
-        {
-            return await _context.GetAllProducts.FromSqlRaw("sp_sbs_productMaster_get").ToListAsync();
-        }
-        public async Task<ProductDto> CreateProductAsync(CreateProductDto dto)
+       
+        public async Task<List<ProductDto>> CreateProductAsync(CreateProductDto dto)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@P_description", dto.Description);
             parameters.Add("@P_unitPrice", dto.UnitPrice);
+            parameters.Add("@P_companyID", dto.CompanyId);
             parameters.Add("@P_createdBy", dto.CreatedBy);
 
             var result = await _db.QueryFirstOrDefaultAsync<InsertProductResult>(
@@ -42,15 +41,16 @@ namespace Client.Persistence.Repositories
                 commandType: CommandType.StoredProcedure
             );
 
-            if (result.R_Status == "Success" && result.R_InsertedID.HasValue)
+            if (result.R_Status == "SUCCESS" && result.R_InsertedID.HasValue)
             {
-                return new ProductDto
-                {
-                    R_id = result.R_InsertedID.Value,
-                    R_description = dto.Description,
-                    R_unitPrice = dto.UnitPrice,
-                   
-                };
+                //return new ProductDto
+                //{
+                //    R_id = result.R_InsertedID.Value,
+                //    R_description = dto.Description,
+                //    R_unitPrice = dto.UnitPrice,
+
+                //};
+                return await GetProductsAsync(dto.CompanyId, null, null);
             }
 
             throw new Exception($"Insert Failed: {result.R_ErrorMessage} (ErrorCode: {result.R_ErrorNumber})");
@@ -82,12 +82,13 @@ namespace Client.Persistence.Repositories
 
         //    throw new Exception($"Update Failed: {result.R_ErrorMessage} (Code: {result.R_ErrorNumber})");
         //}
-        public async Task<ProductDto> UpdateProductAsync(UpdateProductDto dto)
+        public async Task<List<ProductDto>> UpdateProductAsync(UpdateProductDto dto)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@P_id", dto.Id);
             parameters.Add("@P_description", dto.Description);
             parameters.Add("@P_unitPrice", dto.UnitPrice);
+            parameters.Add("@P_companyID", dto.CompanyId);
             parameters.Add("@P_updatedBy", dto.UpdatedBy);
 
             // Call the SP to perform update
@@ -97,7 +98,7 @@ namespace Client.Persistence.Repositories
                 commandType: CommandType.StoredProcedure
             );
 
-            if (result == "Success")
+            if (result == "SUCCESS")
             {
                 // Fetch the updated product manually
                 var product = await _db.QueryFirstOrDefaultAsync<Product>(
@@ -110,36 +111,41 @@ namespace Client.Persistence.Repositories
                 if (product == null)
                     throw new Exception("Updated product not found");
 
-                return new ProductDto
-                {
-                    R_id = product.Id,
-                    R_description = product.Description,
-                    R_unitPrice = product.UnitPrice
-                };
+                //return new ProductDto
+                //{
+                //    R_id = product.Id,
+                //    R_description = product.Description,
+                //    R_unitPrice = product.UnitPrice
+                //};
+                return await GetProductsAsync(dto.CompanyId, null, null);
+
             }
 
             throw new Exception("Product update failed");
         }
-        public async Task<DeleteProductResultDto> DeleteProductAsync(int id, int updatedBy)
+        public async Task<List<ProductDto>> DeleteProductAsync(int id, int updatedBy, int companyId)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@P_id", id);
             parameters.Add("@P_updatedBy", updatedBy);
 
-            var result = await _db.QueryFirstOrDefaultAsync<DeleteProductResultDto>(
+            var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
                 "sp_sbs_productMaster_delete",
                 parameters,
                 commandType: CommandType.StoredProcedure
             );
+            if (result == null || result.R_Status != "SUCCESS")
+                throw new Exception($"Update failed: {result?.R_ErrorMessage ?? "Unknown error"}");
 
-            return result;
+            return await GetProductsAsync(companyId,null, null);
         }
 
-        public async Task<List<ProductDto>> GetProductsAsync(int? id, string? description)
+        public async Task<List<ProductDto>> GetProductsAsync(int companyId,int? id, string? search)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@P_id", id);
-            parameters.Add("@P_description", description);
+            parameters.Add("@P_Search", search);
+            parameters.Add("@P_companyID", companyId);
 
             var result = await _db.QueryAsync<ProductDto>(
                 "sp_sbs_productMaster_get",
