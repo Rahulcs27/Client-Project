@@ -36,14 +36,14 @@ namespace Client.API.Controllers
             return Ok(allUsers);
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(int id,[FromQuery] int updatedBy, [FromQuery]int companyId)
         {
-            var result = await _mediator.Send(new DeleteUserCommand(id));
+            var result = await _mediator.Send(new DeleteUserCommand(id,updatedBy,companyId));
 
-            if (result == "SUCCESS")
-                return Ok(new { message = "User deleted successfully." });
+            if (result != null)
+                return Ok(result);
 
-            return BadRequest(new { message = result });
+            return BadRequest(new { message = "Check SP" });
         }
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto loginDto)

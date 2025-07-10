@@ -13,6 +13,7 @@ namespace Client.Application.Features.User.Dtos
         public string RoleName { get; set; }
         public int CompanyId { get; set; }
         public string Username { get; set; }
+        public string Password { get; set; }
     }
 
 }
