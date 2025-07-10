@@ -8,7 +8,8 @@ using MediatR;
 
 namespace Client.Application.Features.Product.Queries
 {
-    public record GetAllCompanyQuery : IRequest<List<CompanyDto>>;
+    public record GetAllCompanyQuery(int? companyId = null, string? search = null) : IRequest<List<CompanyDto>>;
+
     
 
 }
