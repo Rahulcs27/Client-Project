@@ -70,31 +70,34 @@ export class InvoiceComponent {
 
   ngOnInit(): void {
     this.invoiceForm.get('totalAmount')?.disable();
-    this.companyService.getAllCompanyMasterGetDto().subscribe({
-      next: (response: CompanyMasterGetDto[]) => {
-        this.companies = response;
-      },
-      error: (error) => {
-        console.log(error);
-
-      }
-    })
-    this.productService.getAllProductGetDto().subscribe({
-      next: (response: ProductGetDto[]) => {
-        this.products = response
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    })
-    this.subContractorService.getAllSubContractorGetDto().subscribe({
-      next: (response: SubContractorGetDto[]) => {
-        this.subContractors = response
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    })
+    const companyId = this.loginService.companyId();
+    if(companyId) {
+      this.companyService.getAllCompanyMasterGetDto().subscribe({
+        next: (response: CompanyMasterGetDto[]) => {
+          this.companies = response;
+        },
+        error: (error) => {
+          console.log(error);
+  
+        }
+      })
+      this.productService.getAllProductGetDto().subscribe({
+        next: (response: ProductGetDto[]) => {
+          this.products = response
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      })
+      this.subContractorService.getAllSubContractorGetDto(companyId).subscribe({
+        next: (response: SubContractorGetDto[]) => {
+          this.subContractors = response
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      })
+    }
     this.getAllInvoiceGetDto()
     this.columnsInfo = {
       // 'r_id': {

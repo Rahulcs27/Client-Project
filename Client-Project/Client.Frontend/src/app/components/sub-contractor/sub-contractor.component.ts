@@ -6,26 +6,24 @@ import { SubContractorGetDto } from './sub-contractor-dtos';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TableComponent } from '../utils/table/table.component';
-import { CompanyMasterServiceService } from '../../services/company-master-service.service';
-import { CompanyMasterGetDto } from '../company-master/company-master-dtos';
 import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-sub-contractor',
-  imports: [CommonModule,TableComponent,ReactiveFormsModule],
+  imports: [CommonModule, TableComponent, ReactiveFormsModule],
   templateUrl: './sub-contractor.component.html',
   styleUrl: '../../../componentStyle.css'
 })
 export class SubContractorComponent {
+  companyId: number | null = null;
+  userId: number | null = null;
   constructor(
     private loginService: LoginService,
     private subContractorService: SubContractorService,
-    private companyService: CompanyMasterServiceService,
     private alert: AlertService
   ) { }
-  modalMode: 'edit' | 'add' = 'edit';
-  displayedColumns: string[] = ['companyId', 'name', 'action'];
-  companies: CompanyMasterGetDto[] = [];
+  modalMode: 'view' | 'edit' | 'add' = 'edit';
+  displayedColumns: string[] = ['name', 'action'];
   data: SubContractorGetDto[] = [];
   columnsInfo: {
     [key: string]: {
@@ -47,30 +45,31 @@ export class SubContractorComponent {
   );
 
   ngOnInit(): void {
-    this.companyService.getAllCompanyMasterGetDto().subscribe({
-      next: (response: CompanyMasterGetDto[]) => {
-        this.companies = response;
-      },
-      error: (error) => {
-        console.log(error);
+    this.companyId = this.loginService.companyId()
+    this.userId = this.loginService.userId()
+    if (this.companyId && this.userId) {
+      this.subContractorService.getAllSubContractorGetDto(this.companyId).subscribe({
+        next: (response: SubContractorGetDto[]) => {
+          this.data = response;
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      });
+      this.columnsInfo = {
+        'name': {
+          'title': 'Sub Contractor',
+          'isSort': true,
+          'templateRef': null
+        },
+        'action': {
+          'title': 'Action',
+          'templateRef': this.checkViewer() ? null : this.actionTemplateRef
+        }
       }
-    })
-    this.getAllSubContractorGetDto()
-    this.columnsInfo = {
-      'companyId': {
-        'title': 'Company Name',
-        'isSort': true,
-        'templateRef': null
-      },
-      'name': {
-        'title': 'Sub Contractor',
-        'isSort': true,
-        'templateRef': null
-      },
-      'action': {
-        'title': 'Action',
-        'templateRef': this.checkViewer() ? null : this.actionTemplateRef
-      }
+    }
+    else {
+      this.loginService.logout()
     }
 
   }
@@ -88,37 +87,41 @@ export class SubContractorComponent {
     this.modalMode = 'edit';
   }
 
-  getAllSubContractorGetDto() {
-    this.subContractorService.getAllSubContractorGetDto().subscribe({
-      next: (response: SubContractorGetDto[]) => {
-        this.data = response;
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    });
-  }
-
   addSubContractorGetDto() {
+    this.subContractorForm.patchValue({
+      companyId: this.companyId,
+      createdBy: this.userId,
+    })
     this.modalMode = 'add';
   }
 
-  editSubContractorGetDto(obj: SubContractorGetDto) {
+  viewAndEditSubContractorGetDto(obj: SubContractorGetDto, mode: 'view' | 'edit') {
     this.subContractorForm.patchValue({
       id: obj.id,
       companyId: obj.companyId,
       name: obj.name,
-      updatedBy: 1
+      updatedBy: this.userId,
     })
-    this.modalMode = 'edit';
+    if (mode === 'view') {
+      this.subContractorForm.disable();
+    }
+    else {
+      this.subContractorForm.enable();
+    }
+    this.modalMode = mode;
   }
 
   deleteRowData(id: number) {
     this.alert.Delete.fire().then((result) => {
-      if (result.isConfirmed) {
-        console.log('Confirmed!');
-      } else {
-        console.log('Cancelled');
+      if (result.isConfirmed && this.userId && this.companyId) {
+        this.subContractorService.deleteSubContractorGetDto(id, this.userId, this.companyId).subscribe({
+          next: (response: SubContractorGetDto[]) => {
+            this.data = response;
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        })
       }
     });
   }
@@ -147,7 +150,6 @@ export class SubContractorComponent {
         });
       }
       else if (this.modalMode === 'add') {
-        this.subContractorForm.get('createdBy')?.setValue(1);
         this.subContractorService.addSubContractorGetDto(this.subContractorForm.value).subscribe(
           {
             next: (response: SubContractorGetDto[]) => {

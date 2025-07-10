@@ -10,8 +10,8 @@ import { Observable } from 'rxjs';
 export class SubContractorService {
   constructor(private http: HttpClient) { }
 
-  getAllSubContractorGetDto(): Observable<SubContractorGetDto[]> {
-    return this.http.get<SubContractorGetDto[]>(`${apiUrl}/SubContractor`);
+  getAllSubContractorGetDto(companyId: number): Observable<SubContractorGetDto[]> {
+    return this.http.get<SubContractorGetDto[]>(`${apiUrl}/SubContractor?companyId=${companyId}`);
   }
 
   editSubContractorUpdateDto(formData: SubContractorUpdateDto): Observable<SubContractorGetDto[]> {
@@ -20,5 +20,9 @@ export class SubContractorService {
 
   addSubContractorGetDto(formData: SubContractorCreateDto): Observable<SubContractorGetDto[]> {
     return this.http.post<SubContractorGetDto[]>(`${apiUrl}/SubContractor`, formData);
+  }
+
+  deleteSubContractorGetDto(id:number, updatedBy: number, companyId: number): Observable<SubContractorGetDto[]> {
+    return this.http.delete<SubContractorGetDto[]>(`${apiUrl}/SubContractor/${id}?updatedBy=${updatedBy}&companyId=${companyId}`);
   }
 }

@@ -18,7 +18,7 @@ import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-payment',
-  imports: [CommonModule,ReactiveFormsModule,TableComponent],
+  imports: [CommonModule, ReactiveFormsModule, TableComponent],
   templateUrl: './payment.component.html',
   styleUrl: '../../../componentStyle.css'
 })
@@ -33,7 +33,7 @@ export class PaymentComponent {
     private alert: AlertService
   ) { }
   modalMode: 'edit' | 'add' = 'edit';
-  invoices :InvoiceGetDto[] = [];
+  invoices: InvoiceGetDto[] = [];
   products: ProductGetDto[] = [];
   companies: CompanyMasterGetDto[] = [];
   subContractors: SubContractorGetDto[] = [];
@@ -46,9 +46,9 @@ export class PaymentComponent {
       'templateRef': TemplateRef<any> | null,
     }
   } = {};
-    @ViewChild('dateTemplateRef', { static: true }) dateTemplateRef!: TemplateRef<any>;
-    @ViewChild('bankTemplateRef', { static: true }) bankTemplateRef!: TemplateRef<any>;
-    @ViewChild('actionTemplateRef', { static: true }) actionTemplateRef!: TemplateRef<any>;
+  @ViewChild('dateTemplateRef', { static: true }) dateTemplateRef!: TemplateRef<any>;
+  @ViewChild('bankTemplateRef', { static: true }) bankTemplateRef!: TemplateRef<any>;
+  @ViewChild('actionTemplateRef', { static: true }) actionTemplateRef!: TemplateRef<any>;
 
   paymentForm: FormGroup = new FormGroup(
     {
@@ -78,39 +78,53 @@ export class PaymentComponent {
   );
 
   ngOnInit(): void {
-    this.invoiceService.getAllInvoiceGetDto().subscribe({
-      next: (response: InvoiceGetDto[])=>{
-        this.invoices = response
-      },
-      error: (error)=>{
-        console.log(error);
-      }
-    })
-    this.productService.getAllProductGetDto().subscribe({
-      next: (response: ProductGetDto[])=>{
-        this.products = response
-      },
-      error: (error)=>{
-        console.log(error);
-      }
-    })
-    this.companyService.getAllCompanyMasterGetDto().subscribe({
-      next: (response: CompanyMasterGetDto[])=>{
-        this.companies = response
-      },
-      error: (error)=>{
-        console.log(error);
-      }
-    })
-    this.subContractorService.getAllSubContractorGetDto().subscribe({
-      next: (response: SubContractorGetDto[])=>{
-        this.subContractors = response
-      },
-      error: (error)=>{
-        console.log(error);
-      }
-    })
-    this.getAllPaymentGetDto()
+    const companyId = this.loginService.companyId()
+    if (companyId) {
+      this.invoiceService.getAllInvoiceGetDto().subscribe({
+        next: (response: InvoiceGetDto[]) => {
+          this.invoices = response
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      })
+      this.productService.getAllProductGetDto().subscribe({
+        next: (response: ProductGetDto[]) => {
+          this.products = response
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      })
+      this.companyService.getAllCompanyMasterGetDto().subscribe({
+        next: (response: CompanyMasterGetDto[]) => {
+          this.companies = response
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      })
+      this.subContractorService.getAllSubContractorGetDto(companyId).subscribe({
+        next: (response: SubContractorGetDto[]) => {
+          this.subContractors = response
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      })
+      this.paymentService.getAllPaymentGetDto().subscribe({
+        next: (response: PaymentGetDto[]) => {
+          this.data = response;
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      });
+    }
+    else {
+      console.log('Login First');
+    }
+
     this.columnsInfo = {
       'r_paymentDate': {
         'title': 'Date',
@@ -163,7 +177,7 @@ export class PaymentComponent {
     this.modalMode = 'edit';
   }
 
-  closeInvoiceModal(){
+  closeInvoiceModal() {
     this.invoiceForm.reset({
       companyId: '',
       subcontractorId: '',
@@ -174,17 +188,6 @@ export class PaymentComponent {
       totalAmount: '',
       paymentMode: '',
     })
-  }
-
-  getAllPaymentGetDto() {
-    this.paymentService.getAllPaymentGetDto().subscribe({
-      next: (response: PaymentGetDto[]) => {
-        this.data = response;
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    });
   }
 
   addPaymentGetDto() {
@@ -216,7 +219,7 @@ export class PaymentComponent {
     });
   }
 
-  invoiceGetDto(invoiceId: number){
+  invoiceGetDto(invoiceId: number) {
     const invoice = this.invoices.find(i => i.r_id === invoiceId);
     this.invoiceForm.patchValue({
       companyId: invoice?.r_companyId,

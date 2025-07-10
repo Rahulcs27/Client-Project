@@ -17,6 +17,8 @@ import { LoginService } from '../../services/login.service';
   styleUrl: '../../../componentStyle.css'
 })
 export class UserMasterComponent {
+  userId: number | null = null;
+  companyId: number | null = null;
   constructor(
     private loginService: LoginService,
     private userService: UserMasterService,
@@ -51,43 +53,47 @@ export class UserMasterComponent {
   );
 
   ngOnInit(): void {
-    this.roleService.getAllRoleGetDto().subscribe({
-      next: (response: RoleGetDto[]) => {
-        this.roles = response;
-      },
-      error: (error) => {
-        console.log(error)
-      }
-    })
-    this.getAllUserGetDto()
-    this.columnsInfo = {
-      'username': {
-        'title': 'Name',
-        'isSort': true,
-        'templateRef': null
-      },
-      'roleName': {
-        'title': 'Role',
-        'isSort': true,
-        'templateRef': null
-      },
-      'action': {
-        'title': 'Action',
-        'templateRef': this.actionTemplateRef
+    this.userId = this.loginService.userId();
+    this.companyId = this.loginService.companyId();
+    if (this.userId && this.companyId) {
+      this.roleService.getAllRoleGetDto().subscribe({
+        next: (response: RoleGetDto[]) => {
+          this.roles = response;
+        },
+        error: (error) => {
+          console.log(error)
+        }
+      })
+
+      this.userService.getAllUserGetDto(this.companyId).subscribe({
+        next: (response: UserGetDto[]) => {
+          this.data = response;
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      });
+
+      this.columnsInfo = {
+        'username': {
+          'title': 'Name',
+          'isSort': true,
+          'templateRef': null
+        },
+        'roleName': {
+          'title': 'Role',
+          'isSort': true,
+          'templateRef': null
+        },
+        'action': {
+          'title': 'Action',
+          'templateRef': this.actionTemplateRef
+        }
       }
     }
-
-  }
-
-  getAllUserGetDto() {
-    this.userService.getAllUserGetDto().subscribe({
-      next: (response: UserGetDto[]) => {
-        this.data = response;
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    });
+    else {
+      this.loginService.logout();
+    }
   }
 
   closeModal() {
@@ -107,10 +113,10 @@ export class UserMasterComponent {
 
   addUserGetDto() {
     this.userForm.patchValue({
-      companyId: this.loginService.companyId(),
+      companyId: this.companyId,
       currentPassword: '',
       newPassword: '',
-      createdBy: this.loginService.userId(),
+      createdBy: this.userId,
     })
     this.modalMode = 'add';
   }
@@ -121,20 +127,18 @@ export class UserMasterComponent {
       roleMasterId: obj.roleMasterId,
       username: obj.username,
       password: obj.password,
-      companyId: this.loginService.companyId(),
+      companyId: this.companyId,
       currentPassword: '',
       newPassword: '',
-      updatedBy: this.loginService.userId(),
+      updatedBy: this.userId,
     })
     this.modalMode = 'edit'
   }
 
   deleteRowData(id: number) {
     this.alert.Delete.fire().then((result) => {
-      if (result.isConfirmed) {
-        console.log('Confirmed!');
-      } else {
-        console.log('Cancelled');
+      if (result.isConfirmed && this.userId && this.companyId) {
+        this.userService.deleteUserGetDto(id, this.userId, this.companyId);
       }
     });
   }
@@ -146,7 +150,6 @@ export class UserMasterComponent {
     }
     else {
       if (this.modalMode === 'add') {
-        // this.userForm.get('createdBy')?.setValue(1);
         this.userService.addUserGetDto(this.userForm.value).subscribe(
           {
             next: (response: UserGetDto[]) => {

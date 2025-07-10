@@ -4,15 +4,27 @@ import { Observable } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { AuthResponse, JwtClaims, Login } from '../components/login/login-dtos';
 import { apiUrl } from '../../constant';
+import { Router } from '@angular/router';
+import { AlertService } from './alert.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
-  constructor(private http: HttpClient) { }
+  constructor(
+    private route: Router,
+    private alert: AlertService,
+    private http: HttpClient
+  ) { }
 
   login(formData: Login): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${apiUrl}/User/login`, formData);
+  }
+
+  logout() {
+    sessionStorage.clear();
+    this.route.navigate(['/'])
+    this.alert.Toast.fire('Logged Out Successfully', '', 'success');
   }
 
   isLoggedIn(): boolean {
