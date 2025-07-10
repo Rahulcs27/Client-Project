@@ -10,7 +10,7 @@ using MediatR;
 
 namespace Client.Application.Features.User.Handlers
 {
-    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, List<UserDto>>
+    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, UserDto>
     {
         private readonly IUserRepository _repo;
 
@@ -19,7 +19,7 @@ namespace Client.Application.Features.User.Handlers
             _repo = repo;
         }
 
-        public async Task<List<UserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<UserDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             return await _repo.CreateUserAsync(request.User);
         }

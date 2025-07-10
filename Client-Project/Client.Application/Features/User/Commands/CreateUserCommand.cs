@@ -8,6 +8,6 @@ using MediatR;
 
 namespace Client.Application.Features.User.Commands
 {
-    public record CreateUserCommand(CreateUserDto User) : IRequest<List<UserDto>>;
+    public record CreateUserCommand(CreateUserDto User) : IRequest<UserDto>;
 
 }
