@@ -9,9 +9,9 @@ namespace Client.Application.Interfaces
 {
     public interface IUserRepository
     {
-        Task<UserDto> CreateUserAsync(CreateUserDto userDto);
+        Task<List<UserDto>> CreateUserAsync(CreateUserDto userDto);
         Task<List<UserDto>> UpdateUserAsync(UpdateUserDto userDto);
-        Task<string> DeleteUserAsync(int id);
+        Task<List<UserDto>> DeleteUserAsync(int id, int updatedBy,int companyId);
         Task<string> LoginAsync(string username, string password);
 
 
