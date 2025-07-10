@@ -9,6 +9,6 @@ using MediatR;
 
 namespace Client.Application.Features.Company.Commands
 {
-    public record CreateCompanyCommand(CreateCompanyDto Company) : IRequest<CompanyDto>;
+    public record CreateCompanyCommand(CreateCompanyDto Company) : IRequest<List<CompanyDto>>;
     
 }

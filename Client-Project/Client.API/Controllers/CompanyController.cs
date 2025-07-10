@@ -54,27 +54,19 @@ namespace Client.API.Controllers
             }
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id,[FromQuery]int updatedBy)
         {
-            var result = await _mediator.Send(new DeleteCompanyCommand(id));
+            var result = await _mediator.Send(new DeleteCompanyCommand(id,updatedBy));
+             return Ok( result );
 
-            if (result == "Success")
-                return Ok(new { status = result });
-
-            return NotFound(new { status = result });
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCompanies()
+        public async Task<IActionResult> GetAllCompanies(int? companyId, [FromQuery] string? search)
         {
-            var result = await _mediator.Send(new GetAllCompanyQuery());
+            var result = await _mediator.Send(new GetAllCompanyQuery(companyId, search));
             return Ok(result);
         }
-        [HttpGet("{Id}")]
-        public async Task<IActionResult> GetCompanyById(int Id)
-        {
-            var result = await _mediator.Send(new GetByIdCompanyQuery(Id));
-            return Ok(result);
-        }
+        
     }
 }
