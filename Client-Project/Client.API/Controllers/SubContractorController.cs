@@ -30,18 +30,18 @@ namespace Client.API.Controllers
             return Ok(result);
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSubContractor(int id)
+        public async Task<IActionResult> DeleteSubContractor(int id, [FromQuery]int updatedBy, [FromQuery] int companyId)
         {
-            var updatedList = await _mediator.Send(new DeleteSubContractorCommand(id));
+            var updatedList = await _mediator.Send(new DeleteSubContractorCommand(id,updatedBy,companyId));
             return Ok(updatedList);
         }
 
 
 
         [HttpGet]
-        public async Task<IActionResult> GetSubContractors([FromQuery] int? id, [FromQuery] string? search)
+        public async Task<IActionResult> GetSubContractors([FromQuery] int? id, [FromQuery] string? search, [FromQuery] int companyId)
         {
-            var result = await _mediator.Send(new GetSubContractorQuery(id, search));
+            var result = await _mediator.Send(new GetSubContractorQuery(id, search,companyId));
             return Ok(result);
         }
     }

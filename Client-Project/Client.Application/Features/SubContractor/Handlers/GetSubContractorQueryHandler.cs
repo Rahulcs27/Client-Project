@@ -21,7 +21,7 @@ namespace Client.Application.Features.SubContractor.Handlers
 
         public async Task<List<SubContractorDto>> Handle(GetSubContractorQuery request, CancellationToken cancellationToken)
         {
-            return await _repository.GetSubContractorsAsync(request.Id, request.Search);
+            return await _repository.GetSubContractorsAsync(request.Id, request.Search,request.companyId);
         }
     }
 

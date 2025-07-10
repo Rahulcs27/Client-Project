@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -20,11 +21,12 @@ namespace Client.Persistence.Repositories
             _db = db;
         }
 
-        public async Task<List<SubContractorDto>> GetSubContractorsAsync(int? id, string? search)
+        public async Task<List<SubContractorDto>> GetSubContractorsAsync(int? id, string? search, int companyId)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@p_id", id);
             parameters.Add("@p_search", search);
+            parameters.Add("@p_companyID", companyId);
 
             var result = await _db.QueryAsync<SubContractorDto>(
                 "sp_sbs_subContractor_get",
@@ -34,7 +36,7 @@ namespace Client.Persistence.Repositories
 
             return result.ToList();
         }
-        public async Task<List<SubContractorDto>> CreateSubContractorAsync(CreateSubContractorDto dto)
+        public async Task <List<SubContractorDto>> CreateSubContractorAsync(CreateSubContractorDto dto)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@p_companyId", dto.CompanyId);
@@ -47,9 +49,15 @@ namespace Client.Persistence.Repositories
                 commandType: CommandType.StoredProcedure
             );
 
-            if (result?.Status == "SUCCESS" && result?.InsertedID != null)
+            if (result?.R_Status == "SUCCESS" && result?.R_InsertedID != null)
             {
-                return await GetSubContractorsAsync(null, null);
+                //return new SubContractorDto
+                //{
+                //    Id = result.InsertedID,
+                //    CompanyId = dto.CompanyId,
+                //    Name = dto.Name
+                //};
+                return await GetSubContractorsAsync(null, null, dto.CompanyId); 
             }
 
             throw new Exception($"Insert Failed: {result?.ErrorMessage ?? "Unknown error"}");
@@ -70,15 +78,27 @@ namespace Client.Persistence.Repositories
 
             if (result == "SUCCESS")
             {
-                return await GetSubContractorsAsync(null, null);
+                var getParams = new DynamicParameters();
+                getParams.Add("@p_id", null);
+                getParams.Add("@p_search", null);
+                getParams.Add("p_companyID", dto.CompanyId);
+
+                var updatedList = await _db.QueryAsync<SubContractorDto>(
+                    "sp_sbs_subContractor_get",
+                    getParams,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                return updatedList.ToList();
             }
 
             throw new Exception("SubContractor update failed.");
         }
-        public async Task<List<SubContractorDto>> DeleteSubContractorAsync(int id)
+        public async Task<List<SubContractorDto>> DeleteSubContractorAsync(int id,int updatedBy, int companyId)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@p_id", id);
+            parameters.Add("@p_updatedBy",updatedBy);
 
             var result = await _db.QueryFirstOrDefaultAsync<string>(
                 "sp_sbs_subContractor_delete",
@@ -89,7 +109,9 @@ namespace Client.Persistence.Repositories
             if (result != "SUCCESS")
                 throw new Exception(result ?? "Failed to delete subcontractor.");
 
-            return await GetSubContractorsAsync(null, null);
+            return await GetSubContractorsAsync(null, null, companyId);
+
+
         }
 
 

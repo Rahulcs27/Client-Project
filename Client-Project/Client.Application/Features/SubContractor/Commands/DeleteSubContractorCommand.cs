@@ -8,6 +8,6 @@ using MediatR;
 
 namespace Client.Application.Features.SubContractor.Commands
 {
-    public record DeleteSubContractorCommand(int Id) : IRequest<List<SubContractorDto>>;
+    public record DeleteSubContractorCommand(int Id,int updatedBy, int companyId) : IRequest<List<SubContractorDto>>;
 
 }
