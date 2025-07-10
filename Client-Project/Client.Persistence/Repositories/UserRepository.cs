@@ -102,6 +102,7 @@ namespace Client.Persistence.Repositories
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Username),
             new Claim(ClaimTypes.Role,user.RoleName),
+            new Claim("companyId",user.CompanyId.ToString())
         };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
