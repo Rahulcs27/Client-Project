@@ -81,7 +81,7 @@ export class InvoiceComponent {
   
         }
       })
-      this.productService.getAllProductGetDto().subscribe({
+      this.productService.getAllProductGetDto(companyId).subscribe({
         next: (response: ProductGetDto[]) => {
           this.products = response
         },

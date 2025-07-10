@@ -84,7 +84,7 @@ export class SubContractorComponent {
       createdBy: '',
       updatedBy: '',
     })
-    this.modalMode = 'edit';
+    this.modalMode = 'view';
   }
 
   addSubContractorGetDto() {
@@ -117,6 +117,7 @@ export class SubContractorComponent {
         this.subContractorService.deleteSubContractorGetDto(id, this.userId, this.companyId).subscribe({
           next: (response: SubContractorGetDto[]) => {
             this.data = response;
+            this.alert.Toast.fire('Deleted Successfully', '', 'success');
           },
           error: (error) => {
             console.log(error);

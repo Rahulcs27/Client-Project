@@ -15,12 +15,14 @@ import { LoginService } from '../../services/login.service';
   styleUrl: '../../../componentStyle.css'
 })
 export class ProductComponent {
+  userId: number | null = null;
+  companyId: number | null = null;
   constructor(
     private loginService: LoginService,
     private productService: ProductService,
     private alert: AlertService
   ) { }
-  modalMode: 'edit' | 'add' = 'edit';
+  modalMode: 'view'|'edit' | 'add' = 'view';
   displayedColumns: string[] = ['r_description', 'r_unitPrice', 'action'];
   data: ProductGetDto[] = [];
   columnsInfo: {
@@ -35,6 +37,7 @@ export class ProductComponent {
   productForm: FormGroup = new FormGroup(
     {
       id: new FormControl(''),
+      companyId: new FormControl('', [Validators.required,]),
       description: new FormControl('', [Validators.required, Validators.maxLength(50),]),
       unitPrice: new FormControl('', [Validators.required,]),
       createdBy: new FormControl(''),
@@ -43,24 +46,37 @@ export class ProductComponent {
   );
 
   ngOnInit(): void {
-    this.getAllProductGetDto()
-    this.columnsInfo = {
-      'r_description': {
-        'title': 'Description',
-        'isSort': true,
-        'templateRef': null
-      },
-      'r_unitPrice': {
-        'title': 'Unit Price',
-        'isSort': true,
-        'templateRef': null
-      },
-      'action': {
-        'title': 'Action',
-        'templateRef': this.checkViewer() ? null : this.actionTemplateRef
+    this.userId = this.loginService.userId();
+    this.companyId = this.loginService.companyId();
+    if (this.userId && this.companyId) {
+      this.productService.getAllProductGetDto(this.companyId).subscribe({
+        next: (response: ProductGetDto[]) => {
+          this.data = response;
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      });
+      this.columnsInfo = {
+        'r_description': {
+          'title': 'Name',
+          'isSort': true,
+          'templateRef': null
+        },
+        'r_unitPrice': {
+          'title': 'Unit Price',
+          'isSort': true,
+          'templateRef': null
+        },
+        'action': {
+          'title': 'Action',
+          'templateRef': this.checkViewer() ? null : this.actionTemplateRef
+        }
       }
     }
-
+    else {
+      this.loginService.logout();
+    }
   }
 
   checkViewer = (): boolean => this.loginService.role() !== null && this.loginService.role() === 'Viewer';
@@ -68,45 +84,52 @@ export class ProductComponent {
   closeModal() {
     this.productForm.reset({
       id: '',
+      companyId: '',
       description: '',
       unitPrice: '',
       CreatedBy: '',
       UpdatedBy: '',
     })
-    this.modalMode = 'edit';
-  }
-
-  getAllProductGetDto() {
-    this.productService.getAllProductGetDto().subscribe({
-      next: (response: ProductGetDto[]) => {
-        this.data = response;
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    });
+    this.modalMode = 'view';
   }
 
   addProductGetDto() {
+    this.productForm.patchValue({
+      companyId: this.companyId,
+      createdBy: this.userId,
+    })
     this.modalMode = 'add';
   }
 
-  editProductGetDto(obj: ProductGetDto) {
+  viewAndEditProductGetDto(obj: ProductGetDto, mode: 'view'|'edit') {
     this.productForm.patchValue({
       id: obj.r_id,
+      companyId: obj.r_companyID,
       description: obj.r_description,
       unitPrice: obj.r_unitPrice,
-      updatedBy: 1,
+      updatedBy: this.userId,
     })
-    this.modalMode = 'edit';
+    if (mode === 'view') {
+      this.productForm.disable();
+    }
+    else {
+      this.productForm.enable();
+    }
+    this.modalMode = mode;
   }
 
   deleteRowData(id: number) {
     this.alert.Delete.fire().then((result) => {
-      if (result.isConfirmed) {
-        console.log('Confirmed!');
-      } else {
-        console.log('Cancelled');
+      if (result.isConfirmed && this.userId && this.companyId) {
+        this.productService.deleteProductGetDto(id, this.userId, this.companyId).subscribe({
+          next: (response: ProductGetDto[]) => {
+            this.data = response;
+            this.alert.Toast.fire('Deleted Successfully', '', 'success');
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        })
       }
     });
   }
@@ -119,17 +142,8 @@ export class ProductComponent {
     else {
       if (this.modalMode === 'edit') {
         this.productService.editProductUpdateDto(this.productForm.value).subscribe({
-          next: (response: ProductGetDto) => {
-            this.data = this.data.map(d => {
-              if (d.r_id === response.r_id) {
-                d.r_description = response.r_description;
-                d.r_unitPrice = response.r_unitPrice;
-                return d
-              }
-              else {
-                return d;
-              }
-            })
+          next: (response: ProductGetDto[]) => {
+            this.data = response;
             this.alert.Toast.fire('Updated Successfully', '', 'success');
             this.closeModal();
             const modalElement = document.getElementById('product-modal');
@@ -144,11 +158,10 @@ export class ProductComponent {
         });
       }
       else if (this.modalMode === 'add') {
-        this.productForm.get('createdBy')?.setValue(1);
         this.productService.addProductGetDto(this.productForm.value).subscribe(
           {
-            next: (response: ProductGetDto) => {
-              this.data = [response, ...this.data];
+            next: (response: ProductGetDto[]) => {
+              this.data = response;
               this.alert.Toast.fire('Added Successfully', '', 'success');
               this.closeModal();
               const modalElement = document.getElementById('product-modal');

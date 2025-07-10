@@ -8,8 +8,10 @@
 </app-table>
 
 <ng-template #actionTemplateRef let-row>
+    <i class="fa-regular fa-eye icon" data-bs-toggle="modal" data-bs-target="#product-modal"
+    (click)="viewAndEditProductGetDto(row,'view')"></i>
     <i class="fa-regular fa-pen-to-square icon" data-bs-toggle="modal" data-bs-target="#product-modal"
-    (click)="editProductGetDto(row)"></i>
+    (click)="viewAndEditProductGetDto(row, 'edit')"></i>
     <i class="fa-solid fa-trash icon" (click)="deleteRowData(row.r_id)"></i>
 </ng-template>
 
@@ -20,23 +22,24 @@
             <div class="modal-header d-flex justify-content-between">
                 <h1 *ngIf="modalMode === 'edit'" style="color: whitesmoke;" class="modal-title fs-5 fw-bolder">Edit</h1>
                 <h1 *ngIf="modalMode === 'add'" style="color: whitesmoke;" class="modal-title fs-5 fw-bolder">Add</h1>
+                <h1 *ngIf="modalMode === 'view'" style="color: whitesmoke;" class="modal-title fs-5 fw-bolder">View</h1>
                 <button type="reset" class="btn close-btn" data-bs-dismiss="modal" aria-label="Close"
                     (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label for="description" class="mb-1">Description <span style="color: red;">*</span>
-                        <span *ngIf="
+                    <label for="description" class="mb-1">Name <span *ngIf="modalMode !== 'view'" style="color: red;">*</span>
+                        <span *ngIf="modalMode !== 'view' &&
                     this.productForm.get('description')?.hasError('required') &&
                     (this.productForm.get('description')?.dirty ||
                       this.productForm.get('description')?.touched)
                   " style="color: red">Required</span>
                     </label>
-                    <input type="text" id="description" class="form-control" formControlName="description" placeholder="Description">
+                    <input type="text" id="description" class="form-control" formControlName="description" placeholder="Name">
                 </div>
                 <div class="mb-3">
-                    <label for="unitPrice" class="mb-1">Unit Price <span style="color: red;">*</span>
-                        <span *ngIf="
+                    <label for="unitPrice" class="mb-1">Unit Price <span *ngIf="modalMode !== 'view'" style="color: red;">*</span>
+                        <span *ngIf="modalMode !== 'view' &&
                     this.productForm.get('unitPrice')?.hasError('required') &&
                     (this.productForm.get('unitPrice')?.dirty ||
                       this.productForm.get('unitPrice')?.touched)
@@ -46,10 +49,10 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="add-btn btn btn-outline-primary" type="button"
+                <button *ngIf="modalMode !== 'view'" class="add-btn btn btn-outline-primary" type="button"
                     (click)="saveProductGetDto()">Save</button>
                 <button class="btn btn-outline-danger" data-bs-dismiss="modal" aria-label="Close" type="reset"
-                    (click)="closeModal()">Cancel</button>
+                    (click)="closeModal()"> {{(modalMode !== 'view')?'Cancel':'Close'}}</button>
             </div>
         </form>
     </div>

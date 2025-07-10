@@ -138,7 +138,15 @@ export class UserMasterComponent {
   deleteRowData(id: number) {
     this.alert.Delete.fire().then((result) => {
       if (result.isConfirmed && this.userId && this.companyId) {
-        this.userService.deleteUserGetDto(id, this.userId, this.companyId);
+        this.userService.deleteUserGetDto(id, this.userId, this.companyId).subscribe({
+          next: (response: UserGetDto[]) => {
+            this.data = response;
+            this.alert.Toast.fire('Deleted Successfully', '', 'success');
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        });
       }
     });
   }
