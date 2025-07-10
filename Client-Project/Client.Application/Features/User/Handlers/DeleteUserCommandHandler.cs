@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Client.Application.Features.User.Commands;
+using Client.Application.Features.User.Dtos;
 using Client.Application.Interfaces;
 using MediatR;
 
 namespace Client.Application.Features.User.Handlers
 {
-    public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, string>
+    public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, List<UserDto>>
     {
         private readonly IUserRepository _repository;
 
@@ -18,9 +19,9 @@ namespace Client.Application.Features.User.Handlers
             _repository = repository;
         }
 
-        public async Task<string> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+        public async Task<List<UserDto>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
-            return await _repository.DeleteUserAsync(request.Id);
+            return await _repository.DeleteUserAsync(request.Id,request.updatedBy,request.companyId);
         }
     }
 
