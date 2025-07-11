@@ -102,18 +102,25 @@ namespace Client.Persistence.Repositories
             parameters.Add("@P_paymentStatus", dto.PaymentStatus);
             parameters.Add("@P_updatedBy", dto.UpdatedBy);
 
-            var result = await _db.QueryFirstOrDefaultAsync<(string R_Status, int? R_UpdatedID, int? R_ErrorNumber, string R_ErrorMessage)>(
+
+            var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
                 "sp_sbs_paymentDetails_update",
                 parameters,
                 commandType: CommandType.StoredProcedure
             );
+            if (result == null || result.R_Status != "SUCCESS")
+            {
+                throw new Exception($"Insert failed: {result?.R_ErrorMessage ?? "Unknown error"}");
+            }
+            if (result.R_Status == "SUCCESS")
+            {
+                return await GetPaymentsAsync(dto.CompanyId, null);
+            }
 
-            if (result.R_Status != "Success" || result.R_UpdatedID == null)
-                throw new Exception("Update failed or payment not found");
+            throw new Exception($"Update Failed: {result.R_ErrorMessage} (ErrorCode: {result.R_ErrorNumber})");
 
-            return await GetPaymentsAsync(1,null);
         }
-        public async Task<List<PaymentDetailsDto>> DeletePaymentAsync(int id, int updatedBy)
+        public async Task<List<PaymentDetailsDto>> DeletePaymentAsync(int id, int updatedBy,int companyId)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@P_id", id);
@@ -125,10 +132,10 @@ namespace Client.Persistence.Repositories
                 commandType: CommandType.StoredProcedure
             );
 
-            if (result.R_Status != "Success" || result.R_DeletedID == null)
-                throw new Exception("Payment deletion failed or not found.");
+            if (result.R_Status != "SUCCESS")
+                throw new Exception($" Payment deletionfailed: {result.R_ErrorMessage ?? "Unknown error"}");
 
-            return await GetPaymentsAsync(1,null);
+            return await GetPaymentsAsync(companyId,null);
         }
 
 

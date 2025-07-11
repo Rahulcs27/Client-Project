@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -19,47 +20,53 @@ namespace Client.Persistence.Repositories
             _db = db;
         }
 
-        public async Task<List<PaidReportDto>> GetPaidReportAsync(int? month, int? year, string? paymentMode)
+        public async Task<List<PaidReportDto>> GetPaidReportAsync(string? subcontractorName,int? companyId, string? bankName, string? fromDate,string? toDate)
         {
             var param = new DynamicParameters();
-            param.Add("@p_month", month);
-            param.Add("@p_year", year);
-            param.Add("@p_paymentMode", paymentMode);
+            param.Add("@p_subcontractorName", subcontractorName);
+            param.Add("p_companyID", companyId);
+            param.Add("@p_bankName", bankName);
+            param.Add("@p_fromDate", fromDate);
+            param.Add("@p_toDate",toDate);
 
-            var result = await _db.QueryAsync<PaidReportDto>("sp_sbs_PaidBalancePaymentReport", param, commandType: CommandType.StoredProcedure);
+            var result = await _db.QueryAsync<PaidReportDto>("sp_PaidBalancePaymentReport", param, commandType: CommandType.StoredProcedure);
             return result.ToList();
         }
 
-        public async Task<List<UnpaidReportDto>> GetUnpaidReportAsync(int? month, int? year, string? paymentMode)
+        public async Task<List<UnpaidReportDto>> GetUnpaidReportAsync(string? subcontractorName, int? companyId, string? fromDate, string? toDate)
         {
             var param = new DynamicParameters();
-            param.Add("@p_month", month);
-            param.Add("@p_year", year);
-            param.Add("@p_paymentMode", paymentMode);
+            param.Add("@p_subcontractorName", subcontractorName);
+            param.Add("p_companyID", companyId);
+            param.Add("@p_fromDate", fromDate);
+            param.Add("@p_toDate", toDate);
 
-            var result = await _db.QueryAsync<UnpaidReportDto>("sp_sbs_unPaidBalancePaymentReport", param, commandType: CommandType.StoredProcedure);
+            var result = await _db.QueryAsync<UnpaidReportDto>("sp_UnPaidBalancePaymentReport", param, commandType: CommandType.StoredProcedure);
             return result.ToList();
         }
 
-        public async Task<List<ProductWiseReportDto>> GetProductWiseReportAsync(int? month, int? year, string? productName)
+        public async Task<List<ProductWiseReportDto>> GetProductWiseReportAsync(string? productName,string? subcontractorName, int? companyId, string? fromDate,string? toDate)
         {
             var param = new DynamicParameters();
-            param.Add("@p_month", month);
-            param.Add("@p_year", year);
             param.Add("@p_productName", productName);
+            param.Add("@p_subcontractorName", subcontractorName);
+            param.Add("@p_companyID", companyId);
+            param.Add("@p_fromDate", fromDate);
+            param.Add("@p_toDate", toDate);
 
             var result = await _db.QueryAsync<ProductWiseReportDto>("sp_sbs_ProductWisePayment", param, commandType: CommandType.StoredProcedure);
             return result.ToList();
         }
 
-        public async Task<List<SubcontractorWiseReportDto>> GetSubcontractorWiseReportAsync(int? month, int? year, string? subCoName)
+        public async Task<List<SubcontractorWiseReportDto>> GetSubcontractorWiseReportAsync(string? subcontractorName, int? companyId, string? fromDate, string? toDate)
         {
             var param = new DynamicParameters();
-            param.Add("@p_month", month);
-            param.Add("@p_year", year);
-            param.Add("@p_subCoName", subCoName);
+            param.Add("@p_subCoName", subcontractorName);
+            param.Add("@p_fromDate", fromDate);
+            param.Add("@p_toDate", toDate);
+            param.Add("@p_companyId", companyId);
 
-            var result = await _db.QueryAsync<SubcontractorWiseReportDto>("sp_sbs_MonthlyPaymentSubcontractorWiseTotalPayment", param, commandType: CommandType.StoredProcedure);
+            var result = await _db.QueryAsync<SubcontractorWiseReportDto>("sp_sbs_MonthlySubcontractorWisePayment", param, commandType: CommandType.StoredProcedure);
             return result.ToList();
         }
     }

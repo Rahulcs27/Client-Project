@@ -43,9 +43,9 @@ namespace Client.API.Controllers
         }
 
         [HttpDelete("delete")]
-        public async Task<IActionResult> Delete(int id, int updatedBy)
+        public async Task<IActionResult> Delete(int id, int updatedBy,int companyId)
         {
-            var result = await _mediator.Send(new DeletePaymentCommand(id, updatedBy));
+            var result = await _mediator.Send(new DeletePaymentCommand(id, updatedBy,companyId));
             return Ok(result);
         }
 

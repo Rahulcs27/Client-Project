@@ -12,7 +12,7 @@ namespace Client.Application.Interfaces
     {
         Task<List<PaymentDetailsDto>> CreatePaymentAsync(CreatePaymentDto payment);
         Task<List<PaymentDetailsDto>> UpdatePaymentAsync(UpdatePaymentDto dto);
-        Task<List<PaymentDetailsDto>> DeletePaymentAsync(int id, int updatedBy);
+        Task<List<PaymentDetailsDto>> DeletePaymentAsync(int id, int updatedBy,int companyId);
 
         Task<List<PaymentDetailsDto>> GetPaymentsAsync(int companyId , int? id = null);
 

@@ -8,6 +8,6 @@ using MediatR;
 
 namespace Client.Application.Features.PaymentReports.Queries
 {
-    public record GetSubcontractorWiseReportQuery(int? Month, int? Year, string? SubCoName) : IRequest<List<SubcontractorWiseReportDto>>;
+    public record GetSubcontractorWiseReportQuery(string? SubcontractorName, int? CompanyId, string? FromDate, string? ToDate) : IRequest<List<SubcontractorWiseReportDto>>;
 
 }
