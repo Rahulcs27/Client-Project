@@ -21,7 +21,7 @@ namespace Client.Application.Features.Payment.Handlers
 
         public async Task<List<PaymentDetailsDto>> Handle(DeletePaymentCommand request, CancellationToken cancellationToken)
         {
-            return await _repository.DeletePaymentAsync(request.Id, request.UpdatedBy);
+            return await _repository.DeletePaymentAsync(request.Id, request.UpdatedBy,request.CompanyId);
         }
     }
 }

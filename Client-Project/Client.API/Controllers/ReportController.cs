@@ -19,33 +19,33 @@ namespace Client.API.Controllers
 
         // Paid Balance Report
         [HttpGet("paid-report")]
-        public async Task<ActionResult<List<PaidReportDto>>> GetPaidReport([FromQuery] int? month, [FromQuery] int? year, [FromQuery] string? paymentMode)
+        public async Task<ActionResult<List<PaidReportDto>>> GetPaidReport([FromQuery]string? subcontractorName,[FromQuery] int? companyId, [FromQuery] string? bankName,[FromQuery] string? fromDate,[FromQuery] string? toDate)
         {
-            var result = await _mediator.Send(new GetPaidReportQuery(month, year, paymentMode));
+            var result = await _mediator.Send(new GetPaidReportQuery(subcontractorName,companyId,bankName,fromDate,toDate));
             return Ok(result);
         }
 
         // Unpaid Balance Report
         [HttpGet("unpaid-report")]
-        public async Task<ActionResult<List<UnpaidReportDto>>> GetUnpaidReport([FromQuery] int? month, [FromQuery] int? year, [FromQuery] string? paymentMode)
+        public async Task<ActionResult<List<UnpaidReportDto>>> GetUnpaidReport([FromQuery]string? subcontractorName,[FromQuery] int? companyId,[FromQuery] string? fromDate,[FromQuery] string? toDate)
         {
-            var result = await _mediator.Send(new GetUnpaidReportQuery(month, year, paymentMode));
+            var result = await _mediator.Send(new GetUnpaidReportQuery(subcontractorName,companyId, fromDate, toDate));
             return Ok(result);
         }
 
         // Product Wise Report
         [HttpGet("product-wise-report")]
-        public async Task<ActionResult<List<ProductWiseReportDto>>> GetProductWiseReport([FromQuery] int? month, [FromQuery] int? year, [FromQuery] string? productName)
+        public async Task<ActionResult<List<ProductWiseReportDto>>> GetProductWiseReport( [FromQuery] string? productName,[FromQuery] string? subcontractorName,[FromQuery] int? companyId, [FromQuery] string? fromDate,[FromQuery] string? toDate)
         {
-            var result = await _mediator.Send(new GetProductWiseReportQuery(month, year, productName));
+            var result = await _mediator.Send(new GetProductWiseReportQuery(productName,subcontractorName,companyId,fromDate,toDate));
             return Ok(result);
         }
 
         // Subcontractor Wise Report
         [HttpGet("subcontractor-wise-report")]
-        public async Task<ActionResult<List<SubcontractorWiseReportDto>>> GetSubcontractorWiseReport([FromQuery] int? month, [FromQuery] int? year, [FromQuery] string? subCoName)
+        public async Task<ActionResult<List<SubcontractorWiseReportDto>>> GetSubcontractorWiseReport([FromQuery] string? subcontractorName, [FromQuery] int? companyId, [FromQuery] string? fromDate, [FromQuery] string? toDate)
         {
-            var result = await _mediator.Send(new GetSubcontractorWiseReportQuery(month, year, subCoName));
+            var result = await _mediator.Send(new GetSubcontractorWiseReportQuery(subcontractorName, companyId, fromDate, toDate));
             return Ok(result);
         }
     }

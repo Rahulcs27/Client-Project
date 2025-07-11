@@ -20,7 +20,7 @@ namespace Client.Application.Features.PaymentReports.Handlers
 
         public async Task<List<UnpaidReportDto>> Handle(GetUnpaidReportQuery request, CancellationToken cancellationToken)
         {
-            var result = await _repo.GetUnpaidReportAsync(request.Year,request.Month,request.PaymentMode);
+            var result = await _repo.GetUnpaidReportAsync(request.SubcontractorName,request.CompanyId,request.FromDate,request.ToDate);
             return result;
         }
     }
