@@ -11,19 +11,16 @@ using MediatR;
 
 namespace Client.Application.Features.Invoice.Handlers
 {
-    public class CreateInvoiceCommandHandler : IRequestHandler<CreateInvoiceCommand, InvoiceDetailsDto>
+    public class CreateInvoiceCommandHandler : IRequestHandler<CreateInvoiceCommand,List<InvoiceDetailsDto>>
     {
         private readonly IInvoiceRepository _invoiceRepository;
-        private readonly IMapper _mapper;
-        public CreateInvoiceCommandHandler(IInvoiceRepository invoiceRepository, IMapper mapper)
+        public CreateInvoiceCommandHandler(IInvoiceRepository invoiceRepository)
         {
             _invoiceRepository = invoiceRepository;
-            _mapper = mapper;
         }
-        public async Task<InvoiceDetailsDto> Handle(CreateInvoiceCommand request, CancellationToken cancellationToken)
+        public async Task<List<InvoiceDetailsDto>> Handle(CreateInvoiceCommand request, CancellationToken cancellationToken)
         {
-            var result = await _invoiceRepository.CreateInvoiceAsync(request.Invoice);
-            return _mapper.Map<InvoiceDetailsDto>(result);
+            return await _invoiceRepository.CreateInvoiceAsync(request.Invoice);
         }
     }
 }

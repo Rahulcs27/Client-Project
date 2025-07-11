@@ -15,6 +15,8 @@ namespace Client.Application.Features.Invoice.Dtos
         public string R_subcontractorName { get; set; }
         public int R_productId { get; set; }
         public string R_productDescription { get; set; }
+        public decimal UnitPrice { get; set; }
+        public decimal R_unitAmount { get; set; }
         public DateTime R_invoiceDate { get; set; }
         public string R_status { get; set; }
         public int R_quantity { get; set; }

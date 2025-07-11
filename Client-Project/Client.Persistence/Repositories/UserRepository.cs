@@ -21,37 +21,16 @@ namespace Client.Persistence.Repositories
     {
         private readonly IDbConnection _db;
         private readonly IConfiguration _config;
+        private readonly IEmailService _emailService;
 
 
-        public UserRepository(IDbConnection db , IConfiguration config)
+        public UserRepository(IDbConnection db , IConfiguration config,IEmailService emailService)
         {
             _db = db;
             _config = config;
+            _emailService = emailService;
+
         }
-        //public async Task<UserDto> CreateUserAsync(CreateUserDto userDto)
-        //{
-        //    var parameters = new DynamicParameters();
-        //    parameters.Add("@p_roleMasterId", userDto.RoleMasterId);
-        //    parameters.Add("@p_username", userDto.Username);
-        //    parameters.Add("@p_password", userDto.Password);
-        //    parameters.Add("@p_createdBy", userDto.CreatedBy);
-
-        //    var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
-        //        "sp_sbs_userMaster_insert",
-        //        parameters,
-        //        commandType: CommandType.StoredProcedure
-        //    );
-
-        //    if (result == null || result.Status != "SUCCESS")
-        //        throw new Exception($"Insert Failed: {result?.ErrorMessage ?? "Unknown error"}");
-
-        //    return new UserDto
-        //    {
-        //        Id = result.InsertedID,
-        //        RoleMasterId = userDto.RoleMasterId,
-        //        Username = userDto.Username
-        //    };
-        //}
 
         public async Task<List<UserDto>> CreateUserAsync(CreateUserDto userDto)
         {
@@ -60,6 +39,7 @@ namespace Client.Persistence.Repositories
             var parameters = new DynamicParameters();
             parameters.Add("@p_roleMasterId", userDto.RoleMasterId);
             parameters.Add("@p_companyId", userDto.CompanyId);
+            parameters.Add("@p_email", userDto.Email);
             parameters.Add("@p_username", userDto.Username);
             parameters.Add("@p_password", hashedPassword);
             parameters.Add("@p_createdBy", userDto.CreatedBy);
@@ -122,23 +102,67 @@ namespace Client.Persistence.Repositories
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        //public async Task<List<UserDto>> UpdateUserAsync(UpdateUserDto userDto)
+        //{
+        //    var parameters = new DynamicParameters();
+        //    parameters.Add("@p_id", userDto.Id);
+        //    parameters.Add("@p_roleMasterId", userDto.RoleMasterId);
+        //    parameters.Add("@p_companyId", userDto.CompanyId);
+        //    parameters.Add("@p_username", userDto.Username);
+        //    parameters.Add("@p_updatedBy", userDto.UpdatedBy);
+        //    //var verifiedUsers = await GetUsersAsync(userDto.Id, null, userDto.CompanyId);
+        //    //var verifiedUser = verifiedUsers.FirstOrDefault();
+
+        //    if(!userDto.NewPassword.IsNullOrEmpty() && !userDto.CurrentPassword.IsNullOrEmpty())
+        //    {
+        //        if (userDto == null || !BCrypt.Net.BCrypt.Verify(userDto.CurrentPassword, userDto.Password))
+        //            throw new UnauthorizedAccessException("Password does not match.");
+        //        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(userDto.NewPassword);
+        //        parameters.Add("@p_password", hashedPassword);
+        //    }
+        //    else if (userDto.NewPassword.IsNullOrEmpty() && userDto.CurrentPassword.IsNullOrEmpty())
+        //    {
+        //        parameters.Add("@p_password", userDto.Password);
+        //    }
+        //    else
+        //    {
+        //        throw new ArgumentException("Both NewPassword and CurrentPassword must be provided or neither.");
+        //    }
+
+        //    var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
+        //            "sp_sbs_userMaster_update",
+        //            parameters,
+        //            commandType: CommandType.StoredProcedure
+        //        );
+
+        //    if (result == null || result.R_Status != "SUCCESS")
+        //        throw new Exception($"Update failed: {result?.R_ErrorMessage ?? "Unknown error"}");
+
+        //    int updatedId = result.R_UpdatedID;
+
+        //    return await GetUsersAsync(null, null, userDto.CompanyId);
+        //}
+
         public async Task<List<UserDto>> UpdateUserAsync(UpdateUserDto userDto)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@p_id", userDto.Id);
             parameters.Add("@p_roleMasterId", userDto.RoleMasterId);
             parameters.Add("@p_companyId", userDto.CompanyId);
+            parameters.Add("@p_email", userDto.Email);
             parameters.Add("@p_username", userDto.Username);
             parameters.Add("@p_updatedBy", userDto.UpdatedBy);
-            //var verifiedUsers = await GetUsersAsync(userDto.Id, null, userDto.CompanyId);
-            //var verifiedUser = verifiedUsers.FirstOrDefault();
 
-            if(!userDto.NewPassword.IsNullOrEmpty() && !userDto.CurrentPassword.IsNullOrEmpty())
+            bool isPasswordChanged = false;
+
+            if (!userDto.NewPassword.IsNullOrEmpty() && !userDto.CurrentPassword.IsNullOrEmpty())
             {
-                if (userDto == null || !BCrypt.Net.BCrypt.Verify(userDto.CurrentPassword, userDto.Password))
+                if (!BCrypt.Net.BCrypt.Verify(userDto.CurrentPassword, userDto.Password))
                     throw new UnauthorizedAccessException("Password does not match.");
+
                 var hashedPassword = BCrypt.Net.BCrypt.HashPassword(userDto.NewPassword);
                 parameters.Add("@p_password", hashedPassword);
+                isPasswordChanged = true;
             }
             else if (userDto.NewPassword.IsNullOrEmpty() && userDto.CurrentPassword.IsNullOrEmpty())
             {
@@ -150,20 +174,30 @@ namespace Client.Persistence.Repositories
             }
 
             var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
-                    "sp_sbs_userMaster_update",
-                    parameters,
-                    commandType: CommandType.StoredProcedure
-                );
+                "sp_sbs_userMaster_update",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
 
             if (result == null || result.R_Status != "SUCCESS")
                 throw new Exception($"Update failed: {result?.R_ErrorMessage ?? "Unknown error"}");
 
-            int updatedId = result.R_UpdatedID;
+            // 📨 Send Email Notification
+            string emailSubject = "Your account information has been updated";
+            var sb = new StringBuilder();
+            sb.AppendLine($"<p>Dear {userDto.Username},</p>");
+            sb.AppendLine("<p>Your account has been successfully updated with the following changes:</p>");
+            if (isPasswordChanged)
+                sb.AppendLine("<p>✅ Your password has been changed.</p>");
+            //if (!string.IsNullOrEmpty(userDto.Username))
+            //    sb.AppendLine($"<p>✅ Your username has been updated to <strong>{userDto.Username}</strong>.</p>");
+            sb.AppendLine("<p>If you did not initiate this change, please contact support immediately.</p>");
+            sb.AppendLine("<br/><p>Thank you,<br/>HRMS Team</p>");
+
+            await _emailService.SendEmailAsync(userDto.Email, emailSubject, sb.ToString());
 
             return await GetUsersAsync(null, null, userDto.CompanyId);
         }
-
-
 
         public async Task<List<UserDto>> GetUsersAsync(int? id, string? search,int? companyId)
         {
