@@ -98,6 +98,7 @@ export class ProductComponent {
       companyId: this.companyId,
       createdBy: this.userId,
     })
+    this.productForm.enable();
     this.modalMode = 'add';
   }
 

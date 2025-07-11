@@ -56,10 +56,10 @@
                       this.invoiceForm.get('productId')?.touched)
                   " style="color: red">Required</span>
                     </label>
-                    <select id="productId" class="form-control" formControlName="productId"
-                        (change)="calculateTotalAmount()">
+                    <select #productId id="productId" class="form-control" formControlName="productId"
+                        (change)="setUnitAmount(productId.value)">
                         <option value="">--Select--</option>
-                        <option *ngFor="let product of products" value="{{product.r_id}}">{{product.r_description}}
+                        <option *ngFor="let product of products" value="{{product.r_id+'_'+product.r_unitPrice}}">{{product.r_description}}
                         </option>
                     </select>
                 </div>
@@ -72,7 +72,7 @@
                       this.invoiceForm.get('unitAmount')?.touched)
                   " style="color: red">Required</span>
                     </label>
-                    <input type="text" id="unitAmount" class="form-control" placeholder="Unit Price" formControlName="unitAmount" />
+                    <input type="text" id="unitAmount" class="form-control" placeholder="Unit Price" formControlName="unitAmount" (input)="calculateTotalAmount()" />
                 </div>
                 <div class="mb-3">
                     <label for="invoiceDate" class="mb-1">Invoice Date <span *ngIf="modalMode !== 'view'"

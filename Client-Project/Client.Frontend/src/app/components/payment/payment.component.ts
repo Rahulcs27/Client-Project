@@ -80,7 +80,7 @@ export class PaymentComponent {
   ngOnInit(): void {
     const companyId = this.loginService.companyId()
     if (companyId) {
-      this.invoiceService.getAllInvoiceGetDto().subscribe({
+      this.invoiceService.getAllInvoiceGetDto(companyId).subscribe({
         next: (response: InvoiceGetDto[]) => {
           this.invoices = response
         },

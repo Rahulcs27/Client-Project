@@ -25,7 +25,7 @@ export class UserMasterComponent {
     private roleService: RoleService,
     private alert: AlertService
   ) { }
-  modalMode: 'add' | 'edit' = 'edit';
+  modalMode: 'add' | 'edit' | 'view' = 'view';
   displayedColumns: string[] = ['username', 'roleName', 'action'];
   roles: RoleGetDto[] = [];
   data: UserGetDto[] = [];
@@ -43,6 +43,7 @@ export class UserMasterComponent {
       id: new FormControl(''),
       roleMasterId: new FormControl('', [Validators.required]),
       username: new FormControl('', [Validators.required]),
+      email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required]),
       companyId: new FormControl('', [Validators.required]),
       currentPassword: new FormControl(''),
@@ -101,6 +102,7 @@ export class UserMasterComponent {
       id: '',
       roleMasterId: '',
       username: '',
+      email: '',
       password: '',
       companyId: '',
       currentPassword: '',
@@ -108,31 +110,35 @@ export class UserMasterComponent {
       createdBy: '',
       updatedBy: '',
     })
-    this.modalMode = 'edit';
+    this.modalMode = 'view';
   }
 
   addUserGetDto() {
     this.userForm.patchValue({
       companyId: this.companyId,
-      currentPassword: '',
-      newPassword: '',
       createdBy: this.userId,
     })
+    this.userForm.enable();
     this.modalMode = 'add';
   }
 
-  editUserGetDto(obj: UserGetDto) {
+  viewAndEditUserGetDto(obj: UserGetDto, mode: 'view'|'edit') {
     this.userForm.patchValue({
       id: obj.id,
       roleMasterId: obj.roleMasterId,
       username: obj.username,
       password: obj.password,
+      email: obj.email,
       companyId: this.companyId,
-      currentPassword: '',
-      newPassword: '',
       updatedBy: this.userId,
     })
-    this.modalMode = 'edit'
+    if (mode === 'view') {
+      this.userForm.disable();
+    }
+    else {
+      this.userForm.enable();
+    }
+    this.modalMode = mode;
   }
 
   deleteRowData(id: number) {

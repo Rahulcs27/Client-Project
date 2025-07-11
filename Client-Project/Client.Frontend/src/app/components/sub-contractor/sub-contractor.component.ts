@@ -92,6 +92,7 @@ export class SubContractorComponent {
       companyId: this.companyId,
       createdBy: this.userId,
     })
+    this.subContractorForm.enable();
     this.modalMode = 'add';
   }
 

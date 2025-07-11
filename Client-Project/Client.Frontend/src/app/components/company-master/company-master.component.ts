@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AlertService } from '../../services/alert.service';
 import { CompanyMasterGetDto } from './company-master-dtos';
+import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-company-master',
@@ -14,7 +15,11 @@ import { CompanyMasterGetDto } from './company-master-dtos';
   styleUrl: '../../../componentStyle.css'
 })
 export class CompanyMasterComponent implements OnInit {
-  constructor(private companyMasterService: CompanyMasterServiceService,
+  userId: number | null = null;
+  companyId: number | null = null;
+  constructor(
+    private loginService: LoginService,
+    private companyMasterService: CompanyMasterServiceService,
     private alert: AlertService
   ) { }
   modalMode: 'view' | 'edit' | 'add' = 'view';
@@ -42,40 +47,42 @@ export class CompanyMasterComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.getAllCompanyMasterGetDto()
-    this.columnsInfo = {
-      'name': {
-        'title': 'Name',
-        'isSort': true,
-        'templateRef': null
-      },
-      'phone': {
-        'title': 'Phone No.',
-        'isSort': true,
-        'templateRef': null
-      },
-      'email': {
-        'title': 'Email Address',
-        'isSort': true,
-        'templateRef': null
-      },
-      'action': {
-        'title': 'Action',
-        'templateRef': this.actionTemplateRef
+    this.companyId = this.loginService.companyId();
+    this.userId = this.loginService.userId();
+    if(this.companyId && this.userId) {
+      this.companyMasterService.getAllCompanyMasterGetDto().subscribe({
+        next: (response: CompanyMasterGetDto[]) => {
+          this.data = response;
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      });
+      this.columnsInfo = {
+        'name': {
+          'title': 'Name',
+          'isSort': true,
+          'templateRef': null
+        },
+        'phone': {
+          'title': 'Phone No.',
+          'isSort': true,
+          'templateRef': null
+        },
+        'email': {
+          'title': 'Email Address',
+          'isSort': true,
+          'templateRef': null
+        },
+        'action': {
+          'title': 'Action',
+          'templateRef': this.actionTemplateRef
+        }
       }
     }
-
-  }
-
-  getAllCompanyMasterGetDto() {
-    this.companyMasterService.getAllCompanyMasterGetDto().subscribe({
-      next: (response: CompanyMasterGetDto[]) => {
-        this.data = response;
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    });
+    else {
+      this.loginService.logout();
+    }
   }
 
   closeModal() {
@@ -88,10 +95,6 @@ export class CompanyMasterComponent implements OnInit {
       createdBy: '',
       updatedBy: '',
     })
-    this.companyMasterForm.get('name')?.enable();
-    this.companyMasterForm.get('phone')?.enable();
-    this.companyMasterForm.get('email')?.enable();
-    this.companyMasterForm.get('address')?.enable();
     this.modalMode = 'view';
   }
 
@@ -102,10 +105,7 @@ export class CompanyMasterComponent implements OnInit {
       email: obj.email,
       address: obj.address
     })
-    this.companyMasterForm.get('name')?.disable();
-    this.companyMasterForm.get('phone')?.disable();
-    this.companyMasterForm.get('email')?.disable();
-    this.companyMasterForm.get('address')?.disable();
+    this.companyMasterForm.disable();
     this.modalMode = 'view';
   }
 
@@ -116,17 +116,34 @@ export class CompanyMasterComponent implements OnInit {
       phone: obj.phone,
       email: obj.email,
       address: obj.address,
-      updatedBy: 1
+      updatedBy: this.userId
     })
+    this.companyMasterForm.enable();
     this.modalMode = 'edit';
   }
 
   addCompanyMasterGetDto() {
+     this.companyMasterForm.patchValue({
+      createdBy: this.userId
+    })
+    this.companyMasterForm.enable();
     this.modalMode = 'add';
   }
 
   deleteRowData(id: number) {
-    
+    this.alert.Delete.fire().then((result) => {
+      if (result.isConfirmed && this.userId && this.companyId) {
+        this.companyMasterService.deleteCompanyMasterGetDto(id, this.userId).subscribe({
+          next: (response: CompanyMasterGetDto[]) => {
+            this.data = response;
+            this.alert.Toast.fire('Deleted Successfully', '', 'success');
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        });
+      }
+    });
   }
 
   saveCompanyMasterGetDto() {

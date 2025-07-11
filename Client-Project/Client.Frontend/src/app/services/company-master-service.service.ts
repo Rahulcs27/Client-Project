@@ -21,4 +21,8 @@ export class CompanyMasterServiceService {
   addCompanyMasterGetDto(formData:CompanyMasterCreateDto): Observable<CompanyMasterGetDto[]> {
     return this.http.post<CompanyMasterGetDto[]>(`${apiUrl}/Company/create`,formData);
   }
+
+  deleteCompanyMasterGetDto(companyId: number, userId: number): Observable<CompanyMasterGetDto[]> {
+    return this.http.delete<CompanyMasterGetDto[]>(`${apiUrl}/Company/${companyId}?updatedBy=${userId}`);
+  }
 }

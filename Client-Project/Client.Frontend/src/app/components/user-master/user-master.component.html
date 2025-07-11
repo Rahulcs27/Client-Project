@@ -9,8 +9,10 @@
 </app-table>
 
 <ng-template #actionTemplateRef let-row>
+    <i class="fa-regular fa-eye icon" data-bs-toggle="modal" data-bs-target="#user-modal"
+    (click)="viewAndEditUserGetDto(row,'view')"></i>
     <i class="fa-regular fa-pen-to-square icon" data-bs-toggle="modal" data-bs-target="#user-modal"
-        (click)="editUserGetDto(row)"></i>
+        (click)="viewAndEditUserGetDto(row,'edit')"></i>
     <i class="fa-solid fa-trash icon" (click)="deleteRowData(row.id)"></i>
 </ng-template>
 
@@ -40,7 +42,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="username" class="mb-1">User Name <span style="color: red;">*</span>
+                    <label for="username" class="mb-1">Email ID <span style="color: red;">*</span>
                         <span *ngIf="
                     this.userForm.get('username')?.hasError('required') &&
                     (this.userForm.get('username')?.dirty ||
@@ -48,6 +50,17 @@
                   " style="color: red">Required</span>
                     </label>
                     <input type="text" class="form-control" formControlName="username">
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="mb-1">User Name <span style="color: red;">*</span>
+                        <span *ngIf="
+                    this.userForm.get('email')?.hasError('required') &&
+                    (this.userForm.get('email')?.dirty ||
+                      this.userForm.get('email')?.touched)
+                  " style="color: red">Required</span>
+                    </label>
+                    <input type="email" class="form-control" formControlName="email">
                 </div>
 
                 <div class="mb-3" *ngIf="modalMode ==='add'">
