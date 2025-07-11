@@ -42,7 +42,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="username" class="mb-1">Email ID <span style="color: red;">*</span>
+                    <label for="username" class="mb-1">User Name <span style="color: red;">*</span>
                         <span *ngIf="
                     this.userForm.get('username')?.hasError('required') &&
                     (this.userForm.get('username')?.dirty ||
@@ -53,7 +53,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="email" class="mb-1">User Name <span style="color: red;">*</span>
+                    <label for="email" class="mb-1">Email ID <span style="color: red;">*</span>
                         <span *ngIf="
                     this.userForm.get('email')?.hasError('required') &&
                     (this.userForm.get('email')?.dirty ||

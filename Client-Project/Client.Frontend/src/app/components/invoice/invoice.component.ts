@@ -30,7 +30,7 @@ export class InvoiceComponent {
     private alert: AlertService
   ) { }
   modalMode: 'view' | 'edit' | 'add' = 'view';
-  displayedColumns: string[] = ['r_subcontractorName', 'r_invoiceDate', 'r_status', 'r_quantity', 'r_totalAmount', 'action'];
+  displayedColumns: string[] = ['name', 'r_invoiceDate', 'r_status', 'r_quantity', 'r_totalAmount', 'action'];
   data: InvoiceGetDto[] = [];
   products: ProductGetDto[] = [];
   subContractors: SubContractorGetDto[] = [];
@@ -91,7 +91,7 @@ export class InvoiceComponent {
         }
       });
       this.columnsInfo = {
-        'r_subcontractorName': {
+        'name': {
           'title': 'Sub-Contract Name',
           'isSort': true,
           'templateRef': null
@@ -161,7 +161,7 @@ export class InvoiceComponent {
       id: obj.r_id,
       companyId: obj.r_companyId,
       subcontractorId: obj.r_subcontractorId,
-      productId: obj.r_productId+'_'+obj.unitPrice,
+      productId: obj.r_productId + '_' + obj.unitPrice,
       unitAmount: obj.r_unitAmount,
       invoiceDate: new Date(obj.r_invoiceDate),
       status: obj.r_status,
@@ -193,10 +193,16 @@ export class InvoiceComponent {
 
   deleteRowData(id: number) {
     this.alert.Delete.fire().then((result) => {
-      if (result.isConfirmed) {
-        console.log('Confirmed!');
-      } else {
-        console.log('Cancelled');
+      if (result.isConfirmed && this.userId && this.companyId) {
+        this.invoiceService.deleteInvoiceGetDto(id, this.companyId, this.userId).subscribe({
+          next: (response: InvoiceGetDto[]) => {
+            this.data = response;
+            this.alert.Toast.fire('Deleted Successfully', '', 'success');
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        });
       }
     });
   }

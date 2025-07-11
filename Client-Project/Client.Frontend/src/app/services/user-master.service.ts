@@ -14,6 +14,10 @@ export class UserMasterService {
     return this.http.get<UserGetDto[]>(`${apiUrl}/User?companyId=${companyId}`);
   }
 
+  getUserGetDto(companyId: number, userId: number): Observable<UserGetDto[]> {
+    return this.http.get<UserGetDto[]>(`${apiUrl}/User?companyId=${companyId}&id=${userId}`);
+  }
+
   editUserUpdateDto(formData: UserUpdateDto): Observable<UserGetDto[]> {
     return this.http.put<UserGetDto[]>(`${apiUrl}/User`, formData);
   }

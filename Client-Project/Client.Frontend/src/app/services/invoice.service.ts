@@ -21,4 +21,8 @@ export class InvoiceService {
   addInvoiceGetDto(formData: InvoiceCreateDto): Observable<InvoiceGetDto[]> {
     return this.http.post<InvoiceGetDto[]>(`${apiUrl}/Invoice/create`, formData);
   }
+
+  deleteInvoiceGetDto(id:number, companyId: number, userId: number): Observable<InvoiceGetDto[]> {
+    return this.http.delete<InvoiceGetDto[]>(`${apiUrl}/Invoice/${id}?updatedBy=${userId}&companyId=${companyId}`);
+  }
 }

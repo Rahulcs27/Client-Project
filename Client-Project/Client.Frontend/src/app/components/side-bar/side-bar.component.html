@@ -17,7 +17,11 @@
                 <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="profile"
                     data-bs-parent="#profile-accordion">
                     <div class="accordion-body">
-                        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/invoice">Change
+                        <a class="btn sideBar-nav-links mt-2" data-bs-toggle="modal" data-bs-target="#change-modal" (click)="changeUserName()">Change
+                            User Name</a>
+                        <a class="btn sideBar-nav-links mt-2" data-bs-toggle="modal" data-bs-target="#change-modal" (click)="changeEmail()">Change
+                            Email ID</a>
+                        <a class="btn sideBar-nav-links mt-2" data-bs-toggle="modal" data-bs-target="#change-modal" (click)="changePassword()">Change
                             Password</a>
                     </div>
                 </div>
@@ -70,3 +74,59 @@
         </div>
     </div>
 </aside>
+
+<div class="modal fade" [formGroup]="userChangeForm" id="change-modal" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <form class="modal-content">
+            <div class="modal-header d-flex justify-content-between">
+                <h1 *ngIf="modalMode === 'password'" style="color: whitesmoke;" class="modal-title fs-5 fw-bolder">
+                    Change Password</h1>
+                <h1 *ngIf="modalMode === 'email'" style="color: whitesmoke;" class="modal-title fs-5 fw-bolder">Change
+                    Email</h1>
+                <h1 *ngIf="modalMode === 'userName'" style="color: whitesmoke;" class="modal-title fs-5 fw-bolder">
+                    Change User Name</h1>
+                <button type="reset" class="btn close-btn" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3" *ngIf="modalMode === 'userName'">
+                    <label for="username" class="mb-1">User Name <span style="color: red;">*</span>
+                        <span *ngIf="
+                    this.userChangeForm.get('username')?.hasError('required') &&
+                    (this.userChangeForm.get('username')?.dirty ||
+                      this.userChangeForm.get('username')?.touched)
+                  " style="color: red">Required</span>
+                    </label>
+                    <input type="text" class="form-control" formControlName="username">
+                </div>
+
+                <div class="mb-3" *ngIf="modalMode === 'email'">
+                    <label for="email" class="mb-1">Email ID <span style="color: red;">*</span>
+                        <span *ngIf="
+                    this.userChangeForm.get('email')?.hasError('required') &&
+                    (this.userChangeForm.get('email')?.dirty ||
+                      this.userChangeForm.get('email')?.touched)
+                  " style="color: red">Required</span>
+                    </label>
+                    <input type="email" class="form-control" formControlName="email">
+                </div>
+
+                <div class="mb-3" *ngIf="modalMode ==='password'">
+                    <label for="currentPassword" class="mb-1">Current Password </label>
+                    <input type="text" class="form-control" formControlName="currentPassword">
+                </div>
+
+                <div class="mb-3" *ngIf="modalMode ==='password'">
+                    <label for="newPassword" class="mb-1">New Password </label>
+                    <input type="text" class="form-control" formControlName="newPassword">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="add-btn btn btn-outline-primary" type="button" (click)="saveUserGetDto()">Save</button>
+                <button class="btn btn-outline-danger" data-bs-dismiss="modal" aria-label="Close" type="reset"
+                    (click)="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>

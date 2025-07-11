@@ -3,7 +3,7 @@ export interface InvoiceGetDto {
     r_companyId: number;
     r_companyName: string;
     r_subcontractorId: number;
-    r_subcontractorName: string
+    name: string
     r_productId: number;
     r_productDescription: string;
     r_unitAmount: number;
