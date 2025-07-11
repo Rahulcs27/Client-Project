@@ -35,7 +35,7 @@
                     <input type="text" id="roleName" class="form-control" formControlName="roleName" placeholder="Role Name">
                 </div>
                 <div class="mb-3">
-                    <label for="description" class="mb-1">Unit Price <span style="color: red;">*</span>
+                    <label for="description" class="mb-1">Description <span style="color: red;">*</span>
                         <span *ngIf="
                     this.roleForm.get('description')?.hasError('required') &&
                     (this.roleForm.get('description')?.dirty ||

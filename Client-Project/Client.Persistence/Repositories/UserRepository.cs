@@ -83,7 +83,7 @@ namespace Client.Persistence.Repositories
             new Claim(ClaimTypes.Name, user.Username),
             new Claim("user", user.Username),
             new Claim("userId",user.Id.ToString()),
-            new Claim("role",user.RoleMasterId.ToString()),
+            new Claim("role",user.RoleName),
             new Claim(ClaimTypes.Role,user.RoleName),
             new Claim("companyId",user.CompanyId.ToString())
         };

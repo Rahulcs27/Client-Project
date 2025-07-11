@@ -5,7 +5,7 @@ import { LoginService } from './services/login.service';
 export const roleGuard: CanActivateFn = (route, state) => {
 const router = inject(Router)
 const loginService = inject(LoginService);
-if (loginService.role() && loginService.role() === 1) {
+if (loginService.role() && loginService.role() === 'Admin') {
     return true;
 }
 else {
