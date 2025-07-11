@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ namespace Client.Application.Interfaces
         Task<List<PaymentDetailsDto>> UpdatePaymentAsync(UpdatePaymentDto dto);
         Task<List<PaymentDetailsDto>> DeletePaymentAsync(int id, int updatedBy);
 
-        Task<List<PaymentDetailsDto>> GetPaymentsAsync(int? id = null);
+        Task<List<PaymentDetailsDto>> GetPaymentsAsync(int companyId , int? id = null);
 
     }
 }

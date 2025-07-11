@@ -19,10 +19,11 @@ namespace Client.Persistence.Repositories
             _db = db;
         }
 
-        public async Task<List<PaymentDetailsDto>> GetPaymentsAsync(int? id = null)
+        public async Task<List<PaymentDetailsDto>> GetPaymentsAsync(int companyId,int? id = null)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@P_id", id);
+            parameters.Add("@P_companyID", companyId);
 
             var result = await _db.QueryAsync<PaymentDetailsDto>(
                 "sp_sbs_paymentDetails_get",
@@ -73,20 +74,22 @@ namespace Client.Persistence.Repositories
             parameters.Add("@P_paymentStatus", dto.PaymentStatus);
             parameters.Add("@P_createdBy", dto.CreatedBy);
 
-            var insertResult = await _db.QueryFirstOrDefaultAsync<(string R_Status, int? R_InsertedID, int? R_ErrorNumber, string R_ErrorMessage)>(
+            var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
                 "sp_sbs_paymentDetails_insert",
                 parameters,
                 commandType: CommandType.StoredProcedure);
 
-            if (insertResult.R_Status == null || !insertResult.R_Status.Equals("Success", StringComparison.OrdinalIgnoreCase) || insertResult.R_InsertedID == null)
+            if (result == null || result.R_Status != "SUCCESS")
             {
-                var errorMsg = insertResult.R_ErrorMessage ?? "Unknown error occurred during insert.";
-                throw new Exception($"Payment insert failed: {errorMsg}");
+                throw new Exception($"Insert failed: {result?.R_ErrorMessage ?? "Unknown error"}");
+            }
+            if (result.R_Status == "SUCCESS")
+            {
+                return await GetPaymentsAsync(dto.CompanyId, null);
             }
 
-            var allPayments = await GetPaymentsAsync();
+            throw new Exception($"Insert Failed: {result.R_ErrorMessage} (ErrorCode: {result.R_ErrorNumber})");
 
-            return allPayments;
         }
         public async Task<List<PaymentDetailsDto>> UpdatePaymentAsync(UpdatePaymentDto dto)
         {
@@ -108,7 +111,7 @@ namespace Client.Persistence.Repositories
             if (result.R_Status != "Success" || result.R_UpdatedID == null)
                 throw new Exception("Update failed or payment not found");
 
-            return await GetPaymentsAsync();
+            return await GetPaymentsAsync(1,null);
         }
         public async Task<List<PaymentDetailsDto>> DeletePaymentAsync(int id, int updatedBy)
         {
@@ -125,7 +128,7 @@ namespace Client.Persistence.Repositories
             if (result.R_Status != "Success" || result.R_DeletedID == null)
                 throw new Exception("Payment deletion failed or not found.");
 
-            return await GetPaymentsAsync();
+            return await GetPaymentsAsync(1,null);
         }
 
 

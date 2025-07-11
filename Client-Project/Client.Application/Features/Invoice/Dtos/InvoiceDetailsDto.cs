@@ -12,7 +12,7 @@ namespace Client.Application.Features.Invoice.Dtos
         public int R_companyId { get; set; }
         public string R_companyName { get; set; }
         public int R_subcontractorId { get; set; }
-        public string R_subcontractorName { get; set; }
+        public string Name { get; set; }
         public int R_productId { get; set; }
         public string R_productDescription { get; set; }
         public decimal UnitPrice { get; set; }

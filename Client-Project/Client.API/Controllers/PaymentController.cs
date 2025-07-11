@@ -19,18 +19,13 @@ namespace Client.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllPayments()
+        public async Task<IActionResult> GetPayments([FromQuery]int companyId,int? id)
         {
-            var result = await _mediator.Send(new GetPaymentDetailsQuery(null));
+            var result = await _mediator.Send(new GetPaymentDetailsQuery(companyId,id));
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPaymentById(int id)
-        {
-            var result = await _mediator.Send(new GetPaymentDetailsQuery(id));
-            return Ok(result);
-        }
+       
         [HttpPost]
         public async Task<IActionResult> CreatePayment([FromBody] CreatePaymentDto paymentDto)
         {
