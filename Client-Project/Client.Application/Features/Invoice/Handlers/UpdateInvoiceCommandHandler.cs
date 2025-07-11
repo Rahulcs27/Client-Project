@@ -10,7 +10,7 @@ using MediatR;
 
 namespace Client.Application.Features.Invoice.Handlers
 {
-    public class UpdateInvoiceCommandHandler : IRequestHandler<UpdateInvoiceCommand, InvoiceDetailsDto>
+    public class UpdateInvoiceCommandHandler : IRequestHandler<UpdateInvoiceCommand, List<InvoiceDetailsDto>>
     {
         private readonly IInvoiceRepository _repo;
 
@@ -19,7 +19,7 @@ namespace Client.Application.Features.Invoice.Handlers
             _repo = repo;
         }
 
-        public async Task<InvoiceDetailsDto> Handle(UpdateInvoiceCommand request, CancellationToken cancellationToken)
+        public async Task<List<InvoiceDetailsDto>> Handle(UpdateInvoiceCommand request, CancellationToken cancellationToken)
         {
             return await _repo.UpdateInvoiceAsync(request.Invoice);
         }

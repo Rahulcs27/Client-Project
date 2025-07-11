@@ -37,17 +37,17 @@ namespace Client.API.Controllers
         //    return Ok(result);
         //}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteInvoice(int id, [FromQuery] int updatedBy)
+        public async Task<IActionResult> DeleteInvoice(int id, [FromQuery] int updatedBy, [FromQuery] int companyId)
         {
-            var result = await _mediator.Send(new DeleteInvoiceCommand(id, updatedBy));
-            return Ok(new { message = result });
+            var result = await _mediator.Send(new DeleteInvoiceCommand(id, updatedBy,companyId));
+            return Ok(result);
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] int? id)
+        public async Task<IActionResult> Get([FromQuery]int companyId,[FromQuery] int? id)
         {
-            var result = await _mediator.Send(new GetInvoicesQuery(id));
+            var result = await _mediator.Send(new GetInvoicesQuery(companyId,id));
             return Ok(result);
         }
     }

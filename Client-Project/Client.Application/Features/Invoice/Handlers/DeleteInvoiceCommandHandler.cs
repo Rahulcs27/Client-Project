@@ -10,7 +10,7 @@ using MediatR;
 
 namespace Client.Application.Features.Invoice.Handlers
 {
-    public class DeleteInvoiceCommandHandler : IRequestHandler<DeleteInvoiceCommand, string>
+    public class DeleteInvoiceCommandHandler : IRequestHandler<DeleteInvoiceCommand, List<InvoiceDetailsDto>>
     {
         private readonly IInvoiceRepository _repo;
 
@@ -19,9 +19,9 @@ namespace Client.Application.Features.Invoice.Handlers
             _repo = repo;
         }
 
-        public async Task<string> Handle(DeleteInvoiceCommand request, CancellationToken cancellationToken)
+        public async Task<List<InvoiceDetailsDto>> Handle(DeleteInvoiceCommand request, CancellationToken cancellationToken)
         {
-            return await _repo.DeleteInvoiceAsync(request.Id, request.UpdatedBy);
+            return await _repo.DeleteInvoiceAsync(request.Id, request.UpdatedBy,request.companyId);
         }
     }
 
