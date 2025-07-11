@@ -19,7 +19,7 @@ namespace Client.Application.Features.PaymentReports.Handlers
         }
         public async Task<List<SubcontractorWiseReportDto>> Handle(GetSubcontractorWiseReportQuery request, CancellationToken cancellationToken)
         {
-            return await _repo.GetSubcontractorWiseReportAsync(request.Month,request.Year,request.SubCoName);
+            return await _repo.GetSubcontractorWiseReportAsync(request.SubcontractorName, request.CompanyId,request.FromDate,request.ToDate);
         }
     }
 }

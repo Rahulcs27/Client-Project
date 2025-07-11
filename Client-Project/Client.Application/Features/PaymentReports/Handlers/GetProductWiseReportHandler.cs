@@ -19,7 +19,7 @@ namespace Client.Application.Features.PaymentReports.Handlers
         }
         public async Task<List<ProductWiseReportDto>> Handle(GetProductWiseReportQuery request, CancellationToken cancellationToken)
         {
-            var result = await _repo.GetProductWiseReportAsync(request.Month ,request.Year,request.ProductName);
+            var result = await _repo.GetProductWiseReportAsync(request.ProductName,request.SubcontractorName,request.CompanyId,request.FromDate,request.ToDate);
             return result;
         }
     }

@@ -8,6 +8,6 @@ using MediatR;
 
 namespace Client.Application.Features.Payment.Commands
 {
-    public record DeletePaymentCommand(int Id, int UpdatedBy) : IRequest<List<PaymentDetailsDto>>;
+    public record DeletePaymentCommand(int Id, int UpdatedBy,int CompanyId) : IRequest<List<PaymentDetailsDto>>;
 
 }

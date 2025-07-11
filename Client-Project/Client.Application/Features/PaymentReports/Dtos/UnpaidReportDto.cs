@@ -9,10 +9,11 @@ namespace Client.Application.Features.PaymentReports.Dtos
 
     public class UnpaidReportDto
     {
-        public string PaymentMode { get; set; }
-        public int NoOfInvoice { get; set; }
-        public decimal TotalAmount { get; set; }
-        public decimal UnPaidAmount { get; set; }
+
+        public string? SubContractor { get; set; }
+        public DateTime? InvoiceDate { get; set; }
+        public decimal? InvoiceAmount { get; set; }
+      
     }
 
 }
