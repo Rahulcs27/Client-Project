@@ -137,19 +137,8 @@ export class CompanyMasterComponent implements OnInit {
     else {
       if (this.modalMode === 'edit') {
         this.companyMasterService.editCompanyMasterUpdateDto(this.companyMasterForm.value).subscribe({
-          next: (response: CompanyMasterGetDto) => {
-            this.data = this.data.map(d => {
-              if (d.id === response.id) {
-                d.name = response.name;
-                d.phone = response.phone;
-                d.email = response.email;
-                d.address = response.address;
-                return d
-              }
-              else {
-                return d;
-              }
-            })
+          next: (response: CompanyMasterGetDto[]) => {
+            this.data = response;
             this.alert.Toast.fire('Updated Successfully', '', 'success')
             this.closeModal();
             const modalElement = document.getElementById('companyMaster-modal');
@@ -167,8 +156,8 @@ export class CompanyMasterComponent implements OnInit {
         this.companyMasterForm.get('createdBy')?.setValue(1);
         this.companyMasterService.addCompanyMasterGetDto(this.companyMasterForm.value).subscribe(
           {
-            next: (response: CompanyMasterGetDto) => {
-              this.data = [response, ...this.data];
+            next: (response: CompanyMasterGetDto[]) => {
+              this.data = response;
               this.alert.Toast.fire('Added Successfully', '', 'success')
               this.closeModal();
               const modalElement = document.getElementById('companyMaster-modal');

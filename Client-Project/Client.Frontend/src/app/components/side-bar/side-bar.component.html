@@ -1,26 +1,11 @@
 <aside class="offcanvas offcanvas-start offcanvas-width" tabindex="-1" id="sideBar" aria-labelledby="sideBarLabel">
     <div class="offcanvas-header">
         <div></div>
-        <!-- <button routerLink="/home" class="btn "></button> -->
-        <!-- <h5 class="offcanvas-title" id="sideBarLabel">{{username}}!</h5> -->
         <button type="button" class="btn" data-bs-dismiss="offcanvas" aria-label="Close">
             <i class="fa-solid fa-xmark fs-5"></i>
         </button>
     </div>
     <div class="offcanvas-body">
-        <a class="btn sideBar-nav-links" data-bs-dismiss="offcanvas" routerLink="/home">Home</a>
-        <a class="btn sideBar-nav-links mt-2" *ngIf="userRole === 'Admin'" data-bs-dismiss="offcanvas"
-            routerLink="/userMaster">User Master</a>
-        <a class="btn sideBar-nav-links mt-2" *ngIf="userRole === 'Admin'" data-bs-dismiss="offcanvas"
-            routerLink="/roleMaster">Role Master</a>
-        <a class="btn sideBar-nav-links mt-2" *ngIf="userRole === 'Admin'" data-bs-dismiss="offcanvas"
-            routerLink="/companyMaster">Company Master</a>
-        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/invoice">Invoice</a>
-        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/product">Product</a>
-        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/subContractor">SubContractor</a>
-        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/payment">payment</a>
-    </div>
-    <div class="offcanvas-footer">
         <div class="accordion" id="profile-accordion">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="profile">
@@ -32,7 +17,53 @@
                 <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="profile"
                     data-bs-parent="#profile-accordion">
                     <div class="accordion-body">
-                        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/invoice">Change Password</a>
+                        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/invoice">Change
+                            Password</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/home">Home</a>
+        <div class="accordion" *ngIf="userRole === 'Admin'" id="master-accordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header mt-2" id="master">
+                    <button class="accordion-button userName" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapse-master" aria-expanded="true" aria-controls="collapse-master">
+                        Master
+                    </button>
+                </h2>
+                <div id="collapse-master" class="accordion-collapse collapse" aria-labelledby="master"
+                    data-bs-parent="#master-accordion">
+                    <div class="accordion-body">
+                        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas"
+                            routerLink="/companyMaster">Company Master</a>
+                        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/roleMaster">Role
+                            Master</a>
+                        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/userMaster">User
+                            Master</a>
+                        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/product">Product
+                            Master</a>
+                        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas"
+                            routerLink="/subContractor">SubContractor Master</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/invoice">Invoice</a>
+        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/payment">payment</a>
+        <div class="accordion mt-2" id="report-accordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="report">
+                    <button class="accordion-button userName" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapse-report" aria-expanded="true" aria-controls="collapse-report">
+                        Reports
+                    </button>
+                </h2>
+                <div id="collapse-report" class="accordion-collapse collapse" aria-labelledby="report"
+                    data-bs-parent="#report-accordion">
+                    <div class="accordion-body">
+                        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/invoice">Change
+                            Password</a>
                     </div>
                 </div>
             </div>

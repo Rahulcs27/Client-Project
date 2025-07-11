@@ -7,16 +7,15 @@ import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InvoiceGetDto } from './invoice-dtos';
 import { ProductGetDto } from '../product/product-dtos';
-import { CompanyMasterServiceService } from '../../services/company-master-service.service';
 import { ProductService } from '../../services/product.service';
 import { SubContractorGetDto } from '../sub-contractor/sub-contractor-dtos';
 import { SubContractorService } from '../../services/sub-contractor.service';
-import { CompanyMasterGetDto } from '../company-master/company-master-dtos';
+import { DatePickerModule } from 'primeng/datepicker';
 import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-invoice',
-  imports: [TableComponent, CommonModule, ReactiveFormsModule],
+  imports: [TableComponent, CommonModule, ReactiveFormsModule, DatePickerModule],
   templateUrl: './invoice.component.html',
   styleUrl: '../../../componentStyle.css',
 })
@@ -24,21 +23,13 @@ export class InvoiceComponent {
   constructor(
     private loginService: LoginService,
     private invoiceService: InvoiceService,
-    private companyService: CompanyMasterServiceService,
     private productService: ProductService,
     private subContractorService: SubContractorService,
     private alert: AlertService
   ) { }
   modalMode: 'view' | 'edit' | 'add' = 'view';
-  displayedColumns: string[] = [
-    // 'r_id', 'r_companyName', 
-    'r_subcontractorName',
-    // 'r_productDescription', 
-    'r_invoiceDate', 'r_status', 'r_quantity', 'r_totalAmount',
-    // 'r_paymentMode', 
-    'action'];
+  displayedColumns: string[] = ['r_subcontractorName', 'r_invoiceDate', 'r_status', 'r_quantity', 'r_totalAmount', 'action'];
   data: InvoiceGetDto[] = [];
-  companies: CompanyMasterGetDto[] = [];
   products: ProductGetDto[] = [];
   subContractors: SubContractorGetDto[] = [];
   columnsInfo: {
@@ -58,7 +49,7 @@ export class InvoiceComponent {
       subcontractorId: new FormControl(''),
       productId: new FormControl('', [Validators.required,]),
       invoiceDate: new FormControl('', [Validators.required]),
-      // unitPrice: new FormControl('', [Validators.required]),
+      unitAmount: new FormControl('', [Validators.required]),
       status: new FormControl(''),
       quantity: new FormControl('', [Validators.required]),
       totalAmount: new FormControl('', [Validators.required]),
@@ -72,15 +63,6 @@ export class InvoiceComponent {
     this.invoiceForm.get('totalAmount')?.disable();
     const companyId = this.loginService.companyId();
     if(companyId) {
-      this.companyService.getAllCompanyMasterGetDto().subscribe({
-        next: (response: CompanyMasterGetDto[]) => {
-          this.companies = response;
-        },
-        error: (error) => {
-          console.log(error);
-  
-        }
-      })
       this.productService.getAllProductGetDto(companyId).subscribe({
         next: (response: ProductGetDto[]) => {
           this.products = response
@@ -100,26 +82,11 @@ export class InvoiceComponent {
     }
     this.getAllInvoiceGetDto()
     this.columnsInfo = {
-      // 'r_id': {
-      //   'title': 'Invoice No.',
-      //   'isSort': true,
-      //   'templateRef': null
-      // },
-      // 'r_companyName': {
-      //   'title': 'Company Name',
-      //   'isSort': true,
-      //   'templateRef': null
-      // },
       'r_subcontractorName': {
         'title': 'Sub-Contract Name',
         'isSort': true,
         'templateRef': null
       },
-      // 'r_productDescription': {
-      //   'title': 'Product Name',
-      //   'isSort': true,
-      //   'templateRef': null
-      // },
       'r_invoiceDate': {
         'title': 'Invoice Date',
         'isSort': true,
@@ -140,11 +107,6 @@ export class InvoiceComponent {
         'isSort': true,
         'templateRef': null
       },
-      // 'r_paymentMode': {
-      //   'title': 'Payment Mode',
-      //   'isSort': true,
-      //   'templateRef': null
-      // },
       'action': {
         'title': 'Action',
         'templateRef': this.checkViewer() ? null : this.actionTemplateRef

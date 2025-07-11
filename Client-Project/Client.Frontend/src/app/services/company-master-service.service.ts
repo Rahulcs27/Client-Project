@@ -14,11 +14,11 @@ export class CompanyMasterServiceService {
     return this.http.get<CompanyMasterGetDto[]>(`${apiUrl}/Company`);
   }
 
-  editCompanyMasterUpdateDto(formData:CompanyMasterUpdateDto): Observable<CompanyMasterGetDto> {
-    return this.http.put<CompanyMasterGetDto>(`${apiUrl}/Company/update`,formData);
+  editCompanyMasterUpdateDto(formData:CompanyMasterUpdateDto): Observable<CompanyMasterGetDto[]> {
+    return this.http.put<CompanyMasterGetDto[]>(`${apiUrl}/Company/update`,formData);
   }
 
-  addCompanyMasterGetDto(formData:CompanyMasterCreateDto): Observable<CompanyMasterGetDto> {
-    return this.http.post<CompanyMasterGetDto>(`${apiUrl}/Company/create`,formData);
+  addCompanyMasterGetDto(formData:CompanyMasterCreateDto): Observable<CompanyMasterGetDto[]> {
+    return this.http.post<CompanyMasterGetDto[]>(`${apiUrl}/Company/create`,formData);
   }
 }
