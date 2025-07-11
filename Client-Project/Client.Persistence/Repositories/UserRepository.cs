@@ -182,7 +182,6 @@ namespace Client.Persistence.Repositories
             if (result == null || result.R_Status != "SUCCESS")
                 throw new Exception($"Update failed: {result?.R_ErrorMessage ?? "Unknown error"}");
 
-            // 📨 Send Email Notification
             string emailSubject = "Your account information has been updated";
             var sb = new StringBuilder();
             sb.AppendLine($"<p>Dear {userDto.Username},</p>");
@@ -192,7 +191,7 @@ namespace Client.Persistence.Repositories
             //if (!string.IsNullOrEmpty(userDto.Username))
             //    sb.AppendLine($"<p>✅ Your username has been updated to <strong>{userDto.Username}</strong>.</p>");
             sb.AppendLine("<p>If you did not initiate this change, please contact support immediately.</p>");
-            sb.AppendLine("<br/><p>Thank you,<br/>HRMS Team</p>");
+            sb.AppendLine("<br/><p>Thank you! ♥");
 
             await _emailService.SendEmailAsync(userDto.Email, emailSubject, sb.ToString());
 
