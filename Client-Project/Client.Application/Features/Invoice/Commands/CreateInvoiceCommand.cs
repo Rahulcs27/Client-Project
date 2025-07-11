@@ -8,6 +8,6 @@ using MediatR;
 
 namespace Client.Application.Features.Invoice.Commands
 {
-    public record CreateInvoiceCommand(CreateInvoiceDto Invoice) : IRequest<InvoiceDetailsDto>;
+    public record CreateInvoiceCommand(CreateInvoiceDto Invoice) : IRequest<List<InvoiceDetailsDto>>;
     
 }

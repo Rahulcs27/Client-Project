@@ -9,12 +9,12 @@ namespace Client.Application.Interfaces
 {
     public interface IInvoiceRepository
     {
-        Task<InvoiceDetailsDto> CreateInvoiceAsync(CreateInvoiceDto dto);
-        Task<InvoiceDetailsDto> UpdateInvoiceAsync(UpdateInvoiceDto dto);
-        Task<string> DeleteInvoiceAsync(int id, int updatedBy);
+        Task<List<InvoiceDetailsDto>> CreateInvoiceAsync(CreateInvoiceDto dto);
+        Task<List<InvoiceDetailsDto>> UpdateInvoiceAsync(UpdateInvoiceDto dto);
+        Task<List<InvoiceDetailsDto>> DeleteInvoiceAsync(int id, int updatedBy,int companyId);
 
 
-        Task<List<InvoiceDetailsDto>> GetInvoicesAsync(int? id = null);
+        Task<List<InvoiceDetailsDto>> GetInvoicesAsync(int companyId,int? id = null);
     }
 
 }

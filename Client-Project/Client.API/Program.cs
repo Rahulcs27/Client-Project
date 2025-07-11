@@ -2,9 +2,12 @@
 using System.Data;
 using System.Text;
 using Client.Application;
+using Client.Application.Interfaces;
 using Client.Application.Profiles;
+using Client.Domain.Models;
 using Client.Persistence;
 using Client.Persistence.Context;
+using Client.Persistence.Repositories;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -29,6 +32,10 @@ namespace Client.API
             // Add services to the container.
             builder.Services.AddApplicationServices();
             builder.Services.AddPersistenceServices(builder.Configuration);
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+            builder.Services.AddScoped<IEmailService, EmailService>();
+
+
             // AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);

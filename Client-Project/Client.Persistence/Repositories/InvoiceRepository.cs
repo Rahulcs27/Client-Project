@@ -20,10 +20,11 @@ namespace Client.Persistence.Repositories
             _db = db;
         }
 
-        public async Task<List<InvoiceDetailsDto>> GetInvoicesAsync(int? id = null)
+        public async Task<List<InvoiceDetailsDto>> GetInvoicesAsync(int companyId, int? id = null)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@P_id", id);
+            parameters.Add("@P_companyId", companyId);
 
             var result = await _db.QueryAsync<InvoiceDetailsDto>(
                 "sp_sbs_invoiceDetails_get",
@@ -33,7 +34,7 @@ namespace Client.Persistence.Repositories
 
             return result.ToList();
         }
-        public async Task<InvoiceDetailsDto> CreateInvoiceAsync(CreateInvoiceDto dto)
+        public async Task<List<InvoiceDetailsDto>> CreateInvoiceAsync(CreateInvoiceDto dto)
         {
             var insertParams = new DynamicParameters();
             insertParams.Add("@P_companyId", dto.CompanyId);
@@ -41,69 +42,82 @@ namespace Client.Persistence.Repositories
             insertParams.Add("@P_productId", dto.ProductId);
             insertParams.Add("@P_invoiceDate", dto.InvoiceDate);
             insertParams.Add("@P_quantity", dto.Quantity);
+            insertParams.Add("P_unitAmount", dto.UnitAmount);
             insertParams.Add("@P_totalAmount", dto.TotalAmount);
             insertParams.Add("@P_paymentMode", dto.PaymentMode);
             insertParams.Add("@P_createdBy", dto.CreatedBy);
 
-            var insertResult = await _db.QueryFirstOrDefaultAsync<dynamic>(
+            var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
                 "sp_sbs_invoiceDetails_insert",
                 insertParams,
                 commandType: CommandType.StoredProcedure
             );
 
-            if (insertResult == null || insertResult.R_Status != "Success")
+            if (result == null || result.R_Status != "SUCCESS")
             {
-                throw new Exception($"Insert failed: {insertResult?.R_ErrorMessage ?? "Unknown error"}");
+                throw new Exception($"Insert failed: {result?.R_ErrorMessage ?? "Unknown error"}");
             }
 
-            int insertedId = insertResult.R_InsertedID;
+            //int insertedId = insertResult.R_InsertedID;
 
-            var getParams = new DynamicParameters();
-            getParams.Add("@P_id", insertedId);
+            //var getParams = new DynamicParameters();
+            //getParams.Add("@P_id", insertedId);
+            //getParams.Add("P_companyID", dto.CompanyId);
 
-            var invoiceDetails = await _db.QueryFirstOrDefaultAsync<InvoiceDetailsDto>(
-                "sp_sbs_invoiceDetails_get",
-                getParams,
-                commandType: CommandType.StoredProcedure
-            );
+            //var invoiceDetails = await _db.QueryFirstOrDefaultAsync<dynamic>(
+            //    "sp_sbs_invoiceDetails_get",
+            //    getParams,
+            //    commandType: CommandType.StoredProcedure
+            //);
+            if (result.R_Status == "SUCCESS")
+            {
+                return await GetInvoicesAsync(dto.CompanyId, null);
+            }
 
-            return invoiceDetails ?? throw new Exception("Inserted invoice not found.");
+            throw new Exception($"Insert Failed: {result.R_ErrorMessage} (ErrorCode: {result.R_ErrorNumber})");
         }
-        public async Task<InvoiceDetailsDto> UpdateInvoiceAsync(UpdateInvoiceDto dto)
+        public async Task<List<InvoiceDetailsDto>> UpdateInvoiceAsync(UpdateInvoiceDto dto)
         {
             var updateParams = new DynamicParameters();
             updateParams.Add("@P_id", dto.Id);
+            updateParams.Add("@P_companyId", dto.CompanyId);
             updateParams.Add("@P_productId", dto.ProductId);
             updateParams.Add("@P_invoiceDate", dto.InvoiceDate);
             updateParams.Add("@P_quantity", dto.Quantity);
+            updateParams.Add("P_unitAmount", dto.UnitAmount);
             updateParams.Add("@P_totalAmount", dto.TotalAmount);
             updateParams.Add("@P_paymentMode", dto.PaymentMode);
             updateParams.Add("@P_status", dto.Status);
             updateParams.Add("@P_updatedBy", dto.UpdatedBy);
 
-            var updateResult = await _db.QueryFirstOrDefaultAsync<dynamic>(
+            var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
                 "sp_sbs_invoiceDetails_update",
                 updateParams,
                 commandType: CommandType.StoredProcedure
             );
 
-            if (updateResult == null || updateResult.R_Status != "Success")
+            if (result == null || result.R_Status != "SUCCESS")
             {
-                throw new Exception($"Update failed: {updateResult?.R_ErrorMessage ?? "Unknown error"}");
+                throw new Exception($"Update failed: {result?.R_ErrorMessage ?? "Unknown error"}");
             }
 
-            int updatedId = updateResult.R_UpdatedID;
+            //int updatedId = updateResult.R_UpdatedID;
 
-            var getParams = new DynamicParameters();
-            getParams.Add("@P_id", updatedId);
+            //var getParams = new DynamicParameters();
+            //getParams.Add("@P_id", updatedId);
 
-            var updatedInvoice = await _db.QueryFirstOrDefaultAsync<InvoiceDetailsDto>(
-                "sp_sbs_invoiceDetails_get",
-                getParams,
-                commandType: CommandType.StoredProcedure
-            );
+            //var updatedInvoice = await _db.QueryFirstOrDefaultAsync<InvoiceDetailsDto>(
+            //    "sp_sbs_invoiceDetails_get",
+            //    getParams,
+            //    commandType: CommandType.StoredProcedure
+            //);
+            if (result.R_Status == "SUCCESS")
+            {
+                return await GetInvoicesAsync(dto.CompanyId, null);
+            }
 
-            return updatedInvoice ?? throw new Exception("Updated invoice not found.");
+            throw new Exception($"Update Failed: {result.R_ErrorMessage} (ErrorCode: {result.R_ErrorNumber})");
+
         }
 
         //public async Task<InvoiceDetailsDto> DeleteInvoiceAsync(int id, int updatedBy)
@@ -139,7 +153,7 @@ namespace Client.Persistence.Repositories
         //           ?? throw new Exception("Invoice not found after deletion.");
         //}
 
-        public async Task<string> DeleteInvoiceAsync(int id, int updatedBy)
+        public async Task<List<InvoiceDetailsDto>> DeleteInvoiceAsync(int id, int updatedBy,int companyId)
         {
             var deleteParams = new DynamicParameters();
             deleteParams.Add("@P_id", id);
@@ -151,10 +165,16 @@ namespace Client.Persistence.Repositories
                 commandType: CommandType.StoredProcedure
             );
 
-            if (result == null || result.R_Status != "Success")
+            if (result == null || result.R_Status != "SUCCESS")
                 throw new Exception($"Delete failed: {result?.R_ErrorMessage ?? "Unknown error"}");
 
-            return "Success";
+            if (result.R_Status == "SUCCESS")
+            {
+                return await GetInvoicesAsync(companyId, null);
+            }
+
+            throw new Exception($"Update Failed: {result.R_ErrorMessage} (ErrorCode: {result.R_ErrorNumber})");
+
         }
 
 

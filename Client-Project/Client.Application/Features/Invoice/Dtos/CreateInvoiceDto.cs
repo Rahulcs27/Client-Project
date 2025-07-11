@@ -13,6 +13,7 @@ namespace Client.Application.Features.Invoice.Dtos
         public int ProductId { get; set; }
         public DateTime InvoiceDate { get; set; }
         public int Quantity { get; set; }
+        public decimal UnitAmount { get; set; }
         public decimal TotalAmount { get; set; }
         public string PaymentMode { get; set; }
         public int CreatedBy { get; set; }
