@@ -14,13 +14,10 @@ export class AppComponent {
   title = 'Client.Frontend';
   userName: string | null = '';
 
-  constructor( 
-    private route: Router,
-    private alert: AlertService, 
-    private loginService: LoginService) { }
+  constructor(private loginService: LoginService) { }
 
   checkLogin = (): boolean => {
-    if(sessionStorage.getItem('token') != null){
+    if (sessionStorage.getItem('token') != null) {
       this.userName = this.loginService.user();
       return true;
     }
@@ -28,8 +25,6 @@ export class AppComponent {
   };
 
   logoutUser() {
-    sessionStorage.clear();
-    this.route.navigate(['/'])
-    this.alert.Toast.fire('Logged Out Successfully', '', 'success');
+    this.loginService.logout();
   }
 }
