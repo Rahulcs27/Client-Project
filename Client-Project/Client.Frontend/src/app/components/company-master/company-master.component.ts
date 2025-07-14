@@ -7,6 +7,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AlertService } from '../../services/alert.service';
 import { CompanyMasterGetDto } from './company-master-dtos';
 import { LoginService } from '../../services/login.service';
+import { ExportFileService } from '../../services/export-file.service';
 
 @Component({
   selector: 'app-company-master',
@@ -17,7 +18,9 @@ import { LoginService } from '../../services/login.service';
 export class CompanyMasterComponent implements OnInit {
   userId: number | null = null;
   companyId: number | null = null;
+  searchVaue: string = '';
   constructor(
+    private exportService: ExportFileService,
     private loginService: LoginService,
     private companyMasterService: CompanyMasterServiceService,
     private alert: AlertService
@@ -25,6 +28,7 @@ export class CompanyMasterComponent implements OnInit {
   modalMode: 'view' | 'edit' | 'add' = 'view';
   displayedColumns: string[] = ['name', 'phone', 'email', 'action'];
   data: CompanyMasterGetDto[] = [];
+  fullData: CompanyMasterGetDto[] = [];
   columnsInfo: {
     [key: string]: {
       'title'?: string,
@@ -39,8 +43,8 @@ export class CompanyMasterComponent implements OnInit {
       id: new FormControl(''),
       name: new FormControl('', [Validators.required, Validators.maxLength(20),]),
       phone: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{10}$'),]),
-      email: new FormControl('', [Validators.required]),
-      address: new FormControl('', [Validators.required]),
+      email: new FormControl('', [Validators.required, Validators.email,Validators.maxLength(70),]),
+      address: new FormControl('', [Validators.required, Validators.maxLength(250),]),
       createdBy: new FormControl(''),
       updatedBy: new FormControl(''),
     }
@@ -53,6 +57,7 @@ export class CompanyMasterComponent implements OnInit {
       this.companyMasterService.getAllCompanyMasterGetDto().subscribe({
         next: (response: CompanyMasterGetDto[]) => {
           this.data = response;
+          this.fullData = response;
         },
         error: (error) => {
           console.log(error);
@@ -83,6 +88,30 @@ export class CompanyMasterComponent implements OnInit {
     else {
       this.loginService.logout();
     }
+  }
+
+  exportToPdf(){
+    this.exportService.printToPDF('table','companyMaster.pdf',[
+      'Name',
+      'Phone No.',
+      'Email Address',
+    ])
+  }
+
+  exportToExcel(){
+    this.exportService.printToExcel('table', 'companyMaster.xlsx', [
+      'Name',
+      'Phone No.',
+      'Email Address',
+    ])
+  }
+
+  setSearchValue(value: string){
+    this.searchVaue = value;
+  }
+
+  onSearch() {
+    this.data = this.fullData.filter(d => d.name.includes(this.searchVaue));
   }
 
   closeModal() {
@@ -135,7 +164,8 @@ export class CompanyMasterComponent implements OnInit {
       if (result.isConfirmed && this.userId && this.companyId) {
         this.companyMasterService.deleteCompanyMasterGetDto(id, this.userId).subscribe({
           next: (response: CompanyMasterGetDto[]) => {
-            this.data = response;
+            this.fullData = response;
+            this.onSearch();
             this.alert.Toast.fire('Deleted Successfully', '', 'success');
           },
           error: (error) => {
@@ -155,7 +185,8 @@ export class CompanyMasterComponent implements OnInit {
       if (this.modalMode === 'edit') {
         this.companyMasterService.editCompanyMasterUpdateDto(this.companyMasterForm.value).subscribe({
           next: (response: CompanyMasterGetDto[]) => {
-            this.data = response;
+            this.fullData = response;
+            this.onSearch()
             this.alert.Toast.fire('Updated Successfully', '', 'success')
             this.closeModal();
             const modalElement = document.getElementById('companyMaster-modal');
@@ -170,11 +201,11 @@ export class CompanyMasterComponent implements OnInit {
         });
       }
       else if (this.modalMode === 'add') {
-        this.companyMasterForm.get('createdBy')?.setValue(1);
         this.companyMasterService.addCompanyMasterGetDto(this.companyMasterForm.value).subscribe(
           {
             next: (response: CompanyMasterGetDto[]) => {
-              this.data = response;
+              this.fullData = response;
+              this.onSearch();
               this.alert.Toast.fire('Added Successfully', '', 'success')
               this.closeModal();
               const modalElement = document.getElementById('companyMaster-modal');

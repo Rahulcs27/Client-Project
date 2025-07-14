@@ -1,10 +1,18 @@
 <h2 class="pt-4 fs-1">Invoice</h2>
 
-<div class="pt-md-5 pt-3 px-md-5 px-3 pb-2" *ngIf="!checkViewer()">
-    <button data-bs-toggle="modal" data-bs-target="#invoice-modal" class="add-btn btn btn-outline-primary"
+<div class="btn-container pt-md-5 pt-3 px-md-5 px-3 pb-2">
+    <button data-bs-toggle="modal" data-bs-target="#invoice-modal" class="add-btn btn btn-outline-primary mb-2"
         (click)="addInvoiceGetDto()">Add
     </button>
+    <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="
+        exportToPdf()">
+        <i class="fa-solid fa-file-pdf"></i> Print to PDF
+    </button>
+    <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="exportToExcel()">
+        <i class="fa-solid fa-file-excel"></i> Print to Excel
+    </button>
 </div>
+
 <app-table [data]="data" [displayedColumns]="displayedColumns" [columnsInfo]="columnsInfo">
 </app-table>
 
@@ -71,6 +79,11 @@
                     (this.invoiceForm.get('unitAmount')?.dirty ||
                       this.invoiceForm.get('unitAmount')?.touched)
                   " style="color: red">Required</span>
+                    <span *ngIf="modalMode !== 'view' &&
+                    this.invoiceForm.get('unitAmount')?.hasError('pattern') &&
+                    (this.invoiceForm.get('unitAmount')?.dirty ||
+                      this.invoiceForm.get('unitAmount')?.touched)
+                  " style="color: red">Invalid Price</span>
                     </label>
                     <input type="text" id="unitAmount" class="form-control" placeholder="Unit Price" formControlName="unitAmount" (input)="calculateTotalAmount()" />
                 </div>
@@ -83,7 +96,7 @@
                       this.invoiceForm.get('invoiceDate')?.touched)
                   " style="color: red">Required</span>
                     </label>
-                    <p-datepicker id="invoiceDate" formControlName="invoiceDate" placeholder="dd/MM/yy" dateFormat="dd/mm/yy" />
+                    <p-datepicker id="invoiceDate" formControlName="invoiceDate" placeholder="dd-MM-yy" dateFormat="dd-mm-yy" />
                 </div>
                 <div class="mb-3" *ngIf="modalMode !== 'add'">
                     <label for="status" class="mb-1">Status <span *ngIf="modalMode !== 'view'"
@@ -109,6 +122,11 @@
                     (this.invoiceForm.get('quantity')?.dirty ||
                       this.invoiceForm.get('quantity')?.touched)
                   " style="color: red">Required</span>
+                  <span *ngIf="modalMode !== 'view' &&
+                    this.invoiceForm.get('quantity')?.hasError('pattern') &&
+                    (this.invoiceForm.get('quantity')?.dirty ||
+                      this.invoiceForm.get('quantity')?.touched)
+                  " style="color: red">Invalid Quantity</span>
                     </label>
                     <input type="text" id="quantity" class="form-control" formControlName="quantity"
                         (input)="calculateTotalAmount()">

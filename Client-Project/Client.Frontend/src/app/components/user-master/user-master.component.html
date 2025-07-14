@@ -1,23 +1,38 @@
 <h2 class="pt-4 fs-1">User Master</h2>
 
-<div class="pt-md-5 pt-3 px-md-5 px-3 pb-2">
-    <button data-bs-toggle="modal" data-bs-target="#user-modal" class="add-btn btn btn-outline-primary"
-    (click)="addUserGetDto()">Add
+<div class="btn-container pt-md-5 pt-3 px-md-5 px-3 pb-2">
+    <button data-bs-toggle="modal" data-bs-target="#user-modal" class="add-btn btn btn-outline-primary mb-2"
+        (click)="addUserGetDto()">Add
     </button>
+    <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="
+        exportToPdf()">
+        <i class="fa-solid fa-file-pdf"></i> Print to PDF
+    </button>
+    <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="exportToExcel()">
+        <i class="fa-solid fa-file-excel"></i> Print to Excel
+    </button>
+    <div class="input-group mb-2">
+        <input #searchInput (input)="setSearchValue(searchInput.value)" type="text" class="form-control input-search"
+            placeholder="Search: User Name" aria-label="Search by User Name" aria-describedby="search-btn">
+        <div class="input-group-append">
+            <span class="input-group-text btn-search" id="search-btn" (click)="onSearch()">Search</span>
+        </div>
+    </div>
 </div>
+
 <app-table [data]="data" [displayedColumns]="displayedColumns" [columnsInfo]="columnsInfo">
 </app-table>
 
 <ng-template #actionTemplateRef let-row>
     <i class="fa-regular fa-eye icon" data-bs-toggle="modal" data-bs-target="#user-modal"
-    (click)="viewAndEditUserGetDto(row,'view')"></i>
+        (click)="viewAndEditUserGetDto(row,'view')"></i>
     <i class="fa-regular fa-pen-to-square icon" data-bs-toggle="modal" data-bs-target="#user-modal"
         (click)="viewAndEditUserGetDto(row,'edit')"></i>
     <i class="fa-solid fa-trash icon" (click)="deleteRowData(row.id)"></i>
 </ng-template>
 
-<div class="modal fade" [formGroup]="userForm" id="user-modal" data-bs-backdrop="static"
-    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" [formGroup]="userForm" id="user-modal" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <form class="modal-content">
             <div class="modal-header d-flex justify-content-between">
@@ -48,6 +63,11 @@
                     (this.userForm.get('username')?.dirty ||
                       this.userForm.get('username')?.touched)
                   " style="color: red">Required</span>
+                        <span *ngIf="
+                    this.userForm.get('username')?.hasError('maxlength') &&
+                    (this.userForm.get('username')?.dirty ||
+                      this.userForm.get('username')?.touched)
+                  " style="color: red">Max 50 Characters</span>
                     </label>
                     <input type="text" class="form-control" formControlName="username">
                 </div>
@@ -59,6 +79,16 @@
                     (this.userForm.get('email')?.dirty ||
                       this.userForm.get('email')?.touched)
                   " style="color: red">Required</span>
+                        <span *ngIf="
+                    this.userForm.get('email')?.hasError('email') &&
+                    (this.userForm.get('email')?.dirty ||
+                      this.userForm.get('email')?.touched)
+                  " style="color: red">Invalid Email</span>
+                        <span *ngIf="
+                    this.userForm.get('email')?.hasError('maxlength') &&
+                    (this.userForm.get('email')?.dirty ||
+                      this.userForm.get('email')?.touched)
+                  " style="color: red">Max 70 Characters</span>
                     </label>
                     <input type="email" class="form-control" formControlName="email">
                 </div>
@@ -70,13 +100,21 @@
                     (this.userForm.get('password')?.dirty ||
                       this.userForm.get('password')?.touched)
                   " style="color: red">Required</span>
+                        <span *ngIf="modalMode === 'add' &&
+                    this.userForm.get('password')?.hasError('pattern') &&
+                    (this.userForm.get('password')?.dirty ||
+                      this.userForm.get('password')?.touched)
+                  " style="color: red">Should
+                            contain
+                            atleast 1 capital letter, 1 numeric, 1 small letter, and 1 alphanumeric character (Between
+                            4-10
+                            digits)</span>
                     </label>
                     <input type="text" class="form-control" formControlName="password">
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="add-btn btn btn-outline-primary" type="button"
-                    (click)="saveUserGetDto()">Save</button>
+                <button class="add-btn btn btn-outline-primary" type="button" (click)="saveUserGetDto()">Save</button>
                 <button class="btn btn-outline-danger" data-bs-dismiss="modal" aria-label="Close" type="reset"
                     (click)="closeModal()">Cancel</button>
             </div>

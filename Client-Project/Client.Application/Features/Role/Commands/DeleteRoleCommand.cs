@@ -9,6 +9,6 @@ using MediatR;
 namespace Client.Application.Features.Role.Commands
 {
 
-    public record DeleteRoleCommand(int Id) : IRequest<List<RoleDto>>;
+    public record DeleteRoleCommand(int Id, int updatedBy) : IRequest<List<RoleDto>>;
 
 }

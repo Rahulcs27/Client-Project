@@ -13,16 +13,16 @@ import { SubContractorWiseReportDto } from '../components/sub-contractor-wise-re
 export class ReportService {
   constructor(private http: HttpClient) { }
 
-  getAllPaidReportsGetDto(): Observable<PaidReportDto[]> {
-    return this.http.get<PaidReportDto[]>(`${apiUrl}/Report/paid-report`);
+  getAllPaidReportsGetDto(url:string): Observable<PaidReportDto[]> {
+    return this.http.get<PaidReportDto[]>(`${apiUrl}/Report/paid-report${url}`);
   }
-   getAllUnPaidReportsGetDto(): Observable<UnpaidReportDto[]> {
-    return this.http.get<UnpaidReportDto[]>(`${apiUrl}/Report/unpaid-report`);
+   getAllUnPaidReportsGetDto(url:string): Observable<UnpaidReportDto[]> {
+    return this.http.get<UnpaidReportDto[]>(`${apiUrl}/Report/unpaid-report${url}`);
   }
-  getAllProductWiseReportsGetDto(): Observable<ProductWiseReportComponent[]> {
-    return this.http.get<ProductWiseReportComponent[]>(`${apiUrl}/Report/product-wise-report`);
+  getAllProductWiseReportsGetDto(url:string): Observable<ProductWiseReportComponent[]> {
+    return this.http.get<ProductWiseReportComponent[]>(`${apiUrl}/Report/product-wise-report${url}`);
   }
-  getAllSubContractorWiseReportsGetDto(): Observable<SubContractorWiseReportDto[]> {
-    return this.http.get<SubContractorWiseReportDto[]>(`${apiUrl}/Report/subcontractor-wise-report`);
+  getAllSubContractorWiseReportsGetDto(url:string): Observable<SubContractorWiseReportDto[]> {
+    return this.http.get<SubContractorWiseReportDto[]>(`${apiUrl}/Report/subcontractor-wise-report${url}`);
   }
 }

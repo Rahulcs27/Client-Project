@@ -31,7 +31,7 @@ namespace Client.Persistence.Repositories
                 commandType: CommandType.StoredProcedure
             );
 
-            if (result.status == "Success" && result.inserted_id.HasValue)
+            if (result.status == "SUCCESS" && result.inserted_id.HasValue)
             {
                 return await GetRolesAsync(null);
             }
@@ -52,23 +52,18 @@ namespace Client.Persistence.Repositories
                 commandType: CommandType.StoredProcedure
             );
 
-            if (result == "Success")
+            if (result == "SUCCESS")
             {
-                var roles = await _db.QueryAsync<RoleDto>(
-                    "sp_sbs_roleMaster_get",
-                    new { p_id = (int?)null },
-                    commandType: CommandType.StoredProcedure
-                );
-
-                return roles.ToList();
+                return await GetRolesAsync(null);
             }
 
             throw new Exception("Role update failed: " + result);
         }
-        public async Task<string> DeleteRoleAsync(int id)
+        public async Task<List<RoleDto>> DeleteRoleAsync(int id, int updatedBy)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@p_id", id);
+            parameters.Add("@p_updatedBy", updatedBy);
 
             var result = await _db.QueryFirstOrDefaultAsync<string>(
                 "sp_sbs_roleMaster_delete",
@@ -76,7 +71,12 @@ namespace Client.Persistence.Repositories
                 commandType: CommandType.StoredProcedure
             );
 
-            return result;
+            if (result == "SUCCESS")
+            {
+                return await GetRolesAsync(null);
+            }
+
+            throw new Exception(result);
         }
         public async Task<List<RoleDto>> GetRolesAsync(int? id)
         {

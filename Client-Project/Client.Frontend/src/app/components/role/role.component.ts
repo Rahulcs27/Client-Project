@@ -6,15 +6,21 @@ import { TableComponent } from '../utils/table/table.component';
 import { AlertService } from '../../services/alert.service';
 import { RoleGetDto } from './role-dtos';
 import { RoleService } from '../../services/role.service';
+import { ExportFileService } from '../../services/export-file.service';
+import { LoginService } from '../../services/login.service';
 
 @Component({
   selector: 'app-role',
-  imports: [CommonModule,ReactiveFormsModule,TableComponent],
+  imports: [CommonModule, ReactiveFormsModule, TableComponent],
   templateUrl: './role.component.html',
   styleUrl: '../../../componentStyle.css'
 })
 export class RoleComponent {
-  constructor(private roleService: RoleService,
+  userId: number | null = null;
+  constructor(
+    private loginService: LoginService,
+    private exportService: ExportFileService,
+    private roleService: RoleService,
     private alert: AlertService
   ) { }
   modalMode: 'edit' | 'add' = 'edit';
@@ -40,22 +46,35 @@ export class RoleComponent {
   );
 
   ngOnInit(): void {
-    this.getAllRoleGetDto()
-    this.columnsInfo = {
-      'roleName': {
-        'title': 'Role',
-        'isSort': true,
-        'templateRef': null
-      },
-      'description': {
-        'title': 'Description',
-        'isSort': true,
-        'templateRef': null
-      },
-      'action': {
-        'title': 'Action',
-        'templateRef': this.actionTemplateRef
+    this.userId = this.loginService.userId();
+    if (this.userId) {
+      this.roleService.getAllRoleGetDto().subscribe({
+        next: (response: RoleGetDto[]) => {
+          this.data = response;
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      });
+      this.columnsInfo = {
+        'roleName': {
+          'title': 'Role',
+          'isSort': true,
+          'templateRef': null
+        },
+        'description': {
+          'title': 'Description',
+          'isSort': true,
+          'templateRef': null
+        },
+        'action': {
+          'title': 'Action',
+          'templateRef': this.actionTemplateRef
+        }
       }
+    }
+    else {
+      this.loginService.logout();
     }
 
   }
@@ -71,17 +90,6 @@ export class RoleComponent {
     this.modalMode = 'edit';
   }
 
-  getAllRoleGetDto() {
-    this.roleService.getAllRoleGetDto().subscribe({
-      next: (response: RoleGetDto[]) => {
-        this.data = response;
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    });
-  }
-
   addRoleGetDto() {
     this.modalMode = 'add';
   }
@@ -91,19 +99,39 @@ export class RoleComponent {
       id: obj.id,
       description: obj.description,
       roleName: obj.roleName,
-      updatedBy: 1
+      updatedBy: this.userId
     })
     this.modalMode = 'edit';
   }
 
   deleteRowData(id: number) {
     this.alert.Delete.fire().then((result) => {
-      if (result.isConfirmed) {
-        console.log('Confirmed!');
-      } else {
-        console.log('Cancelled');
+      if (result.isConfirmed && this.userId) {
+        this.roleService.deleteRoleGetDto(id, this.userId).subscribe({
+          next: (response) => {
+            this.data = response
+            this.alert.Toast.fire('Deleted Successfully', '', 'success');
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        })
       }
     });
+  }
+
+  exportToPdf() {
+    this.exportService.printToPDF('table', 'roleMaster.pdf', [
+      'Role',
+      'Description',
+    ])
+  }
+
+  exportToExcel() {
+    this.exportService.printToExcel('table', 'roleMaster.xlsx', [
+      'Role',
+      'Description',
+    ])
   }
 
   saveRoleGetDto() {
@@ -130,7 +158,7 @@ export class RoleComponent {
         });
       }
       else if (this.modalMode === 'add') {
-        this.roleForm.get('createdBy')?.setValue(1);
+        this.roleForm.get('createdBy')?.setValue(this.userId);
         this.roleService.addRoleGetDto(this.roleForm.value).subscribe(
           {
             next: (response: RoleGetDto[]) => {

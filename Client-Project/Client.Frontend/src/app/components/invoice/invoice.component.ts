@@ -12,6 +12,7 @@ import { SubContractorGetDto } from '../sub-contractor/sub-contractor-dtos';
 import { SubContractorService } from '../../services/sub-contractor.service';
 import { DatePickerModule } from 'primeng/datepicker';
 import { LoginService } from '../../services/login.service';
+import { ExportFileService } from '../../services/export-file.service';
 
 @Component({
   selector: 'app-invoice',
@@ -23,6 +24,7 @@ export class InvoiceComponent {
   companyId: number | null = null;
   userId: number | null = null;
   constructor(
+    private exportService: ExportFileService,
     private loginService: LoginService,
     private invoiceService: InvoiceService,
     private productService: ProductService,
@@ -51,9 +53,9 @@ export class InvoiceComponent {
       subcontractorId: new FormControl(''),
       productId: new FormControl('', [Validators.required,]),
       invoiceDate: new FormControl('', [Validators.required]),
-      unitAmount: new FormControl('', [Validators.required]),
+      unitAmount: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),]),
       status: new FormControl(''),
-      quantity: new FormControl('', [Validators.required]),
+      quantity: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+'),]),
       totalAmount: new FormControl('', [Validators.required]),
       paymentMode: new FormControl('', [Validators.required]),
       createdBy: new FormControl(''),
@@ -112,13 +114,13 @@ export class InvoiceComponent {
           'templateRef': null
         },
         'r_totalAmount': {
-          'title': 'Total Amout',
+          'title': 'Total Amount',
           'isSort': true,
           'templateRef': null
         },
         'action': {
           'title': 'Action',
-          'templateRef': this.checkViewer() ? null : this.actionTemplateRef
+          'templateRef': this.actionTemplateRef
         }
       }
     }
@@ -126,7 +128,26 @@ export class InvoiceComponent {
       this.loginService.logout();
     }
   }
-  checkViewer = (): boolean => this.loginService.role() !== null && this.loginService.role() === 'Viewer';
+
+  exportToPdf(){
+    this.exportService.printToPDF('table','invoice.pdf',[
+      'Sub-Contract Name',
+      'Invoice Date',
+      'Status',
+      'Quantity',
+      'Total Amount',
+    ])
+  }
+
+  exportToExcel(){
+    this.exportService.printToExcel('table', 'invoice.xlsx', [
+      'Sub-Contract Name',
+      'Invoice Date',
+      'Status',
+      'Quantity',
+      'Total Amount',
+    ])
+  }
 
   setUnitAmount(value: string) {
     this.invoiceForm.get('unitAmount')?.setValue((value !== '') ? value.split('_')[1] : '');

@@ -7,6 +7,7 @@ import { ProductService } from '../../services/product.service';
 import { TableComponent } from "../utils/table/table.component";
 import { CommonModule } from '@angular/common';
 import { LoginService } from '../../services/login.service';
+import { ExportFileService } from '../../services/export-file.service';
 
 @Component({
   selector: 'app-product',
@@ -18,13 +19,16 @@ export class ProductComponent {
   userId: number | null = null;
   companyId: number | null = null;
   constructor(
+    private exportService: ExportFileService,
     private loginService: LoginService,
     private productService: ProductService,
     private alert: AlertService
   ) { }
-  modalMode: 'view'|'edit' | 'add' = 'view';
+  searchVaue: string = '';
+  modalMode: 'view' | 'edit' | 'add' = 'view';
   displayedColumns: string[] = ['r_description', 'r_unitPrice', 'action'];
   data: ProductGetDto[] = [];
+  fullData: ProductGetDto[] = [];
   columnsInfo: {
     [key: string]: {
       'title'?: string,
@@ -39,7 +43,7 @@ export class ProductComponent {
       id: new FormControl(''),
       companyId: new FormControl('', [Validators.required,]),
       description: new FormControl('', [Validators.required, Validators.maxLength(50),]),
-      unitPrice: new FormControl('', [Validators.required,]),
+      unitPrice: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),]),
       createdBy: new FormControl(''),
       updatedBy: new FormControl(''),
     }
@@ -51,6 +55,7 @@ export class ProductComponent {
     if (this.userId && this.companyId) {
       this.productService.getAllProductGetDto(this.companyId).subscribe({
         next: (response: ProductGetDto[]) => {
+          this.fullData = response;
           this.data = response;
         },
         error: (error) => {
@@ -70,7 +75,7 @@ export class ProductComponent {
         },
         'action': {
           'title': 'Action',
-          'templateRef': this.checkViewer() ? null : this.actionTemplateRef
+          'templateRef': this.actionTemplateRef
         }
       }
     }
@@ -79,7 +84,27 @@ export class ProductComponent {
     }
   }
 
-  checkViewer = (): boolean => this.loginService.role() !== null && this.loginService.role() === 'Viewer';
+  exportToPdf() {
+    this.exportService.printToPDF('table', 'productMaster.pdf', [
+      'Name',
+      'Unit Price',
+    ])
+  }
+
+  exportToExcel() {
+    this.exportService.printToExcel('table', 'productMaster.xlsx', [
+      'Name',
+      'Unit Price',
+    ])
+  }
+
+  setSearchValue(value: string) {
+    this.searchVaue = value;
+  }
+
+  onSearch() {
+    this.data = this.fullData.filter(d => d.r_description.includes(this.searchVaue));
+  }
 
   closeModal() {
     this.productForm.reset({
@@ -102,7 +127,7 @@ export class ProductComponent {
     this.modalMode = 'add';
   }
 
-  viewAndEditProductGetDto(obj: ProductGetDto, mode: 'view'|'edit') {
+  viewAndEditProductGetDto(obj: ProductGetDto, mode: 'view' | 'edit') {
     this.productForm.patchValue({
       id: obj.r_id,
       companyId: obj.r_companyID,
@@ -124,7 +149,8 @@ export class ProductComponent {
       if (result.isConfirmed && this.userId && this.companyId) {
         this.productService.deleteProductGetDto(id, this.userId, this.companyId).subscribe({
           next: (response: ProductGetDto[]) => {
-            this.data = response;
+            this.fullData = response;
+            this.onSearch();
             this.alert.Toast.fire('Deleted Successfully', '', 'success');
           },
           error: (error) => {
@@ -144,7 +170,8 @@ export class ProductComponent {
       if (this.modalMode === 'edit') {
         this.productService.editProductUpdateDto(this.productForm.value).subscribe({
           next: (response: ProductGetDto[]) => {
-            this.data = response;
+            this.fullData = response;
+            this.onSearch();
             this.alert.Toast.fire('Updated Successfully', '', 'success');
             this.closeModal();
             const modalElement = document.getElementById('product-modal');
@@ -162,7 +189,8 @@ export class ProductComponent {
         this.productService.addProductGetDto(this.productForm.value).subscribe(
           {
             next: (response: ProductGetDto[]) => {
-              this.data = response;
+              this.fullData = response;
+              this.onSearch();
               this.alert.Toast.fire('Added Successfully', '', 'success');
               this.closeModal();
               const modalElement = document.getElementById('product-modal');

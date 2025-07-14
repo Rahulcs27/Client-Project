@@ -7,6 +7,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { TableComponent } from '../utils/table/table.component';
 import { LoginService } from '../../services/login.service';
+import { ExportFileService } from '../../services/export-file.service';
 
 @Component({
   selector: 'app-sub-contractor',
@@ -18,13 +19,16 @@ export class SubContractorComponent {
   companyId: number | null = null;
   userId: number | null = null;
   constructor(
+    private exportService: ExportFileService,
     private loginService: LoginService,
     private subContractorService: SubContractorService,
     private alert: AlertService
   ) { }
+  searchVaue: string = '';
   modalMode: 'view' | 'edit' | 'add' = 'edit';
   displayedColumns: string[] = ['name', 'action'];
   data: SubContractorGetDto[] = [];
+  fullData: SubContractorGetDto[] = [];
   columnsInfo: {
     [key: string]: {
       'title'?: string,
@@ -50,6 +54,7 @@ export class SubContractorComponent {
     if (this.companyId && this.userId) {
       this.subContractorService.getAllSubContractorGetDto(this.companyId).subscribe({
         next: (response: SubContractorGetDto[]) => {
+          this.fullData = response;
           this.data = response;
         },
         error: (error) => {
@@ -64,7 +69,7 @@ export class SubContractorComponent {
         },
         'action': {
           'title': 'Action',
-          'templateRef': this.checkViewer() ? null : this.actionTemplateRef
+          'templateRef': this.actionTemplateRef
         }
       }
     }
@@ -74,7 +79,26 @@ export class SubContractorComponent {
 
   }
 
-  checkViewer = (): boolean => this.loginService.role() !== null && this.loginService.role() === 'Viewer';
+  exportToPdf() {
+    this.exportService.printToPDF('table', 'subContractorMaster.pdf', [
+      'Sub Contractor',
+    ])
+  }
+
+  exportToExcel() {
+    this.exportService.printToExcel('table', 'subContractorMaster.xlsx', [
+      'Sub Contractor',
+    ])
+  }
+
+  setSearchValue(value: string) {
+    this.searchVaue = value;
+  }
+
+  onSearch() {
+    this.data = this.fullData.filter(d => d.name.includes(this.searchVaue));
+  }
+
 
   closeModal() {
     this.subContractorForm.reset({
@@ -117,7 +141,8 @@ export class SubContractorComponent {
       if (result.isConfirmed && this.userId && this.companyId) {
         this.subContractorService.deleteSubContractorGetDto(id, this.userId, this.companyId).subscribe({
           next: (response: SubContractorGetDto[]) => {
-            this.data = response;
+            this.fullData = response;
+            this.onSearch();
             this.alert.Toast.fire('Deleted Successfully', '', 'success');
           },
           error: (error) => {
@@ -137,7 +162,8 @@ export class SubContractorComponent {
       if (this.modalMode === 'edit') {
         this.subContractorService.editSubContractorUpdateDto(this.subContractorForm.value).subscribe({
           next: (response: SubContractorGetDto[]) => {
-            this.data = response;
+            this.fullData = response;
+            this.onSearch();
             this.alert.Toast.fire('Updated Successfully', '', 'success');
             this.closeModal();
             const modalElement = document.getElementById('subContractor-modal');
@@ -155,7 +181,8 @@ export class SubContractorComponent {
         this.subContractorService.addSubContractorGetDto(this.subContractorForm.value).subscribe(
           {
             next: (response: SubContractorGetDto[]) => {
-              this.data = response
+              this.fullData = response;
+              this.onSearch();
               this.alert.Toast.fire('Added Successfully', '', 'success');
               this.closeModal();
               const modalElement = document.getElementById('subContractor-modal');

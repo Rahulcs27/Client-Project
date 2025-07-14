@@ -1,9 +1,24 @@
 <h2 class="pt-4 fs-1">Sub-Contractor</h2>
 
-<div class="pt-md-5 pt-3 px-md-5 px-3 pb-2" *ngIf="!checkViewer()">
-    <button data-bs-toggle="modal" data-bs-target="#subContractor-modal" class="add-btn btn btn-outline-primary"
-    (click)="addSubContractorGetDto()">Add</button>
+<div class="btn-container pt-md-5 pt-3 px-md-5 px-3 pb-2">
+    <button data-bs-toggle="modal" data-bs-target="#subContractor-modal" class="add-btn btn btn-outline-primary mb-2"
+        (click)="addSubContractorGetDto()">Add
+    </button>
+    <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="
+        exportToPdf()">
+        <i class="fa-solid fa-file-pdf"></i> Print to PDF
+    </button>
+    <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="exportToExcel()">
+        <i class="fa-solid fa-file-excel"></i> Print to Excel
+    </button>
+    <div class="input-group mb-2">
+        <input #searchInput (input)="setSearchValue(searchInput.value)" type="text" class="form-control input-search" placeholder="Search: Sub-Contractor Name" aria-label="Search by Sub-Contractor Name" aria-describedby="search-btn">
+        <div class="input-group-append">
+            <span class="input-group-text btn-search" id="search-btn" (click)="onSearch()">Search</span>
+        </div>
+    </div>
 </div>
+
 <app-table [data]="data" [displayedColumns]="displayedColumns" [columnsInfo]="columnsInfo">
 </app-table>
 

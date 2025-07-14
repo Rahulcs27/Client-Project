@@ -10,8 +10,8 @@ import { PaymentCreateDto, PaymentGetDto, PaymentUpdateDto } from '../components
 export class PaymentService {
   constructor(private http: HttpClient) { }
 
-  getAllPaymentGetDto(): Observable<PaymentGetDto[]> {
-    return this.http.get<PaymentGetDto[]>(`${apiUrl}/Payment`);
+  getAllPaymentGetDto(companyId: number): Observable<PaymentGetDto[]> {
+    return this.http.get<PaymentGetDto[]>(`${apiUrl}/Payment?companyId=${companyId}`);
   }
 
   editPaymentUpdateDto(formData: PaymentUpdateDto): Observable<PaymentGetDto[]> {

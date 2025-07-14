@@ -1,6 +1,5 @@
 export interface UnpaidReportDto {
-    paymentMode: string;
-    noOfInvoice: number;
-    totalAmount: number;
-    unPaidAmount: number;
+    subContractor: string;
+    invoiceDate: string;
+    invoiceAmount: number;
 }

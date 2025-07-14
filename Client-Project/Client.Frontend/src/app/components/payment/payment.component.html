@@ -1,14 +1,23 @@
 <h2 class="pt-4 fs-1">Payment</h2>
 
-<div class="pt-md-5 pt-3 px-md-5 px-3 pb-2" *ngIf="!checkViewer()">
-    <button data-bs-toggle="modal" data-bs-target="#payment-modal" class="add-btn btn btn-outline-primary"
-    (click)="addPaymentGetDto()">Add</button>
+<div class="btn-container pt-md-5 pt-3 px-md-5 px-3 pb-2">
+    <button *ngIf="!checkViewer()" data-bs-toggle="modal" data-bs-target="#payment-modal" class="add-btn btn btn-outline-primary mb-2"
+        (click)="addPaymentGetDto()">Add
+    </button>
+    <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="
+        exportToPdf()">
+        <i class="fa-solid fa-file-pdf"></i> Print to PDF
+    </button>
+    <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="exportToExcel()">
+        <i class="fa-solid fa-file-excel"></i> Print to Excel
+    </button>
 </div>
+
 <app-table [data]="data" [displayedColumns]="displayedColumns" [columnsInfo]="columnsInfo">
 </app-table>
 
 <ng-template #dateTemplateRef let-row>
-    {{row.r_paymentDate.split("T")[0]}}
+    {{row.r_paymentDate | date : 'dd-MMM-yy'}}
 </ng-template>
 
 <ng-template #bankTemplateRef let-row>
@@ -16,15 +25,17 @@
 </ng-template>
 
 <ng-template #actionTemplateRef let-row>
-    <i class="fa-solid fa-file icon" data-bs-toggle="modal" data-bs-target="#invoice-modal"
-    (click)="invoiceGetDto(row.r_invoiceId)"></i>
+    @if(row.r_invoiceId){
+        <i class="fa-solid fa-file icon" data-bs-toggle="modal" data-bs-target="#invoice-modal"
+            (click)="invoiceGetDto(row.r_invoiceId)"></i>
+    }
     <i class="fa-regular fa-pen-to-square icon" data-bs-toggle="modal" data-bs-target="#payment-modal"
-    (click)="editPaymentGetDto(row)"></i>
+        (click)="editPaymentGetDto(row)"></i>
     <i class="fa-solid fa-trash icon" (click)="deleteRowData(row.r_id)"></i>
 </ng-template>
 
-<div class="modal fade" [formGroup]="paymentForm" id="payment-modal" data-bs-backdrop="static"
-    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" [formGroup]="paymentForm" id="payment-modal" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <form class="modal-content">
             <div class="modal-header d-flex justify-content-between">
@@ -35,17 +46,9 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3" *ngIf="modalMode === 'add'">
-                    <label for="invoiceId" class="mb-1">Invoice Id <span style="color: red;">*</span>
-                        <span *ngIf="
-                    this.paymentForm.get('invoiceId')?.hasError('required') &&
-                    (this.paymentForm.get('invoiceId')?.dirty ||
-                      this.paymentForm.get('invoiceId')?.touched)
-                  " style="color: red">Required</span>
-                    </label>
-                    <select name="invoiceId" id="invoiceId" class="form-control" formControlName="invoiceId">
-                        <option value="">--Select--</option>
-                        <option *ngFor="let invoice of invoices" value="{{invoice.r_id}}">{{invoice.r_id}}</option>
-                    </select>
+                    <label for="invoiceId" class="mb-1">Invoice Id </label>
+                    <p-autocomplete placeholder="Search: Invoice Id" formControlName="invoiceId" [suggestions]="invoiceIds"
+                        (completeMethod)="search($event)" />
                 </div>
                 <div class="mb-3">
                     <label for="paymentDate" class="mb-1">Date <span style="color: red;">*</span>
@@ -55,7 +58,8 @@
                       this.paymentForm.get('paymentDate')?.touched)
                   " style="color: red">Required</span>
                     </label>
-                    <input type="date" id="paymentDate" class="form-control" formControlName="paymentDate">
+                    <p-datepicker id="paymentDate" formControlName="paymentDate" placeholder="dd-MM-yy"
+                        dateFormat="dd-mm-yy" />
                 </div>
                 <div class="mb-3">
                     <label for="amountPaid" class="mb-1">Amount Paid <span style="color: red;">*</span>
@@ -65,7 +69,8 @@
                       this.paymentForm.get('amountPaid')?.touched)
                   " style="color: red">Required</span>
                     </label>
-                    <input type="text" id="amountPaid" class="form-control" formControlName="amountPaid" placeholder="Amount">
+                    <input type="text" id="amountPaid" class="form-control" formControlName="amountPaid"
+                        placeholder="Amount">
                 </div>
                 <div class="mb-3">
                     <label for="paymentMode" class="mb-1">Payment Mode <span style="color: red;">*</span>
@@ -82,9 +87,16 @@
                         <option value="UPI">UPI</option>
                     </select>
                 </div>
-                <div class="mb-3">
-                    <label for="bankName" class="mb-1">Bank Name </label>
-                    <input type="text" id="bankName" class="form-control" formControlName="bankName" placeholder="Bank Name">
+                <div class="mb-3" *ngIf="paymentForm.get('paymentMode')?.value !== 'Cash' && paymentForm.get('paymentMode')?.value !== ''">
+                    <label for="bankName" class="mb-1">Bank Name <span style="color: red;">*</span>
+                        <span *ngIf="
+                    this.paymentForm.get('bankName')?.hasError('required') &&
+                    (this.paymentForm.get('bankName')?.dirty ||
+                      this.paymentForm.get('bankName')?.touched)
+                  " style="color: red">Required</span>
+                    </label>
+                    <input type="text" id="bankName" class="form-control" formControlName="bankName"
+                        placeholder="Bank Name">
                 </div>
                 <div class="mb-3">
                     <label for="paymentStatus" class="mb-1">Status <span style="color: red;">*</span>
@@ -94,7 +106,8 @@
                       this.paymentForm.get('paymentStatus')?.touched)
                   " style="color: red">Required</span>
                     </label>
-                    <select name="paymentStatus" id="paymentStatus" class="form-control" formControlName="paymentStatus">
+                    <select name="paymentStatus" id="paymentStatus" class="form-control"
+                        formControlName="paymentStatus">
                         <option value="">--Select--</option>
                         <option value="Completed">Completed</option>
                         <option value="Pending">Pending</option>
@@ -123,25 +136,19 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label for="companyId" class="mb-1">Company
-                    </label>
-                    <select id="companyId" class="form-control" formControlName="companyId">
-                        <option value="">--Select--</option>
-                        <option *ngFor="let company of companies" value="{{company.id}}">{{company.name}}</option>
-                    </select>
-                </div>
-                <div class="mb-3">
                     <label for="subcontractorId" class="mb-1">Sub-Contractor</label>
                     <select id="subcontractorId" class="form-control" formControlName="subcontractorId">
                         <option value="">--Select--</option>
-                        <option *ngFor="let subContractor of subContractors" value="{{subContractor.id}}">{{subContractor.name}}</option>
+                        <option *ngFor="let subContractor of subContractors" value="{{subContractor.id}}">
+                            {{subContractor.name}}</option>
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="productId" class="mb-1">Product</label>
                     <select id="productId" class="form-control" formControlName="productId">
                         <option value="">--Select--</option>
-                        <option *ngFor="let product of products" value="{{product.r_id}}">{{product.r_description}}</option>
+                        <option *ngFor="let product of products" value="{{product.r_id}}">{{product.r_description}}
+                        </option>
                     </select>
                 </div>
                 <div class="mb-3">

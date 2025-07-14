@@ -1,9 +1,7 @@
 export interface ProductWiseReportDto {
     prodName: string;
-    noOfInvoices: number;
-    totalAmount: number;
+    subContractorName: string;
     cashAmount: number;
     balanceAmount: number;
-    paidAmount: number
-    unPaidAmount: number
+    paidAmount: number;
 }
