@@ -5,10 +5,12 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using BCrypt.Net;
 using Client.Application.Features.User.Dtos;
 using Client.Application.Interfaces;
+using Client.Domain.Models;
 using Dapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -230,6 +232,23 @@ namespace Client.Persistence.Repositories
             return await GetUsersAsync(null, null, companyId);
 
         }
+        public async Task<bool> VerifyRecaptchaAsync(string token)
+        {
+            var secretKey = _config["GoogleCaptcha:SecretKey"];
+            using var client = new HttpClient();
+            var content = new FormUrlEncodedContent(new[]
+            {
+              new KeyValuePair<string, string>("secret", secretKey),
+              new KeyValuePair<string, string>("response", token)
+            });
+
+            var response = await client.PostAsync("https://www.google.com/recaptcha/api/siteverify", content);
+            var responseString = await response.Content.ReadAsStringAsync();
+            var captchaResponse = JsonSerializer.Deserialize<GoogleCaptchaResponse>(responseString);
+
+            return captchaResponse?.success == true;
+        }
+
 
     }
 }
