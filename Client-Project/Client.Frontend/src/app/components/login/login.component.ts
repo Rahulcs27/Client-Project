@@ -32,10 +32,7 @@ export class LoginComponent {
       this.route.navigate(['/home']);
     }
   }
-
-  onCaptchaResolved(token: string): void {
-    this.loginForm.patchValue({ recaptcha: token });
-  }
+  
   loginUser() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
@@ -45,7 +42,6 @@ export class LoginComponent {
       const username = this.loginForm.get('username')?.value;
       const password = this.loginForm.get('password')?.value;
       const recaptchaToken = this.loginForm.get('recaptcha')?.value;
-      // captchaToken
       if (username && password && recaptchaToken) {
         this.loginService.login({ username, password, recaptchaToken }).subscribe({
           next: (response: AuthResponse) => {
@@ -58,7 +54,7 @@ export class LoginComponent {
             this.loginForm.reset({
               username: '',
               password: '',
-              // recaptcha: null,
+              recaptcha: '',
             })
           }
         });

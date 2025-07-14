@@ -13,7 +13,7 @@ namespace Client.Application.Features.Payment.Dtos
         public DateTime PaymentDate { get; set; }
         public decimal AmountPaid { get; set; }
         public string PaymentMode { get; set; }
-        public string BankName { get; set; }
+        public string? BankName { get; set; }
         public string PaymentStatus { get; set; }
         public int UpdatedBy { get; set; }
     }

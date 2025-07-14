@@ -38,6 +38,7 @@ export class PaymentComponent {
       const bankControl = this.paymentForm.get('bankName');
       if (mode === 'Cash') {
         bankControl?.clearValidators();
+        bankControl?.setValue(null);
       } else {
         bankControl?.setValidators([Validators.required]);
       }
@@ -68,12 +69,12 @@ export class PaymentComponent {
   paymentForm: FormGroup = new FormGroup(
     {
       id: new FormControl(''),
-      invoiceId: new FormControl(''),
+      invoiceId: new FormControl(null),
       companyId: new FormControl('', [Validators.required,]),
       paymentDate: new FormControl('', [Validators.required, Validators.maxLength(50),]),
-      amountPaid: new FormControl('', [Validators.required,]),
+      amountPaid: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),]),
       paymentMode: new FormControl('', [Validators.required, Validators.maxLength(50),]),
-      bankName: new FormControl('', [Validators.maxLength(50),]),
+      bankName: new FormControl(null, [Validators.maxLength(50),]),
       paymentStatus: new FormControl('', [Validators.required, Validators.maxLength(50),]),
       createdBy: new FormControl(''),
       updatedBy: new FormControl(''),
@@ -200,11 +201,11 @@ export class PaymentComponent {
   closeModal() {
     this.paymentForm.reset({
       id: '',
-      invoiceId: '',
+      invoiceId: null,
       paymentDate: '',
       amountPaid: '',
       paymentMode: '',
-      bankName: '',
+      bankName: null,
       paymentStatus: '',
       createdBy: '',
       updatedBy: '',
@@ -227,6 +228,8 @@ export class PaymentComponent {
 
   addPaymentGetDto() {
     this.paymentForm.patchValue({
+      invoiceId: null,
+      bankName: null,
       companyId: this.companyId,
       createdBy: this.userId,
     })
@@ -250,7 +253,7 @@ export class PaymentComponent {
 
   deleteRowData(id: number) {
     this.alert.Delete.fire().then((result) => {
-      if (result.isConfirmed) {
+      if (result.isConfirmed && this.companyId && this.userId) {
         console.log('Confirmed!');
       } else {
         console.log('Cancelled');
@@ -279,7 +282,15 @@ export class PaymentComponent {
       console.log('Payment form invalid', this.paymentForm.value);
     }
     else {
+      if(this.paymentForm.get('invoiceId')?.value === ''){
+        this.paymentForm.get('invoiceId')?.setValue(null);
+      }
+      if(this.paymentForm.get('bankName')?.value === ''){
+        this.paymentForm.get('bankName')?.setValue(null);
+      }
       if (this.modalMode === 'edit') {
+        console.log(this.paymentForm.value);
+        
         this.paymentService.editPaymentUpdateDto(this.paymentForm.value).subscribe({
           next: (response: PaymentGetDto[]) => {
             this.data = response;
