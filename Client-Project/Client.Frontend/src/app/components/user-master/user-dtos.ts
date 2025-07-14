@@ -4,6 +4,7 @@ export interface UserGetDto {
     roleMasterId: number;
     roleName: string;
     username: string;
+    email: string;
     password: string;
 }
 
@@ -11,6 +12,7 @@ export interface UserCreateDto {
     roleMasterId: number;
     companyId: number;
     username: string;
+    email: string;
     password: string;
     createdBy: number;
 }
@@ -20,6 +22,7 @@ export interface UserUpdateDto {
     companyId: number;
     roleMasterId: number;
     username: string;
+    email: string;
     password: string;
     currentPassword: string | null;
     newPassword: string | null;

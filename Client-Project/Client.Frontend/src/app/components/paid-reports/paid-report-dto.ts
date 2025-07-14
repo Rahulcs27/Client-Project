@@ -1,6 +1,8 @@
 export interface PaidReportDto {
-    paymentMode: string;
-    noOfInvoice: number;
-    totalAmount: number;
+    subContractor: string;
+    bankName: string;
+    invoiceDate: string;
+    paymentDate: string;
+    invoiceAmount: number;
     paidAmount: number;
 }

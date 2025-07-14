@@ -9,6 +9,7 @@ import { TableComponent } from "../utils/table/table.component";
 import { RoleGetDto } from '../role/role-dtos';
 import { RoleService } from '../../services/role.service';
 import { LoginService } from '../../services/login.service';
+import { ExportFileService } from '../../services/export-file.service';
 
 @Component({
   selector: 'app-user-master',
@@ -19,16 +20,19 @@ import { LoginService } from '../../services/login.service';
 export class UserMasterComponent {
   userId: number | null = null;
   companyId: number | null = null;
+  searchVaue: string = '';
   constructor(
+    private exportService: ExportFileService,
     private loginService: LoginService,
     private userService: UserMasterService,
     private roleService: RoleService,
     private alert: AlertService
   ) { }
-  modalMode: 'add' | 'edit' = 'edit';
+  modalMode: 'add' | 'edit' | 'view' = 'view';
   displayedColumns: string[] = ['username', 'roleName', 'action'];
   roles: RoleGetDto[] = [];
   data: UserGetDto[] = [];
+  fullData: UserGetDto[] = [];
   columnsInfo: {
     [key: string]: {
       'title'?: string,
@@ -42,8 +46,9 @@ export class UserMasterComponent {
     {
       id: new FormControl(''),
       roleMasterId: new FormControl('', [Validators.required]),
-      username: new FormControl('', [Validators.required]),
-      password: new FormControl('', [Validators.required]),
+      username: new FormControl('', [Validators.required, Validators.maxLength(50)]),
+      email: new FormControl('', [Validators.required, Validators.email, Validators.maxLength(70)]),
+      password: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{4,10}$'),]),
       companyId: new FormControl('', [Validators.required]),
       currentPassword: new FormControl(''),
       newPassword: new FormControl(''),
@@ -68,6 +73,7 @@ export class UserMasterComponent {
       this.userService.getAllUserGetDto(this.companyId).subscribe({
         next: (response: UserGetDto[]) => {
           this.data = response;
+          this.fullData = response;
         },
         error: (error) => {
           console.log(error);
@@ -96,11 +102,34 @@ export class UserMasterComponent {
     }
   }
 
+  exportToPdf(){
+    this.exportService.printToPDF('table','userMaster.pdf',[
+      'Name',
+      'Role',
+    ])
+  }
+
+  exportToExcel(){
+    this.exportService.printToExcel('table', 'userMaster.xlsx', [
+      'Name',
+      'Role',
+    ])
+  }
+
+  setSearchValue(value: string){
+    this.searchVaue = value;
+  }
+
+  onSearch() {
+    this.data = this.fullData.filter(d => d.username.includes(this.searchVaue));
+  }
+
   closeModal() {
     this.userForm.reset({
       id: '',
       roleMasterId: '',
       username: '',
+      email: '',
       password: '',
       companyId: '',
       currentPassword: '',
@@ -108,31 +137,35 @@ export class UserMasterComponent {
       createdBy: '',
       updatedBy: '',
     })
-    this.modalMode = 'edit';
+    this.modalMode = 'view';
   }
 
   addUserGetDto() {
     this.userForm.patchValue({
       companyId: this.companyId,
-      currentPassword: '',
-      newPassword: '',
       createdBy: this.userId,
     })
+    this.userForm.enable();
     this.modalMode = 'add';
   }
 
-  editUserGetDto(obj: UserGetDto) {
+  viewAndEditUserGetDto(obj: UserGetDto, mode: 'view'|'edit') {
     this.userForm.patchValue({
       id: obj.id,
       roleMasterId: obj.roleMasterId,
       username: obj.username,
       password: obj.password,
+      email: obj.email,
       companyId: this.companyId,
-      currentPassword: '',
-      newPassword: '',
       updatedBy: this.userId,
     })
-    this.modalMode = 'edit'
+    if (mode === 'view') {
+      this.userForm.disable();
+    }
+    else {
+      this.userForm.enable();
+    }
+    this.modalMode = mode;
   }
 
   deleteRowData(id: number) {
@@ -140,7 +173,8 @@ export class UserMasterComponent {
       if (result.isConfirmed && this.userId && this.companyId) {
         this.userService.deleteUserGetDto(id, this.userId, this.companyId).subscribe({
           next: (response: UserGetDto[]) => {
-            this.data = response;
+            this.fullData = response;
+            this.onSearch();
             this.alert.Toast.fire('Deleted Successfully', '', 'success');
           },
           error: (error) => {
@@ -161,7 +195,8 @@ export class UserMasterComponent {
         this.userService.addUserGetDto(this.userForm.value).subscribe(
           {
             next: (response: UserGetDto[]) => {
-              this.data = response;
+              this.fullData = response;
+              this.onSearch();
               this.alert.Toast.fire('Added Successfully', '', 'success')
               this.closeModal();
               const modalElement = document.getElementById('user-modal');
@@ -179,7 +214,8 @@ export class UserMasterComponent {
       else if (this.modalMode === 'edit') {
         this.userService.editUserUpdateDto(this.userForm.value).subscribe({
           next: (response: UserGetDto[]) => {
-            this.data = response
+            this.fullData = response;
+            this.onSearch()
             this.alert.Toast.fire('Updated Successfully', '', 'success')
             this.closeModal();
             const modalElement = document.getElementById('user-modal');

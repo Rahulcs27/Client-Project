@@ -24,13 +24,7 @@ namespace Client.Application.Features.Role.Handlers
 
         public async Task<List<RoleDto>> Handle(DeleteRoleCommand request, CancellationToken cancellationToken)
         {
-            var result = await _repository.DeleteRoleAsync(request.Id);
-
-            if (result != "Success")
-                throw new Exception(result);
-
-            // Return updated list after delete
-            return await _repository.GetRolesAsync(null);
+            return await _repository.DeleteRoleAsync(request.Id, request.updatedBy);
         }
     }
 

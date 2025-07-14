@@ -12,7 +12,7 @@ namespace Client.Application.Interfaces
         Task<List<RoleDto>> GetRolesAsync(int? id);
         Task<List<RoleDto>> CreateRoleAsync(CreateRoleDto dto);
         Task<List<RoleDto>> UpdateRoleAsync(UpdateRoleDto dto);
-        Task<string> DeleteRoleAsync(int id);
+        Task<List<RoleDto>> DeleteRoleAsync(int id, int updatedBy);
 
 
     }

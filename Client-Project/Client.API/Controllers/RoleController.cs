@@ -31,9 +31,9 @@ namespace Client.API.Controllers
             return Ok(result);
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRole(int id)
+        public async Task<IActionResult> DeleteRole(int id,[FromQuery] int updatedBy)
         {
-            var roles = await _mediator.Send(new DeleteRoleCommand(id));
+            var roles = await _mediator.Send(new DeleteRoleCommand(id, updatedBy));
             return Ok(roles);
         }
 

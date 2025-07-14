@@ -21,4 +21,8 @@ export class RoleService {
   addRoleGetDto(formData: RoleCreateDto): Observable<RoleGetDto[]> {
     return this.http.post<RoleGetDto[]>(`${apiUrl}/Role`, formData);
   }
+
+  deleteRoleGetDto(id:number, updatedBy: number): Observable<RoleGetDto[]> {
+    return this.http.delete<RoleGetDto[]>(`${apiUrl}/Role/${id}?updatedBy=${updatedBy}`);
+  }
 }

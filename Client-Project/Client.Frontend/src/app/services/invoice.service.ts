@@ -10,15 +10,19 @@ import { InvoiceCreateDto, InvoiceGetDto, InvoiceUpdateDto } from '../components
 export class InvoiceService {
   constructor(private http: HttpClient) { }
 
-  getAllInvoiceGetDto(): Observable<InvoiceGetDto[]> {
-    return this.http.get<InvoiceGetDto[]>(`${apiUrl}/Invoice`);
+  getAllInvoiceGetDto(companyId:number): Observable<InvoiceGetDto[]> {
+    return this.http.get<InvoiceGetDto[]>(`${apiUrl}/Invoice?companyId=${companyId}`);
   }
 
-  editInvoiceUpdateDto(formData: InvoiceUpdateDto): Observable<InvoiceGetDto> {
-    return this.http.put<InvoiceGetDto>(`${apiUrl}/Invoice/update`, formData);
+  editInvoiceUpdateDto(formData: InvoiceUpdateDto): Observable<InvoiceGetDto[]> {
+    return this.http.put<InvoiceGetDto[]>(`${apiUrl}/Invoice/update`, formData);
   }
 
-  addInvoiceGetDto(formData: InvoiceCreateDto): Observable<InvoiceGetDto> {
-    return this.http.post<InvoiceGetDto>(`${apiUrl}/Invoice/create`, formData);
+  addInvoiceGetDto(formData: InvoiceCreateDto): Observable<InvoiceGetDto[]> {
+    return this.http.post<InvoiceGetDto[]>(`${apiUrl}/Invoice/create`, formData);
+  }
+
+  deleteInvoiceGetDto(id:number, companyId: number, userId: number): Observable<InvoiceGetDto[]> {
+    return this.http.delete<InvoiceGetDto[]>(`${apiUrl}/Invoice/${id}?updatedBy=${userId}&companyId=${companyId}`);
   }
 }

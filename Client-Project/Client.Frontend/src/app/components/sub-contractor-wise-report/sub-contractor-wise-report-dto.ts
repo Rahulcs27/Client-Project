@@ -1,10 +1,7 @@
 export interface SubContractorWiseReportDto {
-    subCoName: string;
-    noOfInvoice: number;
-    monthYear: number;
-    totalAmount: number;
+    subContractorName: string;
+    monthAndYear: string;
     cashAmount: number;
     balanceAmount: number;
     paidAmount: number;
-    unPaidAmount: number;
 }

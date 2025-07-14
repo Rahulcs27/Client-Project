@@ -6,6 +6,8 @@ import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AlertService } from '../../services/alert.service';
 import { CompanyMasterGetDto } from './company-master-dtos';
+import { LoginService } from '../../services/login.service';
+import { ExportFileService } from '../../services/export-file.service';
 
 @Component({
   selector: 'app-company-master',
@@ -14,12 +16,19 @@ import { CompanyMasterGetDto } from './company-master-dtos';
   styleUrl: '../../../componentStyle.css'
 })
 export class CompanyMasterComponent implements OnInit {
-  constructor(private companyMasterService: CompanyMasterServiceService,
+  userId: number | null = null;
+  companyId: number | null = null;
+  searchVaue: string = '';
+  constructor(
+    private exportService: ExportFileService,
+    private loginService: LoginService,
+    private companyMasterService: CompanyMasterServiceService,
     private alert: AlertService
   ) { }
   modalMode: 'view' | 'edit' | 'add' = 'view';
   displayedColumns: string[] = ['name', 'phone', 'email', 'action'];
   data: CompanyMasterGetDto[] = [];
+  fullData: CompanyMasterGetDto[] = [];
   columnsInfo: {
     [key: string]: {
       'title'?: string,
@@ -34,48 +43,75 @@ export class CompanyMasterComponent implements OnInit {
       id: new FormControl(''),
       name: new FormControl('', [Validators.required, Validators.maxLength(20),]),
       phone: new FormControl('', [Validators.required, Validators.pattern('^[0-9]{10}$'),]),
-      email: new FormControl('', [Validators.required]),
-      address: new FormControl('', [Validators.required]),
+      email: new FormControl('', [Validators.required, Validators.email,Validators.maxLength(70),]),
+      address: new FormControl('', [Validators.required, Validators.maxLength(250),]),
       createdBy: new FormControl(''),
       updatedBy: new FormControl(''),
     }
   );
 
   ngOnInit(): void {
-    this.getAllCompanyMasterGetDto()
-    this.columnsInfo = {
-      'name': {
-        'title': 'Name',
-        'isSort': true,
-        'templateRef': null
-      },
-      'phone': {
-        'title': 'Phone No.',
-        'isSort': true,
-        'templateRef': null
-      },
-      'email': {
-        'title': 'Email Address',
-        'isSort': true,
-        'templateRef': null
-      },
-      'action': {
-        'title': 'Action',
-        'templateRef': this.actionTemplateRef
+    this.companyId = this.loginService.companyId();
+    this.userId = this.loginService.userId();
+    if(this.companyId && this.userId) {
+      this.companyMasterService.getAllCompanyMasterGetDto().subscribe({
+        next: (response: CompanyMasterGetDto[]) => {
+          this.data = response;
+          this.fullData = response;
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      });
+      this.columnsInfo = {
+        'name': {
+          'title': 'Name',
+          'isSort': true,
+          'templateRef': null
+        },
+        'phone': {
+          'title': 'Phone No.',
+          'isSort': true,
+          'templateRef': null
+        },
+        'email': {
+          'title': 'Email Address',
+          'isSort': true,
+          'templateRef': null
+        },
+        'action': {
+          'title': 'Action',
+          'templateRef': this.actionTemplateRef
+        }
       }
     }
-
+    else {
+      this.loginService.logout();
+    }
   }
 
-  getAllCompanyMasterGetDto() {
-    this.companyMasterService.getAllCompanyMasterGetDto().subscribe({
-      next: (response: CompanyMasterGetDto[]) => {
-        this.data = response;
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    });
+  exportToPdf(){
+    this.exportService.printToPDF('table','companyMaster.pdf',[
+      'Name',
+      'Phone No.',
+      'Email Address',
+    ])
+  }
+
+  exportToExcel(){
+    this.exportService.printToExcel('table', 'companyMaster.xlsx', [
+      'Name',
+      'Phone No.',
+      'Email Address',
+    ])
+  }
+
+  setSearchValue(value: string){
+    this.searchVaue = value;
+  }
+
+  onSearch() {
+    this.data = this.fullData.filter(d => d.name.includes(this.searchVaue));
   }
 
   closeModal() {
@@ -88,10 +124,6 @@ export class CompanyMasterComponent implements OnInit {
       createdBy: '',
       updatedBy: '',
     })
-    this.companyMasterForm.get('name')?.enable();
-    this.companyMasterForm.get('phone')?.enable();
-    this.companyMasterForm.get('email')?.enable();
-    this.companyMasterForm.get('address')?.enable();
     this.modalMode = 'view';
   }
 
@@ -102,10 +134,7 @@ export class CompanyMasterComponent implements OnInit {
       email: obj.email,
       address: obj.address
     })
-    this.companyMasterForm.get('name')?.disable();
-    this.companyMasterForm.get('phone')?.disable();
-    this.companyMasterForm.get('email')?.disable();
-    this.companyMasterForm.get('address')?.disable();
+    this.companyMasterForm.disable();
     this.modalMode = 'view';
   }
 
@@ -116,17 +145,35 @@ export class CompanyMasterComponent implements OnInit {
       phone: obj.phone,
       email: obj.email,
       address: obj.address,
-      updatedBy: 1
+      updatedBy: this.userId
     })
+    this.companyMasterForm.enable();
     this.modalMode = 'edit';
   }
 
   addCompanyMasterGetDto() {
+     this.companyMasterForm.patchValue({
+      createdBy: this.userId
+    })
+    this.companyMasterForm.enable();
     this.modalMode = 'add';
   }
 
   deleteRowData(id: number) {
-    
+    this.alert.Delete.fire().then((result) => {
+      if (result.isConfirmed && this.userId && this.companyId) {
+        this.companyMasterService.deleteCompanyMasterGetDto(id, this.userId).subscribe({
+          next: (response: CompanyMasterGetDto[]) => {
+            this.fullData = response;
+            this.onSearch();
+            this.alert.Toast.fire('Deleted Successfully', '', 'success');
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        });
+      }
+    });
   }
 
   saveCompanyMasterGetDto() {
@@ -138,7 +185,8 @@ export class CompanyMasterComponent implements OnInit {
       if (this.modalMode === 'edit') {
         this.companyMasterService.editCompanyMasterUpdateDto(this.companyMasterForm.value).subscribe({
           next: (response: CompanyMasterGetDto[]) => {
-            this.data = response;
+            this.fullData = response;
+            this.onSearch()
             this.alert.Toast.fire('Updated Successfully', '', 'success')
             this.closeModal();
             const modalElement = document.getElementById('companyMaster-modal');
@@ -153,11 +201,11 @@ export class CompanyMasterComponent implements OnInit {
         });
       }
       else if (this.modalMode === 'add') {
-        this.companyMasterForm.get('createdBy')?.setValue(1);
         this.companyMasterService.addCompanyMasterGetDto(this.companyMasterForm.value).subscribe(
           {
             next: (response: CompanyMasterGetDto[]) => {
-              this.data = response;
+              this.fullData = response;
+              this.onSearch();
               this.alert.Toast.fire('Added Successfully', '', 'success')
               this.closeModal();
               const modalElement = document.getElementById('companyMaster-modal');

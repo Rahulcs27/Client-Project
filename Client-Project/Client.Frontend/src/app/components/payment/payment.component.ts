@@ -8,32 +8,47 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { TableComponent } from '../utils/table/table.component';
 import { InvoiceGetDto } from '../invoice/invoice-dtos';
-import { CompanyMasterServiceService } from '../../services/company-master-service.service';
 import { ProductService } from '../../services/product.service';
 import { ProductGetDto } from '../product/product-dtos';
 import { SubContractorGetDto } from '../sub-contractor/sub-contractor-dtos';
 import { SubContractorService } from '../../services/sub-contractor.service';
 import { CompanyMasterGetDto } from '../company-master/company-master-dtos';
 import { LoginService } from '../../services/login.service';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { DatePickerModule } from 'primeng/datepicker';
+import { ExportFileService } from '../../services/export-file.service';
 
 @Component({
   selector: 'app-payment',
-  imports: [CommonModule, ReactiveFormsModule, TableComponent],
+  imports: [CommonModule, ReactiveFormsModule, TableComponent, AutoCompleteModule, DatePickerModule],
   templateUrl: './payment.component.html',
   styleUrl: '../../../componentStyle.css'
 })
 export class PaymentComponent {
   constructor(
+    private exportService: ExportFileService,
     private loginService: LoginService,
     private paymentService: PaymentService,
     private invoiceService: InvoiceService,
-    private companyService: CompanyMasterServiceService,
     private productService: ProductService,
     private subContractorService: SubContractorService,
     private alert: AlertService
-  ) { }
+  ) {
+    this.paymentForm.get('paymentMode')?.valueChanges.subscribe((mode) => {
+      const bankControl = this.paymentForm.get('bankName');
+      if (mode === 'Cash') {
+        bankControl?.clearValidators();
+      } else {
+        bankControl?.setValidators([Validators.required]);
+      }
+      bankControl?.updateValueAndValidity();
+    });
+   }
+  companyId: number | null = null;
+  userId: number | null = null;
   modalMode: 'edit' | 'add' = 'edit';
   invoices: InvoiceGetDto[] = [];
+  invoiceIds: any[] = [];
   products: ProductGetDto[] = [];
   companies: CompanyMasterGetDto[] = [];
   subContractors: SubContractorGetDto[] = [];
@@ -53,7 +68,8 @@ export class PaymentComponent {
   paymentForm: FormGroup = new FormGroup(
     {
       id: new FormControl(''),
-      invoiceId: new FormControl('', [Validators.required,]),
+      invoiceId: new FormControl(''),
+      companyId: new FormControl('', [Validators.required,]),
       paymentDate: new FormControl('', [Validators.required, Validators.maxLength(50),]),
       amountPaid: new FormControl('', [Validators.required,]),
       paymentMode: new FormControl('', [Validators.required, Validators.maxLength(50),]),
@@ -78,9 +94,10 @@ export class PaymentComponent {
   );
 
   ngOnInit(): void {
-    const companyId = this.loginService.companyId()
-    if (companyId) {
-      this.invoiceService.getAllInvoiceGetDto().subscribe({
+    this.companyId = this.loginService.companyId();
+    this.userId = this.loginService.userId();
+    if (this.companyId && this.userId) {
+      this.invoiceService.getAllInvoiceGetDto(this.companyId).subscribe({
         next: (response: InvoiceGetDto[]) => {
           this.invoices = response
         },
@@ -88,7 +105,7 @@ export class PaymentComponent {
           console.log(error);
         }
       })
-      this.productService.getAllProductGetDto(companyId).subscribe({
+      this.productService.getAllProductGetDto(this.companyId).subscribe({
         next: (response: ProductGetDto[]) => {
           this.products = response
         },
@@ -96,15 +113,7 @@ export class PaymentComponent {
           console.log(error);
         }
       })
-      this.companyService.getAllCompanyMasterGetDto().subscribe({
-        next: (response: CompanyMasterGetDto[]) => {
-          this.companies = response
-        },
-        error: (error) => {
-          console.log(error);
-        }
-      })
-      this.subContractorService.getAllSubContractorGetDto(companyId).subscribe({
+      this.subContractorService.getAllSubContractorGetDto(this.companyId).subscribe({
         next: (response: SubContractorGetDto[]) => {
           this.subContractors = response
         },
@@ -112,7 +121,7 @@ export class PaymentComponent {
           console.log(error);
         }
       })
-      this.paymentService.getAllPaymentGetDto().subscribe({
+      this.paymentService.getAllPaymentGetDto(this.companyId).subscribe({
         next: (response: PaymentGetDto[]) => {
           this.data = response;
         },
@@ -157,10 +166,36 @@ export class PaymentComponent {
         'templateRef': this.checkViewer() ? null : this.actionTemplateRef
       }
     }
+  }
 
+  exportToPdf(){
+    this.exportService.printToPDF('table','payment.pdf',[
+      'Date',
+      'Amount',
+      'Mode',
+      'Bank Name',
+      'Status',
+    ])
+  }
+
+  exportToExcel(){
+    this.exportService.printToExcel('table', 'payment.xlsx', [
+      'Date',
+      'Amount',
+      'Mode',
+      'Bank Name',
+      'Status',
+    ])
   }
 
   checkViewer = (): boolean => this.loginService.role() !== null && this.loginService.role() === 'Viewer';
+
+  search(event: AutoCompleteCompleteEvent) {
+    const query = event.query.toString();
+    this.invoiceIds = this.invoices
+      .filter(item => item.r_id.toString().includes(query))
+      .map(item => item.r_id);
+  }
 
   closeModal() {
     this.paymentForm.reset({
@@ -191,20 +226,24 @@ export class PaymentComponent {
   }
 
   addPaymentGetDto() {
-    this.paymentForm.get('invoiceId')?.setValue('');
+    this.paymentForm.patchValue({
+      companyId: this.companyId,
+      createdBy: this.userId,
+    })
     this.modalMode = 'add';
   }
 
   editPaymentGetDto(obj: PaymentGetDto) {
     this.paymentForm.patchValue({
       id: obj.r_id,
+      companyId: this.companyId,
       invoiceId: obj.r_invoiceId,
-      paymentDate: obj.r_paymentDate.split('T')[0],
+      paymentDate: new Date(obj.r_paymentDate),
       amountPaid: obj.r_amountPaid,
       paymentMode: obj.r_paymentMode,
       bankName: obj.r_bankName,
       paymentStatus: obj.r_paymentStatus,
-      updatedBy: 1
+      updatedBy: this.userId
     })
     this.modalMode = 'edit';
   }
@@ -231,14 +270,7 @@ export class PaymentComponent {
       totalAmount: invoice?.r_totalAmount,
       paymentMode: invoice?.r_paymentMode,
     })
-    this.invoiceForm.get('companyId')?.disable();
-    this.invoiceForm.get('subcontractorId')?.disable();
-    this.invoiceForm.get('productId')?.disable();
-    this.invoiceForm.get('invoiceDate')?.disable();
-    this.invoiceForm.get('status')?.disable();
-    this.invoiceForm.get('quantity')?.disable();
-    this.invoiceForm.get('totalAmount')?.disable();
-    this.invoiceForm.get('paymentMode')?.disable();
+    this.invoiceForm.disable()
   }
 
   savePaymentGetDto() {
@@ -265,7 +297,7 @@ export class PaymentComponent {
         });
       }
       else if (this.modalMode === 'add') {
-        this.paymentForm.get('createdBy')?.setValue(1);
+        this.paymentForm.get('createdBy')?.setValue(this.userId);
         this.paymentService.addPaymentGetDto(this.paymentForm.value).subscribe(
           {
             next: (response: PaymentGetDto[]) => {
@@ -286,4 +318,9 @@ export class PaymentComponent {
       }
     }
   }
+}
+
+interface AutoCompleteCompleteEvent {
+  originalEvent: Event;
+  query: string;
 }

@@ -5,18 +5,23 @@ import { AlertService } from '../../services/alert.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthResponse } from './login-dtos';
+import { ReCaptchaV3Service, NgxCaptchaModule } from 'ngx-captcha';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, ReactiveFormsModule],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule,NgxCaptchaModule],
+  providers: [ReCaptchaV3Service],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
   loginPasswordEyeOpen = false;
+  siteKey:string = 'My-key'
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.required,]),
-    password: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{4,10}$'),])
+    password: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{4,10}$'),]),
+    // recaptcha: new FormControl(null, [Validators.required])
   })
 
   constructor(private loginService: LoginService,
@@ -37,8 +42,10 @@ export class LoginComponent {
     else {
       const username = this.loginForm.get('username')?.value;
       const password = this.loginForm.get('password')?.value;
-      if(username && password){
-        this.loginService.login({username,password}).subscribe({
+      // const captchaToken = this.loginForm.get('recaptcha')?.value;
+      // captchaToken
+      if (username && password) {
+        this.loginService.login({ username, password }).subscribe({
           next: (response: AuthResponse) => {
             sessionStorage.setItem('token', response.token);
             this.alert.Toast.fire('Logged In Successfully', '', 'success')
@@ -46,6 +53,11 @@ export class LoginComponent {
           },
           error: (error) => {
             console.error(error);
+            this.loginForm.reset({
+              username: '',
+              password: '',
+              // recaptcha: null,
+            })
           }
         });
       }

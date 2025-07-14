@@ -1,9 +1,22 @@
 <h2 class="pt-4 fs-1">Company Master</h2>
 
-<div class="pt-md-5 pt-3 px-md-5 px-3 pb-2">
-    <button data-bs-toggle="modal" data-bs-target="#companyMaster-modal" class="add-btn btn btn-outline-primary"
+<div class="btn-container pt-md-5 pt-3 px-md-5 px-3 pb-2">
+    <button data-bs-toggle="modal" data-bs-target="#companyMaster-modal" class="add-btn btn btn-outline-primary mb-2"
         (click)="addCompanyMasterGetDto()">Add
     </button>
+    <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="
+        exportToPdf()">
+        <i class="fa-solid fa-file-pdf"></i> Print to PDF
+    </button>
+    <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="exportToExcel()">
+        <i class="fa-solid fa-file-excel"></i> Print to Excel
+    </button>
+    <div class="input-group mb-2">
+        <input #searchInput (input)="setSearchValue(searchInput.value)" type="text" class="form-control input-search" placeholder="Search: Company Name" aria-label="Search by Company Name" aria-describedby="search-btn">
+        <div class="input-group-append">
+            <span class="input-group-text btn-search" id="search-btn" (click)="onSearch()">Search</span>
+        </div>
+    </div>
 </div>
 <app-table [data]="data" [displayedColumns]="displayedColumns" [columnsInfo]="columnsInfo">
 </app-table>
@@ -37,6 +50,12 @@
                     (this.companyMasterForm.get('name')?.dirty ||
                       this.companyMasterForm.get('name')?.touched)
                   " style="color: red">Required</span>
+                  <span *ngIf="
+                    modalMode !== 'view' &&
+                    this.companyMasterForm.get('name')?.hasError('maxlength') &&
+                    (this.companyMasterForm.get('name')?.dirty ||
+                      this.companyMasterForm.get('name')?.touched)
+                  " style="color: red">Max 20 Characters</span>
                     </label>
                     <input type="text" class="form-control" formControlName="name" placeholder="Name">
                 </div>
@@ -67,6 +86,18 @@
                     (this.companyMasterForm.get('email')?.dirty ||
                       this.companyMasterForm.get('email')?.touched)
                   " style="color: red">Required</span>
+                        <span *ngIf="
+                    modalMode !== 'view' &&
+                    this.companyMasterForm.get('email')?.hasError('email') &&
+                    (this.companyMasterForm.get('email')?.dirty ||
+                      this.companyMasterForm.get('email')?.touched)
+                  " style="color: red">Invalid Email</span>
+                  <span *ngIf="
+                    modalMode !== 'view' &&
+                    this.companyMasterForm.get('email')?.hasError('maxlength') &&
+                    (this.companyMasterForm.get('email')?.dirty ||
+                      this.companyMasterForm.get('email')?.touched)
+                  " style="color: red">Max 70 Characters</span>
                     </label>
                     <input type="email" class="form-control" formControlName="email" placeholder="Email">
                 </div>
@@ -79,6 +110,12 @@
                     (this.companyMasterForm.get('address')?.dirty ||
                       this.companyMasterForm.get('address')?.touched)
                   " style="color: red">Required</span>
+                  <span *ngIf="
+                    modalMode !== 'view' &&
+                    this.companyMasterForm.get('address')?.hasError('maxlength') &&
+                    (this.companyMasterForm.get('address')?.dirty ||
+                      this.companyMasterForm.get('address')?.touched)
+                  " style="color: red">Max 255 Characters</span>
                     </label>
                     <textarea formControlName="address" class="form-control" placeholder="Address"></textarea>
                 </div>

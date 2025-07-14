@@ -1,5 +1,5 @@
 <div class="card-container">
-    <div class="card login-form-card" style="width: 18rem;">
+    <div class="card login-form-card" style="width: 21rem;">
         <div class="card-body">
             <h3 class="card-title login-title mb-3">Login</h3>
             <form class="needs-validation" [formGroup]="loginForm">
@@ -25,6 +25,11 @@
                             digits)</span>
                     </div>
                 </div>
+                <!-- <div class="mb-3">
+                    <div class="field-container">
+                        <ngx-recaptcha2 [siteKey]="siteKey" formControlName="recaptcha"></ngx-recaptcha2>
+                    </div>
+                </div> -->
                 <div class="mb-3 form-check">
                     <label class="form-check-label" for="showPassword">
                         <input type="checkbox" class="form-check-input" id="showPassword"
