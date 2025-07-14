@@ -50,6 +50,8 @@ namespace Client.API.Controllers
         {
             try
             {
+                if (! await _userRepository.VerifyRecaptchaAsync(loginDto.RecaptchaToken))
+                    return BadRequest("reCAPTCHA verification failed.");
                 var token = await _userRepository.LoginAsync(loginDto.Username, loginDto.Password);
                 return Ok(new { token });
             }
@@ -59,6 +61,7 @@ namespace Client.API.Controllers
             }
         }
 
+        
 
         [HttpGet]
         public async Task<IActionResult> GetUsers([FromQuery] int? companyId,[FromQuery] int? id, [FromQuery] string? search)
