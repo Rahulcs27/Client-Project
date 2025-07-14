@@ -13,6 +13,8 @@ namespace Client.Application.Interfaces
         Task<List<UserDto>> UpdateUserAsync(UpdateUserDto userDto);
         Task<List<UserDto>> DeleteUserAsync(int id, int updatedBy,int companyId);
         Task<string> LoginAsync(string username, string password);
+        Task<bool> VerifyRecaptchaAsync(string token);
+
 
 
         Task<List<UserDto>> GetUsersAsync(int? id, string? search,int? companyId);
