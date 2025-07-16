@@ -29,8 +29,8 @@ namespace Client.Persistence.Repositories
         public async Task<List<CompanyDto>> GetCompaniesAsync(int? companyId, string? search)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("@p_searchName", search);
-            parameters.Add("@p_CompanyID", companyId);
+            parameters.Add("@p_search", search);
+            parameters.Add("@p_companyID", companyId);
 
             var result = await _db.QueryAsync<CompanyDto>(
                 "sp_sbs_companyMaster_get",
@@ -57,23 +57,15 @@ namespace Client.Persistence.Repositories
                 parameters,
                 commandType: CommandType.StoredProcedure
             );
+
             if (result?.R_Status == "SUCCESS" && result?.R_InsertedID != null)
             {
-                //return new CompanyDto
-                //{
-                //    Id = result.inserted_id.Value,
-                //    Name = companyDto.Name,
-                //    Address = companyDto.Address,
-                //    Phone = companyDto.Phone,
-                //    Email = companyDto.Email,
-
-                //};
                 return await GetCompaniesAsync(null, null);
-
             }
 
-            throw new Exception("Company insert failed");
+            throw new Exception($"Company insert failed: {result?.R_ErrorMessage ?? "Unknown error"}");
         }
+
         public async Task<List<CompanyDto>> UpdateCompanyAsync(UpdateCompanyDto dto)
         {
             var parameters = new DynamicParameters();
@@ -84,15 +76,16 @@ namespace Client.Persistence.Repositories
             parameters.Add("@p_email", dto.Email);
             parameters.Add("@p_updatedBy", dto.UpdatedBy);
 
-            var result = await _db.QueryFirstOrDefaultAsync<string>(
+            var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
                 "sp_sbs_companyMaster_update",
                 parameters,
                 commandType: CommandType.StoredProcedure
             );
 
-            if (result != "SUCCESS")
-                throw new Exception("Company update failed: " + result);
-
+            if (result?.R_Status == "SUCCESS" && result?.R_UpdatedID != null)
+            {
+                return await GetCompaniesAsync(null, null);
+            }
             var updatedCompany = await _db.QueryFirstOrDefaultAsync<dynamic>(
                 @"SELECT TOP 1 * FROM sbs_companyMaster WHERE id = @Id AND isDeleted = 0",
                 new { Id = dto.Id }
@@ -101,15 +94,9 @@ namespace Client.Persistence.Repositories
             if (updatedCompany == null)
                 throw new Exception("Updated company not found.");
 
-            //return new CompanyDto
-            //{
-            //    Id = updatedCompany.Id,
-            //    Name = updatedCompany.Name,
-            //    Address = updatedCompany.Address,
-            //    Phone = updatedCompany.Phone,
-            //    Email = updatedCompany.Email
-            //};
-            return await GetCompaniesAsync(null, null);
+            throw new Exception($"Company update failed: {result?.R_ErrorMessage ?? "Unknown error"}");
+
+
         }
         public async Task<List<CompanyDto>> DeleteCompanyAsync(int id,int updatedBy)
         {
