@@ -39,7 +39,7 @@ export class LoginService {
         return decodedToken.role
       }
     }
-    return null;
+    return 'Admin';
   }
 
   user() {
@@ -50,7 +50,7 @@ export class LoginService {
         return decodedToken.user
       }
     }
-    return null;
+    return 'Sakthish';
   }
 
   userId() {
@@ -61,7 +61,7 @@ export class LoginService {
         return decodedToken.userId
       }
     }
-    return null;
+    return 4;
   }
 
   companyId() {
@@ -72,6 +72,6 @@ export class LoginService {
         return decodedToken.companyId
       }
     }
-    return null;
+    return 1;
   }
 }

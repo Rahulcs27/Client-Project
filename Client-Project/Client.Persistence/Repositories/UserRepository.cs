@@ -43,7 +43,7 @@ namespace Client.Persistence.Repositories
             parameters.Add("@p_companyId", userDto.CompanyId);
             parameters.Add("@p_email", userDto.Email);
             parameters.Add("@p_username", userDto.Username);
-            parameters.Add("@p_password", hashedPassword);
+            parameters.Add("@p_hashedPassword", hashedPassword);
             parameters.Add("@p_createdBy", userDto.CreatedBy);
 
             var result = await _db.QueryFirstOrDefaultAsync<dynamic>(

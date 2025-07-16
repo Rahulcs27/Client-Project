@@ -189,7 +189,7 @@ export class PaymentComponent {
     ])
   }
 
-  checkViewer = (): boolean => this.loginService.role() !== null && this.loginService.role() === 'Viewer';
+  checkViewer = (): boolean => this.loginService.role() !== null; //&& this.loginService.role() === 'Viewer';
 
   search(event: AutoCompleteCompleteEvent) {
     const query = event.query.toString();

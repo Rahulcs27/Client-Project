@@ -82,7 +82,7 @@ namespace Client.Persistence.Repositories
                 commandType: CommandType.StoredProcedure
             );
 
-            if (result?.R_Status == "SUCCESS" && result?.R_UpdatedID != null)
+            if (result?.R_Status == "SUCCESS" && result?.R_targetId != null)
             {
                 return await GetCompaniesAsync(null, null);
             }
