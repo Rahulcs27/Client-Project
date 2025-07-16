@@ -17,18 +17,18 @@ import { SubContractorWiseReportComponent } from './components/sub-contractor-wi
 
 export const routes: Routes = [
     { path: '', component: LoginComponent },
-    { path: 'home', component: HomeComponent, canActivate: [authGuard] },
-    { path: 'invoice', component: InvoiceComponent, canActivate: [authGuard] },
-    { path: 'product', component: ProductComponent, canActivate: [authGuard] },
-    { path: 'subContractor', component: SubContractorComponent, canActivate: [authGuard] },
-    { path: 'payment', component: PaymentComponent, canActivate: [authGuard] },
+    { path: 'home', component: HomeComponent, canActivate: [] },
+    { path: 'invoice', component: InvoiceComponent, canActivate: [] },
+    { path: 'product', component: ProductComponent, canActivate: [] },
+    { path: 'subContractor', component: SubContractorComponent, canActivate: [] },
+    { path: 'payment', component: PaymentComponent, canActivate: [] },
 
-    { path: 'paidReport', component: PaidReportsComponent, canActivate: [authGuard, roleGuard] },
-    { path: 'unpaidReport', component: UnpaidReportsComponent, canActivate: [authGuard, roleGuard] },
-    { path: 'productWiseReport', component: ProductWiseReportComponent, canActivate: [authGuard, roleGuard] },
-    { path: 'subContractorWiseReport', component: SubContractorWiseReportComponent, canActivate: [authGuard, roleGuard] },
+    { path: 'paidReport', component: PaidReportsComponent, canActivate: [roleGuard] },
+    { path: 'unpaidReport', component: UnpaidReportsComponent, canActivate: [roleGuard] },
+    { path: 'productWiseReport', component: ProductWiseReportComponent, canActivate: [roleGuard] },
+    { path: 'subContractorWiseReport', component: SubContractorWiseReportComponent, canActivate: [roleGuard] },
 
-    { path: 'companyMaster', component: CompanyMasterComponent, canActivate: [authGuard, roleGuard] },
-    { path: 'userMaster', component: UserMasterComponent, canActivate: [authGuard, roleGuard] },
-    { path: 'roleMaster', component: RoleComponent, canActivate: [authGuard, ] },
+    { path: 'companyMaster', component: CompanyMasterComponent, canActivate: [roleGuard] },
+    { path: 'userMaster', component: UserMasterComponent, canActivate: [roleGuard] },
+    { path: 'roleMaster', component: RoleComponent, canActivate: [] },
 ];
