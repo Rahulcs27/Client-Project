@@ -56,6 +56,18 @@
                     </select>
                 </div>
                 <div class="mb-3">
+                    <label for="invoiceDate" class="mb-1">Invoice Date <span *ngIf="modalMode !== 'view'"
+                            style="color: red;">*</span>
+                        <span *ngIf="modalMode !== 'view' &&
+                    this.invoiceForm.get('invoiceDate')?.hasError('required') &&
+                    (this.invoiceForm.get('invoiceDate')?.dirty ||
+                      this.invoiceForm.get('invoiceDate')?.touched)
+                  " style="color: red">Required</span>
+                    </label>
+                    <p-datepicker id="invoiceDate" formControlName="invoiceDate" placeholder="dd-MM-yy"
+                        dateFormat="dd-mm-yy" />
+                </div>
+                <div class="mb-3">
                     <label for="productId" class="mb-1">Product <span *ngIf="modalMode !== 'view'"
                             style="color: red;">*</span>
                         <span *ngIf="modalMode !== 'view' &&
@@ -67,7 +79,8 @@
                     <select #productId id="productId" class="form-control" formControlName="productId"
                         (change)="setUnitAmount(productId.value)">
                         <option value="">--Select--</option>
-                        <option *ngFor="let product of products" value="{{product.r_id+'_'+product.r_unitPrice}}">{{product.r_description}}
+                        <option *ngFor="let product of products" value="{{product.r_id+'_'+product.r_unitPrice}}">
+                            {{product.r_description}}
                         </option>
                     </select>
                 </div>
@@ -79,40 +92,14 @@
                     (this.invoiceForm.get('unitAmount')?.dirty ||
                       this.invoiceForm.get('unitAmount')?.touched)
                   " style="color: red">Required</span>
-                    <span *ngIf="modalMode !== 'view' &&
+                        <span *ngIf="modalMode !== 'view' &&
                     this.invoiceForm.get('unitAmount')?.hasError('pattern') &&
                     (this.invoiceForm.get('unitAmount')?.dirty ||
                       this.invoiceForm.get('unitAmount')?.touched)
                   " style="color: red">Invalid Price</span>
                     </label>
-                    <input type="text" id="unitAmount" class="form-control" placeholder="Unit Price" formControlName="unitAmount" (input)="calculateTotalAmount()" />
-                </div>
-                <div class="mb-3">
-                    <label for="invoiceDate" class="mb-1">Invoice Date <span *ngIf="modalMode !== 'view'"
-                            style="color: red;">*</span>
-                        <span *ngIf="modalMode !== 'view' &&
-                    this.invoiceForm.get('invoiceDate')?.hasError('required') &&
-                    (this.invoiceForm.get('invoiceDate')?.dirty ||
-                      this.invoiceForm.get('invoiceDate')?.touched)
-                  " style="color: red">Required</span>
-                    </label>
-                    <p-datepicker id="invoiceDate" formControlName="invoiceDate" placeholder="dd-MM-yy" dateFormat="dd-mm-yy" />
-                </div>
-                <div class="mb-3" *ngIf="modalMode !== 'add'">
-                    <label for="status" class="mb-1">Status <span *ngIf="modalMode !== 'view'"
-                            style="color: red;">*</span>
-                        <span *ngIf="modalMode !== 'view' &&
-                    this.invoiceForm.get('status')?.hasError('required') &&
-                    (this.invoiceForm.get('status')?.dirty ||
-                      this.invoiceForm.get('status')?.touched)
-                  " style="color: red">Required</span>
-                    </label>
-                    <select id="status" class="form-control" formControlName="status">
-                        <option value="">--Select--</option>
-                        <option value="Paid">Paid</option>
-                        <option value="Partially Paid">Partially Paid</option>
-                        <option value="Pending">Pending</option>
-                    </select>
+                    <input type="text" id="unitAmount" class="form-control" placeholder="Unit Price"
+                        formControlName="unitAmount" (input)="calculateTotalAmount()" />
                 </div>
                 <div class="mb-3">
                     <label for="quantity" class="mb-1">Quantity <span *ngIf="modalMode !== 'view'"
@@ -122,7 +109,7 @@
                     (this.invoiceForm.get('quantity')?.dirty ||
                       this.invoiceForm.get('quantity')?.touched)
                   " style="color: red">Required</span>
-                  <span *ngIf="modalMode !== 'view' &&
+                        <span *ngIf="modalMode !== 'view' &&
                     this.invoiceForm.get('quantity')?.hasError('pattern') &&
                     (this.invoiceForm.get('quantity')?.dirty ||
                       this.invoiceForm.get('quantity')?.touched)
@@ -142,6 +129,22 @@
                     </label>
                     <input type="text" id="totalAmount" class="form-control" formControlName="totalAmount">
                 </div>
+                <div class="mb-3" *ngIf="modalMode !== 'add'">
+                    <label for="status" class="mb-1">Status <span *ngIf="modalMode !== 'view'"
+                            style="color: red;">*</span>
+                        <span *ngIf="modalMode !== 'view' &&
+                    this.invoiceForm.get('status')?.hasError('required') &&
+                    (this.invoiceForm.get('status')?.dirty ||
+                      this.invoiceForm.get('status')?.touched)
+                  " style="color: red">Required</span>
+                    </label>
+                    <select id="status" class="form-control" formControlName="status">
+                        <option value="">--Select--</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Partially Paid">Partially Paid</option>
+                        <option value="Pending">Pending</option>
+                    </select>
+                </div>
                 <div class="mb-3">
                     <label for="paymentMode" class="mb-1">Payment Mode <span *ngIf="modalMode !== 'view'"
                             style="color: red;">*</span>
@@ -152,13 +155,15 @@
                   " style="color: red">Required</span>
                     </label>
                     <div class="form-check">
-                        <input class="form-check-input" formControlName="paymentMode" type="radio" value="Cash" name="paymentMode" id="Cash">
+                        <input class="form-check-input" formControlName="paymentMode" type="radio" value="Cash"
+                            name="paymentMode" id="Cash">
                         <label class="form-check-label" for="Cash">
                             Cash
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" formControlName="paymentMode" type="radio" value="Balance" name="paymentMode" id="Balance">
+                        <input class="form-check-input" formControlName="paymentMode" type="radio" value="Balance"
+                            name="paymentMode" id="Balance">
                         <label class="form-check-label" for="Balance">
                             Balance
                         </label>

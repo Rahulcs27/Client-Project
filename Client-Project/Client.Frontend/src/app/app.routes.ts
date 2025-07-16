@@ -14,6 +14,7 @@ import { PaidReportsComponent } from './components/paid-reports/paid-reports.com
 import { UnpaidReportsComponent } from './components/unpaid-reports/unpaid-reports.component';
 import { ProductWiseReportComponent } from './components/product-wise-report/product-wise-report.component';
 import { SubContractorWiseReportComponent } from './components/sub-contractor-wise-report/sub-contractor-wise-report.component';
+import { BankMasterComponent } from './components/bank-master/bank-master.component';
 
 export const routes: Routes = [
     { path: '', component: LoginComponent },
@@ -31,4 +32,5 @@ export const routes: Routes = [
     { path: 'companyMaster', component: CompanyMasterComponent, canActivate: [roleGuard] },
     { path: 'userMaster', component: UserMasterComponent, canActivate: [roleGuard] },
     { path: 'roleMaster', component: RoleComponent, canActivate: [] },
+    { path: 'bankMaster', component: BankMasterComponent, canActivate: [] },
 ];

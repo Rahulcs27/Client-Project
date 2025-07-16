@@ -32,7 +32,7 @@ export class InvoiceComponent {
     private alert: AlertService
   ) { }
   modalMode: 'view' | 'edit' | 'add' = 'view';
-  displayedColumns: string[] = ['name', 'r_invoiceDate', 'r_status', 'r_quantity', 'r_totalAmount', 'action'];
+  displayedColumns: string[] = ['r_id', 'name', 'r_invoiceDate', 'r_status', 'r_quantity', 'r_totalAmount', 'action'];
   data: InvoiceGetDto[] = [];
   products: ProductGetDto[] = [];
   subContractors: SubContractorGetDto[] = [];
@@ -93,6 +93,11 @@ export class InvoiceComponent {
         }
       });
       this.columnsInfo = {
+        'r_id': {
+          'title': 'Invoice No.',
+          'isSort': true,
+          'templateRef': null
+        },
         'name': {
           'title': 'Sub-Contract Name',
           'isSort': true,
@@ -131,6 +136,7 @@ export class InvoiceComponent {
 
   exportToPdf(){
     this.exportService.printToPDF('table','invoice.pdf',[
+      'Invoice No.',
       'Sub-Contract Name',
       'Invoice Date',
       'Status',
@@ -141,6 +147,7 @@ export class InvoiceComponent {
 
   exportToExcel(){
     this.exportService.printToExcel('table', 'invoice.xlsx', [
+      'Invoice No.',
       'Sub-Contract Name',
       'Invoice Date',
       'Status',
