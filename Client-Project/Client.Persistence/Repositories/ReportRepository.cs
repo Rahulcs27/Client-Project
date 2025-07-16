@@ -24,7 +24,7 @@ namespace Client.Persistence.Repositories
         {
             var param = new DynamicParameters();
             param.Add("@p_subcontractorName", subcontractorName);
-            param.Add("p_companyID", companyId);
+            param.Add("@p_companyID", companyId);
             param.Add("@p_bankName", bankName);
             param.Add("@p_fromDate", fromDate);
             param.Add("@p_toDate",toDate);
