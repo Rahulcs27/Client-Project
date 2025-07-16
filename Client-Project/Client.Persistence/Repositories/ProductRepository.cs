@@ -55,33 +55,7 @@ namespace Client.Persistence.Repositories
 
             throw new Exception($"Insert Failed: {result.R_ErrorMessage} (ErrorCode: {result.R_ErrorNumber})");
         }
-        //public async Task<ProductDto> UpdateProductAsync(UpdateProductDto dto)
-        //{
-        //    var parameters = new DynamicParameters();
-        //    parameters.Add("@P_id", dto.Id);
-        //    parameters.Add("@P_description", dto.Description);
-        //    parameters.Add("@P_unitPrice", dto.UnitPrice);
-        //    parameters.Add("@P_updatedBy", dto.UpdatedBy);
-
-        //    var result = await _db.QueryFirstOrDefaultAsync<UpdateProductResult>(
-        //        "sp_sbs_productMaster_update",
-        //        parameters,
-        //        commandType: CommandType.StoredProcedure
-        //    );
-
-        //    if (result.R_Status == "Success")
-        //    {
-        //        // Fetch updated product from DB
-        //        var updatedProduct = await _db.QueryFirstOrDefaultAsync<ProductDto>(
-        //            "SELECT * FROM sbs_productMaster WHERE id = @id AND isDeleted = 0",
-        //            new { id = dto.Id }
-        //        );
-
-        //        return updatedProduct ?? throw new Exception("Updated product not found.");
-        //    }
-
-        //    throw new Exception($"Update Failed: {result.R_ErrorMessage} (Code: {result.R_ErrorNumber})");
-        //}
+       
         public async Task<List<ProductDto>> UpdateProductAsync(UpdateProductDto dto)
         {
             var parameters = new DynamicParameters();
@@ -91,7 +65,6 @@ namespace Client.Persistence.Repositories
             parameters.Add("@P_companyID", dto.CompanyId);
             parameters.Add("@P_updatedBy", dto.UpdatedBy);
 
-            // Call the SP to perform update
             var result = await _db.QueryFirstOrDefaultAsync<string>(
                 "sp_sbs_productMaster_update",
                 parameters,
@@ -100,7 +73,6 @@ namespace Client.Persistence.Repositories
 
             if (result == "SUCCESS")
             {
-                // Fetch the updated product manually
                 var product = await _db.QueryFirstOrDefaultAsync<Product>(
                     @"SELECT id, description, unitPrice 
               FROM sbs_productMaster 
@@ -111,12 +83,6 @@ namespace Client.Persistence.Repositories
                 if (product == null)
                     throw new Exception("Updated product not found");
 
-                //return new ProductDto
-                //{
-                //    R_id = product.Id,
-                //    R_description = product.Description,
-                //    R_unitPrice = product.UnitPrice
-                //};
                 return await GetProductsAsync(dto.CompanyId, null, null);
 
             }
@@ -143,7 +109,7 @@ namespace Client.Persistence.Repositories
         public async Task<List<ProductDto>> GetProductsAsync(int companyId,int? id, string? search)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("@P_id", id);
+            parameters.Add("@p_id", id);
             parameters.Add("@P_Search", search);
             parameters.Add("@P_companyID", companyId);
 
