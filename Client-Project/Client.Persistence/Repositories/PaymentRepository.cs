@@ -70,7 +70,7 @@ namespace Client.Persistence.Repositories
             parameters.Add("@P_paymentDate", dto.PaymentDate);
             parameters.Add("@P_amountPaid", dto.AmountPaid);
             parameters.Add("@P_paymentMode", dto.PaymentMode);
-            parameters.Add("@P_bankName", dto.BankName);
+            parameters.Add("@P_bankId", dto.BankId);
             parameters.Add("@P_paymentStatus", dto.PaymentStatus);
             parameters.Add("@P_createdBy", dto.CreatedBy);
 
@@ -98,7 +98,7 @@ namespace Client.Persistence.Repositories
             parameters.Add("@P_paymentDate", dto.PaymentDate);
             parameters.Add("@P_amountPaid", dto.AmountPaid);
             parameters.Add("@P_paymentMode", dto.PaymentMode);
-            parameters.Add("@P_bankName", dto.BankName);
+            parameters.Add("@P_bankId", dto.BankId);
             parameters.Add("@P_paymentStatus", dto.PaymentStatus);
             parameters.Add("@P_updatedBy", dto.UpdatedBy);
 

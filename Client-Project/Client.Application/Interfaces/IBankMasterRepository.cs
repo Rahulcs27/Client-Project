@@ -11,6 +11,8 @@ namespace Client.Application.Interfaces
     {
         Task<List<BankMasterDto>> CreateBankAsync(CreateBankMasterDto dto);
         Task<List<BankMasterDto>> UpdateBankAsync(UpdateBankMasterDto dto);
+        Task<List<BankMasterDto>> DeleteBankAsync(DeleteBankMasterDto dto);
+
 
         Task<List<BankMasterDto>> GetBanksAsync(int? id);
 

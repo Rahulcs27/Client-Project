@@ -44,6 +44,8 @@ namespace Client.Persistence.Repositories
             insertParams.Add("@P_quantity", dto.Quantity);
             insertParams.Add("P_unitAmount", dto.UnitAmount);
             insertParams.Add("@P_totalAmount", dto.TotalAmount);
+            insertParams.Add("@P_commissionPercentage", dto.CommissionPercentage);
+            insertParams.Add("@P_commissionAmount", dto.CommissionAmount);
             insertParams.Add("@P_paymentMode", dto.PaymentMode);
             insertParams.Add("@P_createdBy", dto.CreatedBy);
 
@@ -58,17 +60,6 @@ namespace Client.Persistence.Repositories
                 throw new Exception($"Insert failed: {result?.R_ErrorMessage ?? "Unknown error"}");
             }
 
-            //int insertedId = insertResult.R_InsertedID;
-
-            //var getParams = new DynamicParameters();
-            //getParams.Add("@P_id", insertedId);
-            //getParams.Add("P_companyID", dto.CompanyId);
-
-            //var invoiceDetails = await _db.QueryFirstOrDefaultAsync<dynamic>(
-            //    "sp_sbs_invoiceDetails_get",
-            //    getParams,
-            //    commandType: CommandType.StoredProcedure
-            //);
             if (result.R_Status == "SUCCESS")
             {
                 return await GetInvoicesAsync(dto.CompanyId, null);
@@ -86,6 +77,8 @@ namespace Client.Persistence.Repositories
             updateParams.Add("@P_quantity", dto.Quantity);
             updateParams.Add("P_unitAmount", dto.UnitAmount);
             updateParams.Add("@P_totalAmount", dto.TotalAmount);
+            updateParams.Add("@P_commissionPercentage", dto.CommissionPercentage);
+            updateParams.Add("@P_commissionAmount", dto.CommissionAmount);
             updateParams.Add("@P_paymentMode", dto.PaymentMode);
             updateParams.Add("@P_status", dto.Status);
             updateParams.Add("@P_updatedBy", dto.UpdatedBy);
