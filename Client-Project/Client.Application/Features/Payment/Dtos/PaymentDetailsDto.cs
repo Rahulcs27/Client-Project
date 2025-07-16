@@ -13,6 +13,7 @@ namespace Client.Application.Features.Payment.Dtos
         public DateTime R_paymentDate { get; set; }
         public decimal R_amountPaid { get; set; }
         public string R_paymentMode { get; set; }
+        public int R_bankId { get; set; }
         public string R_bankName { get; set; }
         public string R_paymentStatus { get; set; }
     }
