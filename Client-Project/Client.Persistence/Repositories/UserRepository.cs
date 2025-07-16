@@ -67,6 +67,7 @@ namespace Client.Persistence.Repositories
 
             var user = (await _db.QueryFirstOrDefaultAsync<UserLoginDto>(
                 "sp_sbs_userMaster_get",
+
                 parameters,
                 commandType: CommandType.StoredProcedure
             ));

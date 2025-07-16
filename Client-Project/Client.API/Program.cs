@@ -1,6 +1,7 @@
 
 using System.Data;
 using System.Text;
+using Client.API.Middlewares;
 using Client.Application;
 using Client.Application.Interfaces;
 using Client.Application.Profiles;
@@ -84,7 +85,7 @@ namespace Client.API
 
             app.UseAuthorization();
 
-
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.MapControllers();
 
             app.Run();
