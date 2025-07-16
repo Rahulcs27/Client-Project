@@ -9,13 +9,10 @@ namespace Client.Application.Features.User.Dtos
     public class UpdateUserDto
     {
         public int Id { get; set; }
-        public int? RoleMasterId { get; set; }
-        public int? CompanyId { get; set; }
-        public string? Email { get; set; }
-        public string? Username { get; set; }
-        public string? Password { get; set; }
-        public string? CurrentPassword { get; set; }
-        public string? NewPassword { get; set; }
+        public int RoleMasterId { get; set; }
+        public int CompanyId { get; set; }
+        public string Username { get; set; }
+        public string Email { get; set; }
         public int UpdatedBy { get; set; }
     }
 

@@ -28,6 +28,7 @@ namespace Client.Persistence
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IReportRepository, ReportRepository>();
             services.AddScoped<IBankMasterRepository, BankMasterRepository>();
+            services.AddScoped<IJwtService, JwtService>();
 
             return services;
         }

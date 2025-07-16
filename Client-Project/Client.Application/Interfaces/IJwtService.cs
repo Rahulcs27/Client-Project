@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Client.Application.Features.User.Dtos;
-using MediatR;
 
-namespace Client.Application.Features.User.Commands
+namespace Client.Application.Interfaces
 {
-    public record UpdateUserCommand(UpdateUserDto UserDto) : IRequest<List<UserDto>>;
 
-
+    public interface IJwtService
+    {
+        string GenerateToken(UserDto user);
+    }
 
 }
