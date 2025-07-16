@@ -1,8 +1,8 @@
 <h2 class="pt-4 fs-1">Payment</h2>
 
 <div class="btn-container pt-md-5 pt-3 px-md-5 px-3 pb-2">
-    <button *ngIf="!checkViewer()" data-bs-toggle="modal" data-bs-target="#payment-modal" class="add-btn btn btn-outline-primary mb-2"
-        (click)="addPaymentGetDto()">Add
+    <button *ngIf="!checkViewer()" data-bs-toggle="modal" data-bs-target="#payment-modal"
+        class="add-btn btn btn-outline-primary mb-2" (click)="addPaymentGetDto()">Add
     </button>
     <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="
         exportToPdf()">
@@ -26,8 +26,8 @@
 
 <ng-template #actionTemplateRef let-row>
     @if(row.r_invoiceId){
-        <i class="fa-solid fa-file icon" data-bs-toggle="modal" data-bs-target="#invoice-modal"
-            (click)="invoiceGetDto(row.r_invoiceId)"></i>
+    <i class="fa-solid fa-file icon" data-bs-toggle="modal" data-bs-target="#invoice-modal"
+        (click)="invoiceGetDto(row.r_invoiceId)"></i>
     }
     <i class="fa-regular fa-pen-to-square icon" data-bs-toggle="modal" data-bs-target="#payment-modal"
         (click)="editPaymentGetDto(row)"></i>
@@ -47,8 +47,8 @@
             <div class="modal-body">
                 <div class="mb-3" *ngIf="modalMode === 'add'">
                     <label for="invoiceId" class="mb-1">Invoice Id </label>
-                    <p-autocomplete placeholder="Search: Invoice Id" formControlName="invoiceId" [suggestions]="invoiceIds"
-                        (completeMethod)="search($event)" />
+                    <p-autocomplete placeholder="Search: Invoice Id" formControlName="invoiceId"
+                        [suggestions]="invoiceIds" (completeMethod)="search($event)" />
                 </div>
                 <div class="mb-3">
                     <label for="paymentDate" class="mb-1">Date <span style="color: red;">*</span>
@@ -68,11 +68,16 @@
                     (this.paymentForm.get('amountPaid')?.dirty ||
                       this.paymentForm.get('amountPaid')?.touched)
                   " style="color: red">Required</span>
+                        <span *ngIf="
+                    this.paymentForm.get('amountPaid')?.hasError('pattern') &&
+                    (this.paymentForm.get('amountPaid')?.dirty ||
+                      this.paymentForm.get('amountPaid')?.touched)
+                  " style="color: red">Invalid Amount</span>
                     </label>
                     <input type="text" id="amountPaid" class="form-control" formControlName="amountPaid"
                         placeholder="Amount">
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" *ngIf="modalMode ==='add'">
                     <label for="paymentMode" class="mb-1">Payment Mode <span style="color: red;">*</span>
                         <span *ngIf="
                     this.paymentForm.get('paymentMode')?.hasError('required') &&
@@ -87,7 +92,8 @@
                         <option value="UPI">UPI</option>
                     </select>
                 </div>
-                <div class="mb-3" *ngIf="paymentForm.get('paymentMode')?.value !== 'Cash' && paymentForm.get('paymentMode')?.value !== ''">
+                <div class="mb-3"
+                    *ngIf="paymentForm.get('paymentMode')?.value !== 'Cash' && paymentForm.get('paymentMode')?.value !== ''">
                     <label for="bankName" class="mb-1">Bank Name <span style="color: red;">*</span>
                         <span *ngIf="
                     this.paymentForm.get('bankName')?.hasError('required') &&

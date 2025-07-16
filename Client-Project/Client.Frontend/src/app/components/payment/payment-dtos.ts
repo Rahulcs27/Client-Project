@@ -9,12 +9,12 @@ export interface PaymentGetDto {
 }
 
 export interface PaymentCreateDto {
-    invoiceId: number;
+    invoiceId: number | null;
     companyId: number;
     paymentDate: string;
     amountPaid: number;
     paymentMode: string
-    bankName: string;
+    bankName: string | null;
     paymentStatus: string;
     createdBy: number;
 }
@@ -22,11 +22,11 @@ export interface PaymentCreateDto {
 export interface PaymentUpdateDto {
     id: number;
     companyId: number;
-    invoiceId: number;
+    invoiceId: number | null;
     paymentDate: string;
     amountPaid: number;
     paymentMode: string
-    bankName: string;
+    bankName: string | null;
     paymentStatus: string;
     updatedBy: number;
 }
