@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace Client.Application.Features.Bank.Dtos
 {
-    public class UpdateBankMasterDto
+    public class DeleteBankMasterDto
     {
         public int Id { get; set; }
-        public string BankName { get; set; } = string.Empty;
-        public string Branch { get; set; } = string.Empty;
         public int UpdatedBy { get; set; }
     }
 }
