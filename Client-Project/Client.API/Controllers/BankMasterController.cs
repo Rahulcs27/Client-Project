@@ -34,6 +34,13 @@ namespace Client.API.Controllers
             var result = await _mediator.Send(new UpdateBankMasterCommand(dto));
             return Ok(result);
         }
+        [HttpDelete]
+        public async Task<ActionResult<List<BankMasterDto>>> Delete(int id, [FromQuery] int updatedBy)
+        {
+            var dto = new DeleteBankMasterDto { Id = id, UpdatedBy = updatedBy };
+            var result = await _mediator.Send(new DeleteBankMasterCommand(dto));
+            return Ok(result);
+        }
 
 
         [HttpGet]

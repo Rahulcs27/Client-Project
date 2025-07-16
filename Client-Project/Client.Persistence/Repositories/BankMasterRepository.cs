@@ -43,7 +43,6 @@ namespace Client.Persistence.Repositories
             parameters.Add("@P_id", dto.Id);
             parameters.Add("@P_bankName", dto.BankName);
             parameters.Add("@P_branch", dto.Branch);
-            parameters.Add("@P_isActive", dto.IsActive);
             parameters.Add("@P_updatedBy", dto.UpdatedBy);
 
             var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
@@ -57,6 +56,24 @@ namespace Client.Persistence.Repositories
 
             return await GetBanksAsync(null);
         }
+        public async Task<List<BankMasterDto>> DeleteBankAsync(DeleteBankMasterDto dto)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@P_id", dto.Id);
+            parameters.Add("@P_updatedBy", dto.UpdatedBy);
+
+            var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
+                "sp_sbs_bankMaster_delete",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            if (result == null || result.R_Status != "SUCCESS")
+                throw new Exception($"Delete failed: {result?.R_ErrorMessage ?? "Unknown error"}");
+
+            return await GetBanksAsync(null);
+        }
+
 
         public async Task<List<BankMasterDto>> GetBanksAsync(int? id)
         {
