@@ -11,10 +11,12 @@ namespace Client.Application.Features.User.Dtos
         public int Id { get; set; }
         public int RoleMasterId { get; set; }
         public string RoleName { get; set; }
-        public int CompanyId { get; set; }
-        public string Email { get; set; }
+        public int isActive { get; set; }
+        public int CompanyID { get; set; }
         public string Username { get; set; }
-        public string Password { get; set; }
+        public string Email { get; set; }
+        public string Token { get; set; }
     }
+
 
 }

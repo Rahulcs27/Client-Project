@@ -18,6 +18,9 @@ namespace Client.Application.Interfaces
 
         Task<List<CompanyDto>> GetCompaniesAsync(int? companyId, string? search);
 
+        Task<string> SendCompanyEmailAsync(SendCompanyEmailDto dto);
+
+
 
 
     }

@@ -35,36 +35,66 @@ namespace Client.API.Controllers
             var allUsers = await _mediator.Send(new UpdateUserCommand(dto));
             return Ok(allUsers);
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id,[FromQuery] int updatedBy, [FromQuery]int companyId)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUser(int Id,[FromQuery] int UpdatedBy, [FromQuery]int CompanyId)
         {
-            var result = await _mediator.Send(new DeleteUserCommand(id,updatedBy,companyId));
+            var result = await _mediator.Send(new DeleteUserCommand(Id,UpdatedBy,CompanyId));
 
             if (result != null)
                 return Ok(result);
 
             return BadRequest(new { message = "Check SP" });
         }
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginDto)
+        [HttpPut("toggle-active")]
+        public async Task<IActionResult> ToggleActive([FromBody] ToggleUserActiveDto dto)
         {
-            try
-            {
-                if (! await _userRepository.VerifyRecaptchaAsync(loginDto.RecaptchaToken))
-                    return BadRequest("reCAPTCHA verification failed.");
-                var token = await _userRepository.LoginAsync(loginDto.Username, loginDto.Password);
-                return Ok(new { token });
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return Unauthorized("Invalid username or password");
-            }
+            var result = await _mediator.Send(new ToggleUserActiveCommand { Dto = dto });
+            return Ok(result);
         }
 
-        
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        {
+            // reCAPTCHA validation
+            //if (!await _userRepository.VerifyRecaptchaAsync(dto.RecaptchaToken))
+            //    return BadRequest("reCAPTCHA verification failed.");
+
+            // Handle login via MediatR
+            var result = await _mediator.Send(new LoginCommand { Dto = dto });
+
+            if (string.IsNullOrEmpty(result.Token))
+                return Unauthorized(result.Message ?? "Invalid username or password.");
+
+            return Ok(result);
+        }
+
+
+        //[HttpPost("login")]
+        //public async Task<IActionResult> Login([FromBody] LoginRequestDto loginDto)
+        //{
+        //    try
+        //    {
+        //        if (! await _userRepository.VerifyRecaptchaAsync(loginDto.RecaptchaToken))
+        //            return BadRequest("reCAPTCHA verification failed.");
+        //        var token = await _userRepository.LoginAsync(loginDto.Username, loginDto.Password);
+        //        return Ok(new { token });
+        //    }
+        //    catch (UnauthorizedAccessException)
+        //    {
+        //        return Unauthorized("Invalid username or password");
+        //    }
+        //}
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDto dto)
+        {
+            var result = await _mediator.Send(new ChangePasswordCommand { PasswordDto = dto });
+            return Ok(result);
+        }
+
+
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers([FromQuery] int? companyId,[FromQuery] int? id, [FromQuery] string? search)
+        public async Task<IActionResult> GetUsers([FromQuery] int companyId,[FromQuery] int? id, [FromQuery] string? search)
         {
             var result = await _mediator.Send(new GetUsersQuery(companyId,id, search ));
             return Ok(result);

@@ -48,5 +48,12 @@ namespace Client.API.Controllers
             var result = await _mediator.Send(new GetSubcontractorWiseReportQuery(subcontractorName, companyId, fromDate, toDate));
             return Ok(result);
         }
+        //combined subcontractor report
+        [HttpGet("combined-subcontractor-entity")]
+        public async Task<IActionResult> GetCombinedReport()
+        {
+            var result = await _mediator.Send(new GetCombinedSubcontractorReportQuery());
+            return Ok(result);
+        }
     }
 }

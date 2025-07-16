@@ -8,6 +8,6 @@ using MediatR;
 
 namespace Client.Application.Features.User.Queries
 {
-    public record GetUsersQuery(int? companyId = null, int? Id = null, string? Search = null) : IRequest<List<UserDto>>;
+    public record GetUsersQuery(int companyId, int? Id = null, string? Search = null) : IRequest<List<UserDto>>;
 
 }

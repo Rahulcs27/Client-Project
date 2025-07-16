@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace Client.Application.Features.User.Dtos
 {
-    public class LoginRequestDto
+    public class ToggleUserActiveDto
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
-        //public string RecaptchaToken { get; set; }
+        public int Id { get; set; }
+        public int IsActive { get; set; } // 1 or 0
     }
-
 }

@@ -115,5 +115,26 @@ namespace Client.Persistence.Repositories
             return await GetCompaniesAsync(null, null);
 
         }
+        public async Task<string> SendCompanyEmailAsync(SendCompanyEmailDto dto)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@company_id", dto.CompanyId);
+            parameters.Add("@to_email", dto.ToEmail);
+            parameters.Add("@cc_email", dto.CcEmail);
+
+            var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
+                "sp_SendCompanyEmail",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            if (result == null || result.R_Status != "SUCCESS")
+            {
+                var errorMsg = result?.R_ErrorMessage ?? "Unknown error";
+                throw new Exception($"Email sending failed: {errorMsg}");
+            }
+
+            return "Email sent successfully.";
+        }
     }
 }
