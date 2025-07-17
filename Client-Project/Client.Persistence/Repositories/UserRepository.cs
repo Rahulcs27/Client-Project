@@ -286,6 +286,18 @@ namespace Client.Persistence.Repositories
             if (result?.R_Status != "SUCCESS")
                 throw new Exception(result?.R_ErrorMessage ?? "Change Password failed");
 
+            string emailSubject = "Your account information has been updated";
+            var sb = new StringBuilder();
+            sb.AppendLine($"<p>Dear {dto.Username},</p>");
+            sb.AppendLine("<p>Your account has been successfully updated with the following changes:</p>");
+            
+            sb.AppendLine("<p>✅ Your password has been changed.</p>");
+            
+            sb.AppendLine("<p>If you did not initiate this change, please contact support immediately.</p>");
+            sb.AppendLine("<br/><p>Thank you ❤️</p>");
+
+            await _emailService.SendEmailAsync(dto.Email, emailSubject, sb.ToString());
+
             return "Password changed successfully.";
         }
 
