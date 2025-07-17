@@ -1,8 +1,8 @@
 <h2 class="pt-4 fs-1">Payment</h2>
 
 <div class="btn-container pt-md-5 pt-3 px-md-5 px-3 pb-2">
-    <button *ngIf="!checkViewer()" data-bs-toggle="modal" data-bs-target="#payment-modal"
-        class="add-btn btn btn-outline-primary mb-2" (click)="addPaymentGetDto()">Add
+    <button data-bs-toggle="modal" data-bs-target="#payment-modal" class="add-btn btn btn-outline-primary mb-2"
+        (click)="addPaymentGetDto()">Add
     </button>
     <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="
         exportToPdf()">
@@ -11,6 +11,13 @@
     <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="exportToExcel()">
         <i class="fa-solid fa-file-excel"></i> Print to Excel
     </button>
+    <div class="input-group mb-2">
+        <input #searchInput (input)="setSearchValue(searchInput.value)" type="text" class="form-control input-search"
+            placeholder="Search: Bank Name" aria-label="Search by Bank Name" aria-describedby="search-btn">
+        <div class="input-group-append">
+            <span class="input-group-text btn-search" id="search-btn" (click)="onSearch()">Search</span>
+        </div>
+    </div>
 </div>
 
 <app-table [data]="data" [displayedColumns]="displayedColumns" [columnsInfo]="columnsInfo">
@@ -25,10 +32,12 @@
 </ng-template>
 
 <ng-template #actionTemplateRef let-row>
-    @if(row.r_invoiceId){
+    <!-- @if(row.r_invoiceId){
     <i class="fa-solid fa-file icon" data-bs-toggle="modal" data-bs-target="#invoice-modal"
         (click)="invoiceGetDto(row.r_invoiceId)"></i>
-    }
+    } -->
+    <i class="fa-regular fa-eye icon" data-bs-toggle="modal" data-bs-target="#payment-modal"
+        (click)="viewPaymentGetDto(row)"></i>
     <i class="fa-regular fa-pen-to-square icon" data-bs-toggle="modal" data-bs-target="#payment-modal"
         (click)="editPaymentGetDto(row)"></i>
     <i class="fa-solid fa-trash icon" (click)="deleteRowData(row.r_id)"></i>
@@ -41,11 +50,12 @@
             <div class="modal-header d-flex justify-content-between">
                 <h1 *ngIf="modalMode === 'edit'" style="color: whitesmoke;" class="modal-title fs-5 fw-bolder">Edit</h1>
                 <h1 *ngIf="modalMode === 'add'" style="color: whitesmoke;" class="modal-title fs-5 fw-bolder">Add</h1>
+                <h1 *ngIf="modalMode === 'view'" style="color: whitesmoke;" class="modal-title fs-5 fw-bolder">View</h1>
                 <button type="reset" class="btn close-btn" data-bs-dismiss="modal" aria-label="Close"
                     (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
-                <div class="mb-3" *ngIf="modalMode === 'add'">
+                <div class="mb-3" *ngIf="modalMode !== 'edit'">
                     <label for="invoiceId" class="mb-1">Invoice Id </label>
                     <p-autocomplete placeholder="Search: Invoice Id" formControlName="invoiceId"
                         [suggestions]="invoiceIds" (completeMethod)="search($event)" />
@@ -77,7 +87,7 @@
                     <input type="text" id="amountPaid" class="form-control" formControlName="amountPaid"
                         placeholder="Amount">
                 </div>
-                <div class="mb-3" *ngIf="modalMode ==='add'">
+                <div class="mb-3">
                     <label for="paymentMode" class="mb-1">Payment Mode <span style="color: red;">*</span>
                         <span *ngIf="
                     this.paymentForm.get('paymentMode')?.hasError('required') &&
@@ -87,22 +97,23 @@
                     </label>
                     <select name="paymentMode" id="paymentMode" class="form-control" formControlName="paymentMode">
                         <option value="">--Select--</option>
-                        <option value="Cash">Cash</option>
-                        <option value="Bank Transfer">Bank Transfer</option>
-                        <option value="UPI">UPI</option>
+                        <option value="CASH">Cash</option>
+                        <option value="BALANCE">Balance</option>
                     </select>
                 </div>
                 <div class="mb-3"
-                    *ngIf="paymentForm.get('paymentMode')?.value !== 'Cash' && paymentForm.get('paymentMode')?.value !== ''">
-                    <label for="bankName" class="mb-1">Bank Name <span style="color: red;">*</span>
+                    *ngIf="paymentForm.get('paymentMode')?.value !== 'CASH' && paymentForm.get('paymentMode')?.value !== ''">
+                    <label for="bankId" class="mb-1">Bank Name <span style="color: red;">*</span>
                         <span *ngIf="
-                    this.paymentForm.get('bankName')?.hasError('required') &&
-                    (this.paymentForm.get('bankName')?.dirty ||
-                      this.paymentForm.get('bankName')?.touched)
+                    this.paymentForm.get('bankId')?.hasError('required') &&
+                    (this.paymentForm.get('bankId')?.dirty ||
+                      this.paymentForm.get('bankId')?.touched)
                   " style="color: red">Required</span>
                     </label>
-                    <input type="text" id="bankName" class="form-control" formControlName="bankName"
-                        placeholder="Bank Name">
+                    <select name="bankId" id="bankId" class="form-control" formControlName="bankId">
+                        <option value="">--Select--</option>
+                        <option *ngFor="let bank of banks" value="{{bank.r_id}}">{{bank.r_bankName}}</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label for="paymentStatus" class="mb-1">Status <span style="color: red;">*</span>
@@ -131,7 +142,7 @@
     </div>
 </div>
 
-<div class="modal fade" [formGroup]="invoiceForm" id="invoice-modal" data-bs-backdrop="static" data-bs-keyboard="false"
+<!-- <div class="modal fade" [formGroup]="invoiceForm" id="invoice-modal" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <form class="modal-content">
@@ -195,4 +206,4 @@
             </div>
         </form>
     </div>
-</div>
+</div> -->

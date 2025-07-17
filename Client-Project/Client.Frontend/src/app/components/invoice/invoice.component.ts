@@ -31,8 +31,10 @@ export class InvoiceComponent {
     private subContractorService: SubContractorService,
     private alert: AlertService
   ) { }
+  searchVaue: string = '';
   modalMode: 'view' | 'edit' | 'add' = 'view';
   displayedColumns: string[] = ['r_id', 'name', 'r_invoiceDate', 'r_status', 'r_quantity', 'r_totalAmount', 'action'];
+  fullData: InvoiceGetDto[] = [];
   data: InvoiceGetDto[] = [];
   products: ProductGetDto[] = [];
   subContractors: SubContractorGetDto[] = [];
@@ -57,6 +59,8 @@ export class InvoiceComponent {
       status: new FormControl(''),
       quantity: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+'),]),
       totalAmount: new FormControl('', [Validators.required]),
+      commissionPercentage: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),]),
+      commissionAmount: new FormControl('', [Validators.required,]),
       paymentMode: new FormControl('', [Validators.required]),
       createdBy: new FormControl(''),
       updatedBy: new FormControl(''),
@@ -86,6 +90,7 @@ export class InvoiceComponent {
       })
       this.invoiceService.getAllInvoiceGetDto(this.companyId).subscribe({
         next: (response: InvoiceGetDto[]) => {
+          this.fullData = response;
           this.data = response;
         },
         error: (error) => {
@@ -134,8 +139,8 @@ export class InvoiceComponent {
     }
   }
 
-  exportToPdf(){
-    this.exportService.printToPDF('table','invoice.pdf',[
+  exportToPdf() {
+    this.exportService.printToPDF('table', 'invoice.pdf', [
       'Invoice No.',
       'Sub-Contract Name',
       'Invoice Date',
@@ -145,7 +150,7 @@ export class InvoiceComponent {
     ])
   }
 
-  exportToExcel(){
+  exportToExcel() {
     this.exportService.printToExcel('table', 'invoice.xlsx', [
       'Invoice No.',
       'Sub-Contract Name',
@@ -154,6 +159,14 @@ export class InvoiceComponent {
       'Quantity',
       'Total Amount',
     ])
+  }
+
+  setSearchValue(value: string) {
+    this.searchVaue = value;
+  }
+
+  onSearch() {
+    this.data = this.fullData.filter(d => (d.name.includes(this.searchVaue) || (Number(this.searchVaue) && d.r_id === Number(this.searchVaue))));
   }
 
   setUnitAmount(value: string) {
@@ -166,6 +179,12 @@ export class InvoiceComponent {
     this.invoiceForm.get('totalAmount')?.setValue((unitAmount && unitAmount > 0 && quantity && quantity > 0) ? unitAmount * quantity : '')
   }
 
+  calculateCommissionAmount() {
+    const commissionPercentage = Number(this.invoiceForm.get('commissionPercentage')?.value)
+    const totalAmount = Number(this.invoiceForm.get('totalAmount')?.value)
+    this.invoiceForm.get('commissionAmount')?.setValue((commissionPercentage && totalAmount) ? (Math.floor((commissionPercentage * totalAmount) / 100)) : '')
+  }
+
   closeModal() {
     this.invoiceForm.reset({
       id: '',
@@ -176,6 +195,8 @@ export class InvoiceComponent {
       invoiceDate: '',
       quantity: '',
       totalAmount: '',
+      commissionPercentage: '',
+      commissionAmount: '',
       paymentMode: '',
       status: '',
       createdBy: '',
@@ -195,6 +216,8 @@ export class InvoiceComponent {
       status: obj.r_status,
       quantity: obj.r_quantity,
       totalAmount: obj.r_totalAmount,
+      commissionPercentage: obj.r_commissionPercentage,
+      commissionAmount: obj.r_commissionAmount,
       paymentMode: obj.r_paymentMode,
       updatedBy: (mode === 'edit') && this.loginService.userId(),
     })
@@ -204,6 +227,7 @@ export class InvoiceComponent {
     else {
       this.invoiceForm.enable();
       this.invoiceForm.get('totalAmount')?.disable();
+      this.invoiceForm.get('commissionAmount')?.disable();
     }
     this.modalMode = mode;
   }
@@ -216,6 +240,7 @@ export class InvoiceComponent {
     })
     this.invoiceForm.enable();
     this.invoiceForm.get('totalAmount')?.disable();
+    this.invoiceForm.get('commissionAmount')?.disable();
     this.modalMode = 'add';
   }
 
@@ -224,7 +249,8 @@ export class InvoiceComponent {
       if (result.isConfirmed && this.userId && this.companyId) {
         this.invoiceService.deleteInvoiceGetDto(id, this.companyId, this.userId).subscribe({
           next: (response: InvoiceGetDto[]) => {
-            this.data = response;
+            this.fullData = response;
+            this.onSearch();
             this.alert.Toast.fire('Deleted Successfully', '', 'success');
           },
           error: (error) => {
@@ -244,10 +270,12 @@ export class InvoiceComponent {
       const formData = this.invoiceForm.value;
       formData['productId'] = (this.invoiceForm.get('productId')?.value).split('_')[0];
       formData['totalAmount'] = this.invoiceForm.get('totalAmount')?.value
+      formData['commissionAmount'] = this.invoiceForm.get('commissionAmount')?.value
       if (this.modalMode === 'edit') {
         this.invoiceService.editInvoiceUpdateDto(formData).subscribe({
           next: (response: InvoiceGetDto[]) => {
-            this.data = response
+            this.fullData = response;
+            this.onSearch();
             this.alert.Toast.fire('Updated Successfully', '', 'success')
             this.closeModal()
             const modalElement = document.getElementById('invoice-modal');
@@ -265,7 +293,8 @@ export class InvoiceComponent {
         this.invoiceService.addInvoiceGetDto(formData).subscribe(
           {
             next: (response: InvoiceGetDto[]) => {
-              this.data = response;
+              this.fullData = response;
+              this.onSearch();
               this.alert.Toast.fire('Added Successfully', '', 'success')
               const modalElement = document.getElementById('invoice-modal');
               this.closeModal()

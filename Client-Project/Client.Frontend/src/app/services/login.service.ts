@@ -61,7 +61,7 @@ export class LoginService {
         return decodedToken.userId
       }
     }
-    return 4;
+    return 1;
   }
 
   companyId() {

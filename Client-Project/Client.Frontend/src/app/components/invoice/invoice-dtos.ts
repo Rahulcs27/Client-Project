@@ -11,6 +11,8 @@ export interface InvoiceGetDto {
     r_status: string;
     r_quantity: number;
     unitPrice: number;
+    r_commissionPercentage: number;
+    r_commissionAmount: number;
     r_totalAmount: number;
     r_paymentMode: number;
 }
@@ -21,6 +23,8 @@ export interface InvoiceCreateDto {
     productId: number;
     unitAmount: number;
     invoiceDate: string;
+    commissionPercentage: number;
+    commissionAmount: number;
     quantity: number;
     totalAmount: number;
     paymentMode: string;
@@ -34,6 +38,8 @@ export interface InvoiceUpdateDto {
     invoiceDate: string,
     unitAmount: number;
     quantity: number,
+    commissionPercentage: number;
+    commissionAmount: number;
     totalAmount: number,
     paymentMode: string
     status: string,

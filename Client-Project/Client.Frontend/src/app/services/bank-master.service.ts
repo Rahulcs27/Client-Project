@@ -23,6 +23,6 @@ constructor(private http: HttpClient) { }
   }
 
   deleteBankMasterGetDto(id: number, userId: number): Observable<BankGetDto[]> {
-    return this.http.delete<BankGetDto[]>(`${apiUrl}/BankMaster/${id}?updatedBy=${userId}`);
+    return this.http.delete<BankGetDto[]>(`${apiUrl}/BankMaster?id=${id}&updatedBy=${userId}`);
   }
 }

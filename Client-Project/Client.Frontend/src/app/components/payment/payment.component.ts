@@ -17,6 +17,8 @@ import { LoginService } from '../../services/login.service';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ExportFileService } from '../../services/export-file.service';
+import { BankGetDto } from '../bank-master/bank-dtos';
+import { BankMasterService } from '../../services/bank-master.service';
 
 @Component({
   selector: 'app-payment',
@@ -26,6 +28,7 @@ import { ExportFileService } from '../../services/export-file.service';
 })
 export class PaymentComponent {
   constructor(
+    private bankService: BankMasterService,
     private exportService: ExportFileService,
     private loginService: LoginService,
     private paymentService: PaymentService,
@@ -35,19 +38,22 @@ export class PaymentComponent {
     private alert: AlertService
   ) {
     this.paymentForm.get('paymentMode')?.valueChanges.subscribe((mode) => {
-      const bankControl = this.paymentForm.get('bankName');
-      if (mode === 'Cash') {
+      const bankControl = this.paymentForm.get('bankId');
+      if (mode === 'CASH') {
         bankControl?.clearValidators();
-        bankControl?.setValue(null);
+        bankControl?.setValue('');
       } else {
         bankControl?.setValidators([Validators.required]);
       }
       bankControl?.updateValueAndValidity();
     });
-   }
+  }
+  fullData: PaymentGetDto[] = [];
+  searchVaue: string = '';
+  banks: BankGetDto[] = [];
   companyId: number | null = null;
   userId: number | null = null;
-  modalMode: 'edit' | 'add' = 'edit';
+  modalMode: 'edit' | 'add' | 'view' = 'view';
   invoices: InvoiceGetDto[] = [];
   invoiceIds: any[] = [];
   products: ProductGetDto[] = [];
@@ -74,7 +80,7 @@ export class PaymentComponent {
       paymentDate: new FormControl('', [Validators.required, Validators.maxLength(50),]),
       amountPaid: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),]),
       paymentMode: new FormControl('', [Validators.required, Validators.maxLength(50),]),
-      bankName: new FormControl(null, [Validators.maxLength(50),]),
+      bankId: new FormControl(''),
       paymentStatus: new FormControl('', [Validators.required, Validators.maxLength(50),]),
       createdBy: new FormControl(''),
       updatedBy: new FormControl(''),
@@ -98,6 +104,14 @@ export class PaymentComponent {
     this.companyId = this.loginService.companyId();
     this.userId = this.loginService.userId();
     if (this.companyId && this.userId) {
+      this.bankService.getAllBankMasterGetDto().subscribe({
+        next: (response: BankGetDto[]) => {
+          this.banks = response
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      })
       this.invoiceService.getAllInvoiceGetDto(this.companyId).subscribe({
         next: (response: InvoiceGetDto[]) => {
           this.invoices = response
@@ -125,6 +139,7 @@ export class PaymentComponent {
       this.paymentService.getAllPaymentGetDto(this.companyId).subscribe({
         next: (response: PaymentGetDto[]) => {
           this.data = response;
+          this.fullData = response;
         },
         error: (error) => {
           console.log(error);
@@ -164,13 +179,13 @@ export class PaymentComponent {
       },
       'action': {
         'title': 'Action',
-        'templateRef': this.checkViewer() ? null : this.actionTemplateRef
+        'templateRef': this.actionTemplateRef
       }
     }
   }
 
-  exportToPdf(){
-    this.exportService.printToPDF('table','payment.pdf',[
+  exportToPdf() {
+    this.exportService.printToPDF('table', 'payment.pdf', [
       'Date',
       'Amount',
       'Mode',
@@ -179,7 +194,7 @@ export class PaymentComponent {
     ])
   }
 
-  exportToExcel(){
+  exportToExcel() {
     this.exportService.printToExcel('table', 'payment.xlsx', [
       'Date',
       'Amount',
@@ -205,35 +220,66 @@ export class PaymentComponent {
       paymentDate: '',
       amountPaid: '',
       paymentMode: '',
-      bankName: null,
+      bankId: '',
       paymentStatus: '',
       createdBy: '',
       updatedBy: '',
     })
-    this.modalMode = 'edit';
+    this.modalMode = 'view';
+    this.paymentForm.enable();
   }
 
-  closeInvoiceModal() {
-    this.invoiceForm.reset({
-      companyId: '',
-      subcontractorId: '',
-      productId: '',
-      invoiceDate: '',
-      status: '',
-      quantity: '',
-      totalAmount: '',
-      paymentMode: '',
-    })
+  // closeInvoiceModal() {
+  //   this.invoiceForm.reset({
+  //     companyId: '',
+  //     subcontractorId: '',
+  //     productId: '',
+  //     invoiceDate: '',
+  //     status: '',
+  //     quantity: '',
+  //     totalAmount: '',
+  //     paymentMode: '',
+  //   })
+  // }
+
+  setSearchValue(value: string) {
+    this.searchVaue = value;
+  }
+
+  onSearch() {
+    if(this.searchVaue !== ''){
+      this.data = this.fullData.filter(d => d.r_bankName && d.r_bankName.includes(this.searchVaue));
+    }
+    else{
+      this.data = this.fullData
+    }
   }
 
   addPaymentGetDto() {
     this.paymentForm.patchValue({
       invoiceId: null,
-      bankName: null,
+      bankId: '',
       companyId: this.companyId,
       createdBy: this.userId,
     })
     this.modalMode = 'add';
+    this.paymentForm.enable();
+  }
+
+  viewPaymentGetDto(obj: PaymentGetDto) {
+    this.paymentForm.patchValue({
+      id: obj.r_id,
+      companyId: this.companyId,
+      invoiceId: obj.r_invoiceId,
+      paymentDate: new Date(obj.r_paymentDate),
+      amountPaid: obj.r_amountPaid,
+      paymentMode: obj.r_paymentMode,
+      bankId: (!obj.r_bankId || obj.r_bankId === 0) ? '' : obj.r_bankId,
+      paymentStatus: obj.r_paymentStatus,
+      updatedBy: this.userId
+    })
+    this.modalMode = 'view';
+    this.paymentForm.disable();
   }
 
   editPaymentGetDto(obj: PaymentGetDto) {
@@ -244,37 +290,45 @@ export class PaymentComponent {
       paymentDate: new Date(obj.r_paymentDate),
       amountPaid: obj.r_amountPaid,
       paymentMode: obj.r_paymentMode,
-      bankName: obj.r_bankName,
+      bankId: (!obj.r_bankId || obj.r_bankId === 0) ? '' : obj.r_bankId,
       paymentStatus: obj.r_paymentStatus,
       updatedBy: this.userId
     })
     this.modalMode = 'edit';
+    this.paymentForm.enable();
   }
 
   deleteRowData(id: number) {
     this.alert.Delete.fire().then((result) => {
       if (result.isConfirmed && this.companyId && this.userId) {
-        console.log('Confirmed!');
-      } else {
-        console.log('Cancelled');
-      }
+        this.paymentService.deletePaymentGetDto(id, this.userId, this.companyId).subscribe({
+          next: (response: PaymentGetDto[]) => {
+            this.fullData = response;
+            this.onSearch();
+            this.alert.Toast.fire('Deleted Successfully', '', 'success');
+          },
+          error: (error) => {
+            console.log(error);
+          }
+        });
+      } 
     });
   }
 
-  invoiceGetDto(invoiceId: number) {
-    const invoice = this.invoices.find(i => i.r_id === invoiceId);
-    this.invoiceForm.patchValue({
-      companyId: invoice?.r_companyId,
-      subcontractorId: invoice?.r_subcontractorId,
-      productId: invoice?.r_productId,
-      invoiceDate: invoice?.r_invoiceDate.split('T')[0],
-      status: invoice?.r_status,
-      quantity: invoice?.r_quantity,
-      totalAmount: invoice?.r_totalAmount,
-      paymentMode: invoice?.r_paymentMode,
-    })
-    this.invoiceForm.disable()
-  }
+  // invoiceGetDto(invoiceId: number) {
+  //   const invoice = this.invoices.find(i => i.r_id === invoiceId);
+  //   this.invoiceForm.patchValue({
+  //     companyId: invoice?.r_companyId,
+  //     subcontractorId: invoice?.r_subcontractorId,
+  //     productId: invoice?.r_productId,
+  //     invoiceDate: invoice?.r_invoiceDate.split('T')[0],
+  //     status: invoice?.r_status,
+  //     quantity: invoice?.r_quantity,
+  //     totalAmount: invoice?.r_totalAmount,
+  //     paymentMode: invoice?.r_paymentMode,
+  //   })
+  //   this.invoiceForm.disable()
+  // }
 
   savePaymentGetDto() {
     if (this.paymentForm.invalid) {
@@ -282,18 +336,17 @@ export class PaymentComponent {
       console.log('Payment form invalid', this.paymentForm.value);
     }
     else {
-      if(this.paymentForm.get('invoiceId')?.value === ''){
+      if (this.paymentForm.get('invoiceId')?.value === '') {
         this.paymentForm.get('invoiceId')?.setValue(null);
       }
-      if(this.paymentForm.get('bankName')?.value === ''){
-        this.paymentForm.get('bankName')?.setValue(null);
+      if (this.paymentForm.get('bankId')?.value === '') {
+        this.paymentForm.get('bankId')?.setValue(null);
       }
       if (this.modalMode === 'edit') {
-        console.log(this.paymentForm.value);
-        
         this.paymentService.editPaymentUpdateDto(this.paymentForm.value).subscribe({
           next: (response: PaymentGetDto[]) => {
-            this.data = response;
+            this.fullData = response;
+            this.onSearch()
             this.alert.Toast.fire('Updated Successfully', '', 'success');
             this.closeModal();
             const modalElement = document.getElementById('payment-modal');
@@ -308,11 +361,11 @@ export class PaymentComponent {
         });
       }
       else if (this.modalMode === 'add') {
-        this.paymentForm.get('createdBy')?.setValue(this.userId);
         this.paymentService.addPaymentGetDto(this.paymentForm.value).subscribe(
           {
             next: (response: PaymentGetDto[]) => {
-              this.data = response
+              this.fullData = response;
+              this.onSearch()
               this.alert.Toast.fire('Added Successfully', '', 'success');
               this.closeModal();
               const modalElement = document.getElementById('payment-modal');
