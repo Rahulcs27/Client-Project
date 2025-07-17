@@ -81,50 +81,62 @@ namespace Client.Persistence.Repositories
 
             return await GetUsersAsync(null, null, dto.CompanyID);
         }
-        public async Task<UserDto?> ValidateUserAsync(LoginDto dto)
+
+        public async Task<LoginResponseDto> ValidateUserAsync(LoginDto dto)
         {
-            var result = await _db.QueryFirstOrDefaultAsync<string>(
+            var result = await _db.QueryFirstOrDefaultAsync<LoginResult>(
                 "sp_sbs_userMaster_login",
                 new { p_username = dto.Username, p_password = dto.Password },
                 commandType: CommandType.StoredProcedure
             );
 
-            if (result != "True")
-                return null; 
+            if (result == null || result.isValid != "True")
+            {
+                return new LoginResponseDto
+                {
+                    Token = null,
+                    Message = "Invalid username or password"
+                };
+            }
+            var userDetails = await GetUsersAsync(result.user_Id, null, result.company_ID);
 
-            var users = await GetUsersAsync(null, dto.Username, dto.CompanyID);
-            var user = users.FirstOrDefault();
+            var user = new UserDto
+            {
+                Id = result.user_Id,
+                Username = dto.Username,
+                CompanyID = result.company_ID,
+                RoleMasterId = userDetails.First().RoleMasterId,
+                RoleName = userDetails.First().RoleName,
+                isActive = userDetails.First().isActive,
+                Email = userDetails.First().Email
+            };
 
-            if (user == null)
-                return null; 
-
-            // Step 3: Generate JWT
             var token = _jwtService.GenerateToken(user);
 
-            
-            user.Token = token;
-
-            return user; 
+            return new LoginResponseDto
+            {
+                Token = token,
+                Message = "Login successful"
+            };
         }
 
+        //public async Task<string> LoginAsync(string username, string password)
+        //{
+        //    var parameters = new DynamicParameters();
+        //    parameters.Add("@p_search", username);
 
-        public async Task<string> LoginAsync(string username, string password)
-        {
-            var parameters = new DynamicParameters();
-            parameters.Add("@p_search", username);
+        //    var user = (await _db.QueryFirstOrDefaultAsync<UserLoginDto>(
+        //        "sp_sbs_userMaster_get",
 
-            var user = (await _db.QueryFirstOrDefaultAsync<UserLoginDto>(
-                "sp_sbs_userMaster_get",
+        //        parameters,
+        //        commandType: CommandType.StoredProcedure
+        //    ));
 
-                parameters,
-                commandType: CommandType.StoredProcedure
-            ));
+        //    if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
+        //        throw new UnauthorizedAccessException("Invalid username or password.");
 
-            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
-                throw new UnauthorizedAccessException("Invalid username or password.");
-
-            return GenerateJwtToken(user);
-        }
+        //    return GenerateJwtToken(user);
+        //}
 
         private string GenerateJwtToken(UserLoginDto user)
         {

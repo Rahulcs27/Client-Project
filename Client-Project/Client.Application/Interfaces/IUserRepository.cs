@@ -12,12 +12,12 @@ namespace Client.Application.Interfaces
         Task<List<UserDto>> CreateUserAsync(CreateUserDto userDto);
         Task<List<UserDto>> UpdateUserAsync(UpdateUserDto userDto);
         Task<List<UserDto>> DeleteUserAsync(int id, int updatedBy,int companyId);
-        Task<string> LoginAsync(string username, string password);
+        //Task<string> LoginAsync(string username, string password);
         Task<bool> VerifyRecaptchaAsync(string token);
         Task<List<UserDto>> GetUsersAsync(int? id, string? search,int companyId);
         Task<string> ChangePasswordAsync(ChangePasswordDto dto);
         Task<string> ToggleIsActiveAsync(ToggleUserActiveDto dto);
-        Task<UserDto?> ValidateUserAsync(LoginDto dto);
+        Task<LoginResponseDto> ValidateUserAsync(LoginDto dto);
 
 
 

@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace Client.Application.Features.User.Dtos
 {
-    public class LoginDto
+    public class LoginResult
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string RecaptchaToken { get; set; }
-
+        public string isValid { get; set; }
+        public int user_Id { get; set; }
+        public int company_ID { get; set; }
+       
     }
-
 }

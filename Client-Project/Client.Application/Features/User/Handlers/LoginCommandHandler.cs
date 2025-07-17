@@ -13,34 +13,17 @@ namespace Client.Application.Features.User.Handlers
     public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponseDto>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IJwtService _jwtService;
 
-        public LoginCommandHandler(IUserRepository userRepository, IJwtService jwtService)
+        public LoginCommandHandler(IUserRepository userRepository)
         {
             _userRepository = userRepository;
-            _jwtService = jwtService;
         }
 
         public async Task<LoginResponseDto> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.ValidateUserAsync(request.Dto);
-
-            if (user == null)
-            {
-                return new LoginResponseDto
-                {
-                    Token = null,
-                    Message = "Invalid username or password."
-                };
-            }
-
-            var token = _jwtService.GenerateToken(user);
-            return new LoginResponseDto
-            {
-                Token = token,
-                Message = "Login successful"
-            };
+            return await _userRepository.ValidateUserAsync(request.Dto);
         }
     }
+
 
 }
