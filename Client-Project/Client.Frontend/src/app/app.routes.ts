@@ -16,6 +16,7 @@ import { ProductWiseReportComponent } from './components/product-wise-report/pro
 import { SubContractorWiseReportComponent } from './components/sub-contractor-wise-report/sub-contractor-wise-report.component';
 import { BankMasterComponent } from './components/bank-master/bank-master.component';
 import { CombinedSubcontractorEntityReportComponent } from './components/combined-subcontractor-entity-report/combined-subcontractor-entity-report.component';
+import { AdditionalEntityComponent } from './components/additional-entity/additional-entity.component';
 
 export const routes: Routes = [
     { path: '', component: LoginComponent },
@@ -24,6 +25,7 @@ export const routes: Routes = [
     { path: 'product', component: ProductComponent, canActivate: [] },
     { path: 'subContractor', component: SubContractorComponent, canActivate: [] },
     { path: 'payment', component: PaymentComponent, canActivate: [] },
+    { path: 'additionalEntity', component: AdditionalEntityComponent, canActivate: [] },
 
     { path: 'paidReport', component: PaidReportsComponent, canActivate: [] },
     { path: 'unpaidReport', component: UnpaidReportsComponent, canActivate: [] },

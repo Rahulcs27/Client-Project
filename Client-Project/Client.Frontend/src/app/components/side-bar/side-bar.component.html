@@ -11,14 +11,14 @@
                 <h2 class="accordion-header" id="profile">
                     <button class="accordion-button userName" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        <i class="fa-solid fa-user"></i>{{user?.username}}
+                        <i class="fa-solid fa-user"></i>&nbsp;{{user}}
                     </button>
                 </h2>
                 <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="profile"
                     data-bs-parent="#profile-accordion">
                     <div class="accordion-body">
                         <a class="btn sideBar-nav-inner-links mt-2" data-bs-toggle="modal"
-                            data-bs-target="#change-modal" (click)="patchValue()">Change
+                            data-bs-target="#change-modal">Change
                             Password</a>
                     </div>
                 </div>

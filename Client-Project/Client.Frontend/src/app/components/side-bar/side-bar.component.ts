@@ -18,7 +18,8 @@ export class SideBarComponent {
   userRole: string | null = '';
   userId: number | null = null;
   companyId: number | null = null;
-  user?: UserGetDto;
+  email: string | null = null;
+  user: string | null = null;
 
   constructor(
     private alert: AlertService,
@@ -29,74 +30,41 @@ export class SideBarComponent {
     this.userRole = this.loginService.role();
     this.companyId = this.loginService.companyId();
     this.userId = this.loginService.userId();
-    if (this.companyId && this.userId) {
-      this.userService.getUserGetDto(this.companyId, this.userId).subscribe({
-        next: (response: UserGetDto[]) => {
-          if (response.length > 0) {
-            this.user = response[0];
-          }
-          else {
-            this.loginService.logout()
-          }
-        },
-        error: (error) => {
-          console.log(error);
-        }
-      })
-    }
-    else {
+    this.user = this.loginService.user();
+    this.email = this.loginService.email();
+    if (!this.companyId || !this.userId || !this.email || !this.user) {
       this.loginService.logout()
     }
   }
 
   userChangeForm: FormGroup = new FormGroup(
     {
-      id: new FormControl(''),
-      roleMasterId: new FormControl('', [Validators.required]),
-      username: new FormControl('', [Validators.required]),
-      email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required]),
-      companyId: new FormControl('', [Validators.required]),
+      username: new FormControl('', [Validators.required,]),
+      email: new FormControl('', [Validators.required,]),
       currentPassword: new FormControl('', [Validators.required,]),
       newPassword: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{4,10}$'),]),
-      updatedBy: new FormControl(''),
     }
   );
 
   closeModal() {
     this.userChangeForm.reset({
-      id: '',
-      roleMasterId: '',
       username: '',
       email: '',
-      password: '',
-      companyId: '',
       currentPassword: '',
       newPassword: '',
-      updatedBy: '',
-    })
-  }
-
-  patchValue() {
-    this.userChangeForm.patchValue({
-      id: this.user?.id,
-      roleMasterId: this.user?.roleMasterId,
-      username: this.user?.username,
-      email: this.user?.email,
-      password: this.user?.password,
-      companyId: this.user?.companyID,
-      updatedBy: this.userId,
     })
   }
 
   saveUserGetDto() {
-    if(this.userChangeForm.invalid){
+    this.userChangeForm.get('username')?.setValue(this.user);
+    this.userChangeForm.get('email')?.setValue(this.email);
+    if (this.userChangeForm.invalid) {
       this.userChangeForm.markAllAsTouched();
       console.log('Password Change Form Invalid: ', this.userChangeForm.value);
     }
-    else{
-      this.userService.editUserUpdateDto(this.userChangeForm.value).subscribe({
-        next: (response: UserGetDto[]) => {
+    else {
+      this.userService.changePassword(this.userChangeForm.value).subscribe({
+        next: (response: any) => {
           this.alert.Toast.fire('Updated Successfully', '', 'success')
           this.closeModal();
           const modalElement = document.getElementById('change-modal');

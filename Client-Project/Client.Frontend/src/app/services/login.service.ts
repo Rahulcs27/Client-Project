@@ -68,8 +68,19 @@ export class LoginService {
     const token = sessionStorage.getItem('token')
     if (token) {
       const decodedToken: JwtClaims = jwtDecode(token)
-      if (decodedToken.companyId) {
-        return decodedToken.companyId
+      if (decodedToken.CompanyID) {
+        return decodedToken.CompanyID
+      }
+    }
+    return null;
+  }
+
+  email() {
+    const token = sessionStorage.getItem('token')
+    if (token) {
+      const decodedToken: JwtClaims = jwtDecode(token)
+      if (decodedToken.Email) {
+        return decodedToken.Email
       }
     }
     return null;

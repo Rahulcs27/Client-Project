@@ -74,7 +74,7 @@ export class CombinedSubcontractorEntityReportComponent {
           'templateRef': this.cashTemplateRef
         },
         'balanceAmount': {
-          'title': 'Cash Amount',
+          'title': 'Balance Amount',
           'isSort': true,
           'templateRef': this.balanceTemplateRef
         },
@@ -91,9 +91,10 @@ export class CombinedSubcontractorEntityReportComponent {
   }
 
   exportToPdf() {
-    this.exportService.printToPDF('table', 'Sub-Contractor-Wise-Report.pdf', [
+    this.exportService.printToPDF('table', 'Combined-Report.pdf', [
+      'Date',
       'Sub-Contractor',
-      'Month-Year',
+      'Quantity',
       'Cash Amount',
       'Balance Amount',
       'Paid Amount',
@@ -101,9 +102,10 @@ export class CombinedSubcontractorEntityReportComponent {
   }
 
   exportToExcel(){
-    this.exportService.printToExcel('table', 'Sub-Contractor-Wise-Report.xlsx', [
+    this.exportService.printToExcel('table', 'Combined-Report.xlsx', [
+      'Date',
       'Sub-Contractor',
-      'Month-Year',
+      'Quantity',
       'Cash Amount',
       'Balance Amount',
       'Paid Amount',

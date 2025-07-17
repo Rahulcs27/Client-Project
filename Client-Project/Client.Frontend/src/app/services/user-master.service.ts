@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { UserCreateDto, UserGetDto, UserUpdateDto } from '../components/user-master/user-dtos';
+import { ChangePasswordDto, UserCreateDto, UserGetDto, UserUpdateDto } from '../components/user-master/user-dtos';
 import { apiUrl } from '../../constant';
 
 @Injectable({
@@ -14,12 +14,12 @@ export class UserMasterService {
     return this.http.get<UserGetDto[]>(`${apiUrl}/User?companyId=${companyId}`);
   }
 
-  getUserGetDto(companyId: number, userId: number): Observable<UserGetDto[]> {
-    return this.http.get<UserGetDto[]>(`${apiUrl}/User?companyId=${companyId}&id=${userId}`);
-  }
-
   editUserUpdateDto(formData: UserUpdateDto): Observable<UserGetDto[]> {
     return this.http.put<UserGetDto[]>(`${apiUrl}/User`, formData);
+  }
+
+  changePassword(formData: ChangePasswordDto): Observable<any> {
+    return this.http.post<any>(`${apiUrl}/User/change-password`, formData);
   }
 
   addUserGetDto(formData: UserCreateDto): Observable<UserGetDto[]> {

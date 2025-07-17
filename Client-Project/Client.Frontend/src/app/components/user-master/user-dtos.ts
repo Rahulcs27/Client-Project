@@ -28,3 +28,10 @@ export interface UserUpdateDto {
     isActive: number;
     updatedBy: number;
 }
+
+export interface ChangePasswordDto {
+    username: string;
+    email: string;
+    currentPassword: string;
+    newPassword: string;
+}
