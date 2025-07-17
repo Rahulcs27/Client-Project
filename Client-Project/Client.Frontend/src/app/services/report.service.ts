@@ -6,6 +6,7 @@ import { PaidReportDto } from '../components/paid-reports/paid-report-dto';
 import { UnpaidReportDto } from '../components/unpaid-reports/unpaid-report-dto';
 import { ProductWiseReportComponent } from '../components/product-wise-report/product-wise-report.component';
 import { SubContractorWiseReportDto } from '../components/sub-contractor-wise-report/sub-contractor-wise-report-dto';
+import { CombinedSubcontactorEntityDto } from '../components/combined-subcontractor-entity-report/combined-subcontactor-entity-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -24,5 +25,8 @@ export class ReportService {
   }
   getAllSubContractorWiseReportsGetDto(url:string): Observable<SubContractorWiseReportDto[]> {
     return this.http.get<SubContractorWiseReportDto[]>(`${apiUrl}/Report/subcontractor-wise-report${url}`);
+  }
+  getAllCombinedSubContractorEntityReportsGetDto(): Observable<CombinedSubcontactorEntityDto[]> {
+    return this.http.get<CombinedSubcontactorEntityDto[]>(`${apiUrl}/Report/combined-subcontractor-entity`);
   }
 }

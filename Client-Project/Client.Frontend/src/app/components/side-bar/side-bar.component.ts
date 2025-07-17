@@ -84,7 +84,7 @@ export class SideBarComponent {
       username: this.user?.username,
       email: this.user?.email,
       password: this.user?.password,
-      companyId: this.user?.companyId,
+      companyId: this.user?.companyID,
       updatedBy: this.userId,
     })
   }

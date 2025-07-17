@@ -42,7 +42,7 @@ export class PaidReportsComponent implements OnInit {
   ngOnInit(): void {
     this.companyId = this.loginService.companyId()
     if (this.companyId) {
-      this.reportService.getAllPaidReportsGetDto('?companyId=' + this.companyId).subscribe({
+      this.reportService.getAllPaidReportsGetDto('').subscribe({
         next: (response: PaidReportDto[]) => {
           this.data = response;
         },
@@ -131,25 +131,44 @@ export class PaidReportsComponent implements OnInit {
       const date = new Date(inputDate);
       const dd = String(date.getDate()).padStart(2, '0');
       const mm = String(date.getMonth() + 1).padStart(2, '0');
-      const yy = String(date.getFullYear()).slice(-2);
-      return `${dd}-${mm}-${yy}`;
+      const yyyy = String(date.getFullYear());
+      return `${yyyy}-${mm}-${dd}`;
     }
-    let url = '?companyId=' + this.companyId;
     const fromDate = this.filterForm.get('FromDate')?.value;
     const toDate = this.filterForm.get('ToDate')?.value;
     const subContractorName = this.filterForm.get('subContractorName')?.value
     const bankName = this.filterForm.get('bankName')?.value
+    let url = '';
+    let isStartUrl = false;
     if (subContractorName !== null && subContractorName !== '') {
-      url += '&subcontractorName=' + subContractorName;
+      url += '?subcontractorName=' + subContractorName;
+      isStartUrl = true;
     }
     if (bankName !== null && bankName !== '') {
-      url += '&bankName=' + bankName;
+      if(isStartUrl){
+        url += '&bankName=' + bankName;
+      }
+      else{
+        url += '?bankName=' + bankName;
+        isStartUrl = true;
+      }
     }
     if (fromDate !== null && fromDate !== '') {
-      url += '&fromDate=' + getDateFormat(fromDate);
+      if(isStartUrl){
+        url += '&fromDate=' + getDateFormat(fromDate);
+      }
+      else{
+        url += '?fromDate=' + getDateFormat(fromDate);
+        isStartUrl = true
+      }
     }
     if (toDate !== null && toDate !== '') {
-      url += '&toDate=' + getDateFormat(toDate);
+      if(isStartUrl){
+        url += '&toDate=' + getDateFormat(toDate);
+      }
+      else{
+        url += '?toDate=' + getDateFormat(toDate);
+      }
     }
     this.reportService.getAllPaidReportsGetDto(url).subscribe({
       next: (response: PaidReportDto[]) => {

@@ -27,6 +27,6 @@ export class UserMasterService {
   }
 
   deleteUserGetDto(id: number, userId: number, companyId: number): Observable<UserGetDto[]> {
-    return this.http.delete<UserGetDto[]>(`${apiUrl}/User/${id}?updatedBy=${userId}&companyId=${companyId}`);
+    return this.http.delete<UserGetDto[]>(`${apiUrl}/User?Id=${id}?updatedBy=${userId}&companyId=${companyId}`);
   }
 }

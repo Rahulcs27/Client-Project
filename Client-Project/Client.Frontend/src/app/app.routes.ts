@@ -15,6 +15,7 @@ import { UnpaidReportsComponent } from './components/unpaid-reports/unpaid-repor
 import { ProductWiseReportComponent } from './components/product-wise-report/product-wise-report.component';
 import { SubContractorWiseReportComponent } from './components/sub-contractor-wise-report/sub-contractor-wise-report.component';
 import { BankMasterComponent } from './components/bank-master/bank-master.component';
+import { CombinedSubcontractorEntityReportComponent } from './components/combined-subcontractor-entity-report/combined-subcontractor-entity-report.component';
 
 export const routes: Routes = [
     { path: '', component: LoginComponent },
@@ -24,13 +25,14 @@ export const routes: Routes = [
     { path: 'subContractor', component: SubContractorComponent, canActivate: [] },
     { path: 'payment', component: PaymentComponent, canActivate: [] },
 
-    { path: 'paidReport', component: PaidReportsComponent, canActivate: [roleGuard] },
-    { path: 'unpaidReport', component: UnpaidReportsComponent, canActivate: [roleGuard] },
-    { path: 'productWiseReport', component: ProductWiseReportComponent, canActivate: [roleGuard] },
-    { path: 'subContractorWiseReport', component: SubContractorWiseReportComponent, canActivate: [roleGuard] },
+    { path: 'paidReport', component: PaidReportsComponent, canActivate: [] },
+    { path: 'unpaidReport', component: UnpaidReportsComponent, canActivate: [] },
+    { path: 'productWiseReport', component: ProductWiseReportComponent, canActivate: [] },
+    { path: 'subContractorWiseReport', component: SubContractorWiseReportComponent, canActivate: [] },
+    { path: 'combinedSubcontractorEntityReport', component: CombinedSubcontractorEntityReportComponent, canActivate: [] },
 
-    { path: 'companyMaster', component: CompanyMasterComponent, canActivate: [roleGuard] },
-    { path: 'userMaster', component: UserMasterComponent, canActivate: [roleGuard] },
+    { path: 'companyMaster', component: CompanyMasterComponent, canActivate: [] },
+    { path: 'userMaster', component: UserMasterComponent, canActivate: [] },
     { path: 'roleMaster', component: RoleComponent, canActivate: [] },
     { path: 'bankMaster', component: BankMasterComponent, canActivate: [] },
 ];
