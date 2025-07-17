@@ -11,6 +11,12 @@
     <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="exportToExcel()">
         <i class="fa-solid fa-file-excel"></i> Print to Excel
     </button>
+    <div class="input-group mb-2">
+        <input #searchInput (input)="setSearchValue(searchInput.value)" type="text" class="form-control input-search" placeholder="Search: Sub-Contractor Name OR Invoice No." aria-label="Search by Sub-Contractor Name OR Invoice No." aria-describedby="search-btn">
+        <div class="input-group-append">
+            <span class="input-group-text btn-search" id="search-btn" (click)="onSearch()">Search</span>
+        </div>
+    </div>
 </div>
 
 <app-table [data]="data" [displayedColumns]="displayedColumns" [columnsInfo]="columnsInfo">
@@ -40,6 +46,18 @@
                     (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
+                <div class="mb-3">
+                    <label for="invoiceDate" class="mb-1">Invoice Date <span *ngIf="modalMode !== 'view'"
+                            style="color: red;">*</span>
+                        <span *ngIf="modalMode !== 'view' &&
+                    this.invoiceForm.get('invoiceDate')?.hasError('required') &&
+                    (this.invoiceForm.get('invoiceDate')?.dirty ||
+                      this.invoiceForm.get('invoiceDate')?.touched)
+                  " style="color: red">Required</span>
+                    </label>
+                    <p-datepicker id="invoiceDate" formControlName="invoiceDate" placeholder="dd-MM-yy"
+                        dateFormat="dd-mm-yy" />
+                </div>
                 <div class="mb-3" *ngIf="modalMode !== 'edit'">
                     <label for="subcontractorId" class="mb-1">Sub-Contractor <span *ngIf="modalMode !== 'view'"
                             style="color: red;">*</span>
@@ -54,18 +72,6 @@
                         <option *ngFor="let subContractor of subContractors" value="{{subContractor.id}}">
                             {{subContractor.name}}</option>
                     </select>
-                </div>
-                <div class="mb-3">
-                    <label for="invoiceDate" class="mb-1">Invoice Date <span *ngIf="modalMode !== 'view'"
-                            style="color: red;">*</span>
-                        <span *ngIf="modalMode !== 'view' &&
-                    this.invoiceForm.get('invoiceDate')?.hasError('required') &&
-                    (this.invoiceForm.get('invoiceDate')?.dirty ||
-                      this.invoiceForm.get('invoiceDate')?.touched)
-                  " style="color: red">Required</span>
-                    </label>
-                    <p-datepicker id="invoiceDate" formControlName="invoiceDate" placeholder="dd-MM-yy"
-                        dateFormat="dd-mm-yy" />
                 </div>
                 <div class="mb-3">
                     <label for="productId" class="mb-1">Product <span *ngIf="modalMode !== 'view'"
@@ -127,7 +133,49 @@
                       this.invoiceForm.get('totalAmount')?.touched)
                   " style="color: red">Required</span>
                     </label>
-                    <input type="text" id="totalAmount" class="form-control" formControlName="totalAmount">
+                    <input type="text" id="totalAmount" class="form-control" formControlName="totalAmount" (input)="calculateCommissionAmount()">
+                </div>
+                <div class="mb-3">
+                    <label for="commissionPercentage" class="mb-1">Commission Percentage <span style="color: red;">*</span>
+                        <span *ngIf="modalMode !== 'view' &&
+                    this.invoiceForm.get('commissionPercentage')?.hasError('required') &&
+                    (this.invoiceForm.get('commissionPercentage')?.dirty ||
+                      this.invoiceForm.get('commissionPercentage')?.touched)
+                  " style="color: red">Required</span>
+                        <span *ngIf="modalMode !== 'view' &&
+                    this.invoiceForm.get('commissionPercentage')?.hasError('pattern') &&
+                    (this.invoiceForm.get('commissionPercentage')?.dirty ||
+                      this.invoiceForm.get('commissionPercentage')?.touched)
+                  " style="color: red">Invalid Price</span>
+                    </label>
+                    <input type="text" id="commissionPercentage" class="form-control" placeholder="Commission Percentage"
+                        formControlName="commissionPercentage" (input)="calculateCommissionAmount()" />
+                </div>
+                <div class="mb-3">
+                    <label for="commissionAmount" class="mb-1">Commission Amount <span style="color: red;">*</span>
+                        <span *ngIf="modalMode !== 'view' &&
+                    this.invoiceForm.get('commissionAmount')?.hasError('required') &&
+                    (this.invoiceForm.get('commissionAmount')?.dirty ||
+                      this.invoiceForm.get('commissionAmount')?.touched)
+                  " style="color: red">Required</span>
+                    </label>
+                    <input type="text" id="commissionAmount" class="form-control" formControlName="commissionAmount">
+                </div>
+                <div class="mb-3" *ngIf="modalMode !== 'add'">
+                    <label for="status" class="mb-1">Status <span *ngIf="modalMode !== 'view'"
+                            style="color: red;">*</span>
+                        <span *ngIf="modalMode !== 'view' &&
+                    this.invoiceForm.get('status')?.hasError('required') &&
+                    (this.invoiceForm.get('status')?.dirty ||
+                      this.invoiceForm.get('status')?.touched)
+                  " style="color: red">Required</span>
+                    </label>
+                    <select id="status" class="form-control" formControlName="status">
+                        <option value="">--Select--</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Partially Paid">Partially Paid</option>
+                        <option value="Pending">Pending</option>
+                    </select>
                 </div>
                 <div class="mb-3" *ngIf="modalMode !== 'add'">
                     <label for="status" class="mb-1">Status <span *ngIf="modalMode !== 'view'"
@@ -155,14 +203,14 @@
                   " style="color: red">Required</span>
                     </label>
                     <div class="form-check">
-                        <input class="form-check-input" formControlName="paymentMode" type="radio" value="Cash"
+                        <input class="form-check-input" formControlName="paymentMode" type="radio" value="CASH"
                             name="paymentMode" id="Cash">
                         <label class="form-check-label" for="Cash">
                             Cash
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" formControlName="paymentMode" type="radio" value="Balance"
+                        <input class="form-check-input" formControlName="paymentMode" type="radio" value="BALANCE"
                             name="paymentMode" id="Balance">
                         <label class="form-check-label" for="Balance">
                             Balance

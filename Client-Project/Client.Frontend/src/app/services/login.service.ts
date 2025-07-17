@@ -39,7 +39,7 @@ export class LoginService {
         return decodedToken.role
       }
     }
-    return 'Admin';
+    return null;
   }
 
   user() {
@@ -50,7 +50,7 @@ export class LoginService {
         return decodedToken.user
       }
     }
-    return 'Sakthish';
+    return null;
   }
 
   userId() {
@@ -61,17 +61,28 @@ export class LoginService {
         return decodedToken.userId
       }
     }
-    return 4;
+    return null;
   }
 
   companyId() {
     const token = sessionStorage.getItem('token')
     if (token) {
       const decodedToken: JwtClaims = jwtDecode(token)
-      if (decodedToken.companyId) {
-        return decodedToken.companyId
+      if (decodedToken.CompanyID) {
+        return decodedToken.CompanyID
       }
     }
-    return 1;
+    return null;
+  }
+
+  email() {
+    const token = sessionStorage.getItem('token')
+    if (token) {
+      const decodedToken: JwtClaims = jwtDecode(token)
+      if (decodedToken.Email) {
+        return decodedToken.Email
+      }
+    }
+    return null;
   }
 }

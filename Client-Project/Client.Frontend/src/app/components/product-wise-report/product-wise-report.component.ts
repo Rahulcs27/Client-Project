@@ -38,7 +38,7 @@ export class ProductWiseReportComponent {
   ngOnInit(): void {
     this.companyId = this.loginService.companyId()
     if (this.companyId) {
-      this.reportService.getAllProductWiseReportsGetDto('?companyId=' + this.companyId).subscribe({
+      this.reportService.getAllProductWiseReportsGetDto('').subscribe({
         next: (response: ProductWiseReportComponent[]) => {
           this.data = response;
         },
@@ -117,25 +117,44 @@ export class ProductWiseReportComponent {
       const date = new Date(inputDate);
       const dd = String(date.getDate()).padStart(2, '0');
       const mm = String(date.getMonth() + 1).padStart(2, '0');
-      const yy = String(date.getFullYear()).slice(-2);
-      return `${dd}-${mm}-${yy}`;
+      const yyyy = String(date.getFullYear());
+      return `${yyyy}-${mm}-${dd}`;
     }
-    let url = '?companyId=' + this.companyId;
+    let url = '' ;
     const fromDate = this.filterForm.get('FromDate')?.value;
     const toDate = this.filterForm.get('ToDate')?.value;
     const subContractorName = this.filterForm.get('subContractorName')?.value
     const productName = this.filterForm.get('productName')?.value
+    let isStartUrl = false;
     if (subContractorName !== null && subContractorName !== '') {
-      url += '&subcontractorName=' + subContractorName;
+      url += '?subcontractorName=' + subContractorName;
+      isStartUrl = true;
     }
     if (productName !== null && productName !== '') {
-      url += '&productName=' + productName;
+      if(isStartUrl){
+        url += '&productName=' + productName;
+      }
+      else {
+        url += '?productName=' + productName;
+        isStartUrl = true;
+      }
     }
     if (fromDate !== null && fromDate !== '') {
-      url += '&fromDate=' + getDateFormat(fromDate);
+      if(isStartUrl){
+        url += '&fromDate=' + getDateFormat(fromDate);
+      }
+      else{
+        url += '?fromDate=' + getDateFormat(fromDate);
+        isStartUrl = true;
+      }
     }
     if (toDate !== null && toDate !== '') {
-      url += '&toDate=' + getDateFormat(toDate);
+      if(isStartUrl){
+        url += '&toDate=' + getDateFormat(toDate);
+      }
+      else{
+        url += '?toDate=' + getDateFormat(toDate);
+      }
     }
     this.reportService.getAllProductWiseReportsGetDto(url).subscribe({
       next: (response: ProductWiseReportComponent[]) => {

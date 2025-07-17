@@ -11,13 +11,14 @@
                 <h2 class="accordion-header" id="profile">
                     <button class="accordion-button userName" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        <i class="fa-solid fa-user"></i>{{user?.username}}
+                        <i class="fa-solid fa-user"></i>&nbsp;{{user}}
                     </button>
                 </h2>
                 <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="profile"
                     data-bs-parent="#profile-accordion">
                     <div class="accordion-body">
-                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-toggle="modal" data-bs-target="#change-modal" (click)="patchValue()">Change
+                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-toggle="modal"
+                            data-bs-target="#change-modal">Change
                             Password</a>
                     </div>
                 </div>
@@ -37,9 +38,12 @@
                     <div class="accordion-body">
                         <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
                             routerLink="/companyMaster">Company</a>
-                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas" routerLink="/roleMaster">Role</a>
-                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas" routerLink="/userMaster">User</a>
-                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas" routerLink="/product">Product</a>
+                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
+                            routerLink="/roleMaster">Role</a>
+                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
+                            routerLink="/userMaster">User</a>
+                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
+                            routerLink="/product">Product</a>
                         <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
                             routerLink="/subContractor">SubContractor</a>
                     </div>
@@ -59,10 +63,17 @@
                 <div id="collapse-report" class="accordion-collapse collapse" aria-labelledby="report"
                     data-bs-parent="#report-accordion">
                     <div class="accordion-body">
-                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas" routerLink="/paidReport">Paid</a>
-                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas" routerLink="/unpaidReport">Un-Paid</a>
-                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas" routerLink="/productWiseReport">Product Wise</a>
-                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas" routerLink="/subContractorWiseReport">Sub-Contractor Wise</a>
+                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
+                            routerLink="/paidReport">Paid</a>
+                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
+                            routerLink="/unpaidReport">Un-Paid</a>
+                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
+                            routerLink="/productWiseReport">Product Wise</a>
+                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
+                            routerLink="/subContractorWiseReport">Sub-Contractor Wise</a>
+                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
+                            routerLink="/combinedSubcontractorEntityReport">Combined Sub-Contractor Entity Report</a>
+
                     </div>
                 </div>
             </div>
@@ -70,8 +81,8 @@
     </div>
 </aside>
 
-<div class="modal fade" [formGroup]="userChangeForm" id="change-modal" data-bs-backdrop="static" data-bs-keyboard="false"
-    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" [formGroup]="userChangeForm" id="change-modal" data-bs-backdrop="static"
+    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <form class="modal-content">
             <div class="modal-header d-flex justify-content-between">
@@ -89,7 +100,8 @@
                       this.userChangeForm.get('currentPassword')?.touched)
                   " style="color: red">Required</span>
                     </label>
-                    <input type="text" class="form-control" placeholder="Current Password" formControlName="currentPassword">
+                    <input type="text" class="form-control" placeholder="Current Password"
+                        formControlName="currentPassword">
                 </div>
 
                 <div class="mb-3">

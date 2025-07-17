@@ -19,7 +19,7 @@ import { ExportFileService } from '../../services/export-file.service';
 })
 export class UserMasterComponent {
   userId: number | null = null;
-  companyId: number | null = null;
+  companyID: number | null = null;
   searchVaue: string = '';
   constructor(
     private exportService: ExportFileService,
@@ -48,19 +48,28 @@ export class UserMasterComponent {
       roleMasterId: new FormControl('', [Validators.required]),
       username: new FormControl('', [Validators.required, Validators.maxLength(50)]),
       email: new FormControl('', [Validators.required, Validators.email, Validators.maxLength(70)]),
-      password: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{4,10}$'),]),
-      companyId: new FormControl('', [Validators.required]),
-      currentPassword: new FormControl(''),
-      newPassword: new FormControl(''),
+      password: new FormControl(''),
+      companyID: new FormControl('', [Validators.required]),
       updatedBy: new FormControl(''),
       createdBy: new FormControl(''),
     }
   );
 
+  setPasswordValidator() {
+    const passwordControl = this.userForm.get('password');
+
+    if (this.modalMode === 'add') {
+      passwordControl?.setValidators([Validators.required, Validators.pattern('^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{4,10}$'),]);
+    } else {
+      passwordControl?.clearValidators();
+    }
+    passwordControl?.updateValueAndValidity();
+  }
+
   ngOnInit(): void {
     this.userId = this.loginService.userId();
-    this.companyId = this.loginService.companyId();
-    if (this.userId && this.companyId) {
+    this.companyID = this.loginService.companyId();
+    if (this.userId && this.companyID) {
       this.roleService.getAllRoleGetDto().subscribe({
         next: (response: RoleGetDto[]) => {
           this.roles = response;
@@ -70,7 +79,7 @@ export class UserMasterComponent {
         }
       })
 
-      this.userService.getAllUserGetDto(this.companyId).subscribe({
+      this.userService.getAllUserGetDto(this.companyID).subscribe({
         next: (response: UserGetDto[]) => {
           this.data = response;
           this.fullData = response;
@@ -102,21 +111,21 @@ export class UserMasterComponent {
     }
   }
 
-  exportToPdf(){
-    this.exportService.printToPDF('table','userMaster.pdf',[
+  exportToPdf() {
+    this.exportService.printToPDF('table', 'userMaster.pdf', [
       'Name',
       'Role',
     ])
   }
 
-  exportToExcel(){
+  exportToExcel() {
     this.exportService.printToExcel('table', 'userMaster.xlsx', [
       'Name',
       'Role',
     ])
   }
 
-  setSearchValue(value: string){
+  setSearchValue(value: string) {
     this.searchVaue = value;
   }
 
@@ -131,9 +140,7 @@ export class UserMasterComponent {
       username: '',
       email: '',
       password: '',
-      companyId: '',
-      currentPassword: '',
-      newPassword: '',
+      companyID: '',
       createdBy: '',
       updatedBy: '',
     })
@@ -141,22 +148,23 @@ export class UserMasterComponent {
   }
 
   addUserGetDto() {
+    this.modalMode = 'add';
     this.userForm.patchValue({
-      companyId: this.companyId,
+      companyID: this.companyID,
       createdBy: this.userId,
     })
     this.userForm.enable();
-    this.modalMode = 'add';
+    this.setPasswordValidator()
   }
 
-  viewAndEditUserGetDto(obj: UserGetDto, mode: 'view'|'edit') {
+  viewAndEditUserGetDto(obj: UserGetDto, mode: 'view' | 'edit') {
+    this.modalMode = mode;
     this.userForm.patchValue({
       id: obj.id,
       roleMasterId: obj.roleMasterId,
       username: obj.username,
-      password: obj.password,
       email: obj.email,
-      companyId: this.companyId,
+      companyID: this.companyID,
       updatedBy: this.userId,
     })
     if (mode === 'view') {
@@ -165,13 +173,13 @@ export class UserMasterComponent {
     else {
       this.userForm.enable();
     }
-    this.modalMode = mode;
+    this.setPasswordValidator();
   }
 
   deleteRowData(id: number) {
     this.alert.Delete.fire().then((result) => {
-      if (result.isConfirmed && this.userId && this.companyId) {
-        this.userService.deleteUserGetDto(id, this.userId, this.companyId).subscribe({
+      if (result.isConfirmed && this.userId && this.companyID) {
+        this.userService.deleteUserGetDto(id, this.userId, this.companyID).subscribe({
           next: (response: UserGetDto[]) => {
             this.fullData = response;
             this.onSearch();

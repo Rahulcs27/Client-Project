@@ -38,6 +38,7 @@
             <div class="modal-header d-flex justify-content-between">
                 <h1 *ngIf="modalMode === 'add'" style="color: whitesmoke;" class="modal-title fs-5 fw-bolder">Add</h1>
                 <h1 *ngIf="modalMode === 'edit'" style="color: whitesmoke;" class="modal-title fs-5 fw-bolder">Edit</h1>
+                <h1 *ngIf="modalMode === 'view'" style="color: whitesmoke;" class="modal-title fs-5 fw-bolder">View</h1>
                 <button type="reset" class="btn close-btn" data-bs-dismiss="modal" aria-label="Close"
                     (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>

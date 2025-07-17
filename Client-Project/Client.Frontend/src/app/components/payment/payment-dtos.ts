@@ -5,6 +5,7 @@ export interface PaymentGetDto {
     r_amountPaid: number;
     r_paymentMode: string;
     r_bankName: string;
+    r_bankId: number | null;
     r_paymentStatus: string;
 }
 
@@ -14,7 +15,7 @@ export interface PaymentCreateDto {
     paymentDate: string;
     amountPaid: number;
     paymentMode: string
-    bankName: string | null;
+    bankId: number | null;
     paymentStatus: string;
     createdBy: number;
 }
@@ -26,7 +27,7 @@ export interface PaymentUpdateDto {
     paymentDate: string;
     amountPaid: number;
     paymentMode: string
-    bankName: string | null;
+    bankId: number | null;
     paymentStatus: string;
     updatedBy: number;
 }

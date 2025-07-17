@@ -21,4 +21,8 @@ export class PaymentService {
   addPaymentGetDto(formData: PaymentCreateDto): Observable<PaymentGetDto[]> {
     return this.http.post<PaymentGetDto[]>(`${apiUrl}/Payment`, formData);
   }
+
+  deletePaymentGetDto(id:number, updatedBy: number, companyId: number): Observable<PaymentGetDto[]> {
+    return this.http.delete<PaymentGetDto[]>(`${apiUrl}/Payment/delete?id=${id}&updatedBy=${updatedBy}&companyId=${companyId}`);
+  }
 }

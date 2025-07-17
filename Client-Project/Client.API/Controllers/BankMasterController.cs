@@ -26,11 +26,8 @@ namespace Client.API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<List<BankMasterDto>>> Update(int id, [FromBody] UpdateBankMasterDto dto)
+        public async Task<ActionResult<List<BankMasterDto>>> Update([FromBody] UpdateBankMasterDto dto)
         {
-            if (id != dto.Id)
-                return BadRequest("Id mismatch");
-
             var result = await _mediator.Send(new UpdateBankMasterCommand(dto));
             return Ok(result);
         }

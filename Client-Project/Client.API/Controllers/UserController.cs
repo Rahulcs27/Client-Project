@@ -90,7 +90,7 @@ namespace Client.API.Controllers
         public async Task<IActionResult> ChangePassword(ChangePasswordDto dto)
         {
             var result = await _mediator.Send(new ChangePasswordCommand { PasswordDto = dto });
-            return Ok(result);
+            return Ok(new {result = result});
         }
 
 

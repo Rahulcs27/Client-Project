@@ -1,4 +1,4 @@
-<h2 class="pt-4 fs-1">Company Master</h2>
+<h2 class="pt-4 fs-1">Bank Master</h2>
 
 <div class="btn-container pt-md-5 pt-3 px-md-5 px-3 pb-2">
     <button data-bs-toggle="modal" data-bs-target="#bankMaster-modal" class="add-btn btn btn-outline-primary mb-2"
@@ -12,7 +12,7 @@
         <i class="fa-solid fa-file-excel"></i> Print to Excel
     </button>
     <div class="input-group mb-2">
-        <input #searchInput (input)="setSearchValue(searchInput.value)" type="text" class="form-control input-search" placeholder="Search: Company Name" aria-label="Search by Company Name" aria-describedby="search-btn">
+        <input #searchInput (input)="setSearchValue(searchInput.value)" type="text" class="form-control input-search" placeholder="Search: Bank Name" aria-label="Search by Bank Name" aria-describedby="search-btn">
         <div class="input-group-append">
             <span class="input-group-text btn-search" id="search-btn" (click)="onSearch()">Search</span>
         </div>
@@ -26,7 +26,7 @@
         (click)="viewBankMasterGetDto(row)"></i>
     <i class="fa-regular fa-pen-to-square icon" data-bs-toggle="modal" data-bs-target="#bankMaster-modal"
         (click)="editCompanyMasterGetDto(row)"></i>
-    <i class="fa-solid fa-trash icon" (click)="deleteRowData(row.id)"></i>
+    <i class="fa-solid fa-trash icon" (click)="deleteRowData(row.r_id)"></i>
 </ng-template>
 
 <div class="modal fade" [formGroup]="bankMasterForm" id="bankMaster-modal" data-bs-backdrop="static"

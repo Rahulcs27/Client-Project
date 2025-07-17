@@ -12,5 +12,6 @@ export interface JwtClaims {
     user: string;
     userId: number;
     role: string;
-    companyId: number;
+    CompanyID: number;
+    Email: string;
 }

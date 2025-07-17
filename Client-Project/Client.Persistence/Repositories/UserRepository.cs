@@ -211,7 +211,7 @@ namespace Client.Persistence.Repositories
             var parameters = new DynamicParameters();
             parameters.Add("@p_id", userDto.Id);
             parameters.Add("@p_roleMasterId", userDto.RoleMasterId);
-            parameters.Add("@p_companyID", userDto.CompanyId);
+            parameters.Add("@p_companyID", userDto.CompanyID);
             parameters.Add("@p_username", userDto.Username);
             parameters.Add("@p_email", userDto.Email);
             parameters.Add("@p_updatedBy", userDto.UpdatedBy);
@@ -222,7 +222,7 @@ namespace Client.Persistence.Repositories
             if (result?.R_Status != "SUCCESS")
                 throw new Exception(result?.R_ErrorMessage ?? "Update failed");
 
-            return await GetUsersAsync(null, null, userDto.CompanyId);
+            return await GetUsersAsync(null, null, userDto.CompanyID);
         }
 
         public async Task<List<UserDto>> GetUsersAsync(int? id, string? search, int companyId)

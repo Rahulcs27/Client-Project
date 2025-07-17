@@ -174,7 +174,7 @@ export class BankMasterComponent implements OnInit {
             this.onSearch()
             this.alert.Toast.fire('Updated Successfully', '', 'success')
             this.closeModal();
-            const modalElement = document.getElementById('companyMaster-modal');
+            const modalElement = document.getElementById('bankMaster-modal');
             if (modalElement) {
               const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
               modalInstance.hide();
