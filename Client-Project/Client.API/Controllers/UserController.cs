@@ -55,9 +55,9 @@ namespace Client.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
-            // reCAPTCHA validation
-            //if (!await _userRepository.VerifyRecaptchaAsync(dto.RecaptchaToken))
-            //    return BadRequest("reCAPTCHA verification failed.");
+            //reCAPTCHA validation
+            if (!await _userRepository.VerifyRecaptchaAsync(dto.RecaptchaToken))
+                return BadRequest("reCAPTCHA verification failed.");
 
             // Handle login via MediatR
             var result = await _mediator.Send(new LoginCommand { Dto = dto });
