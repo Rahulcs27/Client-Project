@@ -8,8 +8,9 @@ using MediatR;
 
 namespace Client.Application.Features.User.Commands
 {
-    public record UpdateUserCommand(UpdateUserDto UserDto) : IRequest<List<UserDto>>;
-
-
+    public class ChangePasswordCommand : IRequest<string>
+    {
+        public ChangePasswordDto PasswordDto { get; set; }
+    }
 
 }

@@ -10,19 +10,33 @@ using MediatR;
 
 namespace Client.Application.Features.User.Handlers
 {
+    //public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, List<UserDto>>
+    //{
+    //    private readonly IUserRepository _repository;
+
+    //    public DeleteUserCommandHandler(IUserRepository repository)
+    //    {
+    //        _repository = repository;
+    //    }
+
+    //    public async Task<List<UserDto>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+    //    {
+    //        return await _repository.DeleteUserAsync(request.Id,request.updatedBy,request.companyId);
+    //    }
+    //}
     public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, List<UserDto>>
     {
-        private readonly IUserRepository _repository;
-
-        public DeleteUserCommandHandler(IUserRepository repository)
+        private readonly IUserRepository _userRepository;
+        public DeleteUserCommandHandler(IUserRepository userRepository)
         {
-            _repository = repository;
+            _userRepository = userRepository;
         }
 
         public async Task<List<UserDto>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
-            return await _repository.DeleteUserAsync(request.Id,request.updatedBy,request.companyId);
+            return await _userRepository.DeleteUserAsync(request.Id, request.updatedBy, request.companyId);
         }
     }
+
 
 }

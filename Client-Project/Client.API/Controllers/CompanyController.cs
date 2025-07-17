@@ -67,6 +67,13 @@ namespace Client.API.Controllers
             var result = await _mediator.Send(new GetAllCompanyQuery(companyId, search));
             return Ok(result);
         }
-        
+
+        [HttpPost("send-report-email")]
+        public async Task<IActionResult> SendEmail([FromBody] SendCompanyEmailDto dto)
+        {
+            var result = await _mediator.Send(new SendCompanyEmailCommand(dto));
+            return Ok(new { status = "Success", message = result });
+        }
+
     }
 }

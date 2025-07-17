@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Client.Application.Features.User.Dtos
 {
-    public class LoginRequestDto
+    public class ChangePasswordDto
     {
         public string Username { get; set; }
-        public string Password { get; set; }
-        //public string RecaptchaToken { get; set; }
+        public string CurrentPassword { get; set; }
+        public string NewPassword { get; set; }
     }
-
 }
