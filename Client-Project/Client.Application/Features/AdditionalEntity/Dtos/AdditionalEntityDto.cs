@@ -15,6 +15,7 @@ namespace Client.Application.Features.AdditionalEntity.Dtos
         public DateTime R_date { get; set; }
         public int R_companyId { get; set; }
         public int R_subContractorId { get; set; }
+        public string R_subContractorName { get; set; }
     }
 
 }
