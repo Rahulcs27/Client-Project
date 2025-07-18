@@ -1,4 +1,5 @@
-﻿using Client.Application.Features.Payment.Commands;
+﻿using Client.API.Authorization.Attributes;
+using Client.Application.Features.Payment.Commands;
 using Client.Application.Features.Payment.Dtos;
 using Client.Application.Features.Payment.Queries;
 using MediatR;
@@ -9,6 +10,8 @@ namespace Client.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [ScreenAccess("PAYMENT", "View")]
+
     public class PaymentController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -27,6 +30,8 @@ namespace Client.API.Controllers
 
        
         [HttpPost]
+        [ScreenAccess("PAYMENT", "Create")]
+
         public async Task<IActionResult> CreatePayment([FromBody] CreatePaymentDto paymentDto)
         {
             var result = await _mediator.Send(new CreatePaymentCommand(paymentDto));
@@ -36,6 +41,8 @@ namespace Client.API.Controllers
             return Ok(result);
         }
         [HttpPut("update")]
+        [ScreenAccess("PAYMENT", "Edit")]
+
         public async Task<IActionResult> Update([FromBody] UpdatePaymentDto dto)
         {
             var result = await _mediator.Send(new UpdatePaymentCommand(dto));
@@ -43,6 +50,8 @@ namespace Client.API.Controllers
         }
 
         [HttpDelete("delete")]
+        [ScreenAccess("PAYMENT", "Delete")]
+
         public async Task<IActionResult> Delete(int id, int updatedBy,int companyId)
         {
             var result = await _mediator.Send(new DeletePaymentCommand(id, updatedBy,companyId));

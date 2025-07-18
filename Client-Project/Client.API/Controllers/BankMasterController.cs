@@ -1,4 +1,5 @@
-﻿using Client.Application.Features.Bank.Commands;
+﻿using Client.API.Authorization.Attributes;
+using Client.Application.Features.Bank.Commands;
 using Client.Application.Features.Bank.Dtos;
 using Client.Application.Features.Bank.Queries;
 using MediatR;
@@ -9,6 +10,8 @@ namespace Client.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ScreenAccess("BANK", "View")]
+
     public class BankMasterController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -19,6 +22,7 @@ namespace Client.API.Controllers
         }
 
         [HttpPost]
+        [ScreenAccess("BANK", "Create")]
         public async Task<ActionResult<List<BankMasterDto>>> Create([FromBody] CreateBankMasterDto dto)
         {
             var result = await _mediator.Send(new CreateBankMasterCommand(dto));
@@ -26,12 +30,14 @@ namespace Client.API.Controllers
         }
 
         [HttpPut]
+        [ScreenAccess("BANK", "Edit")]
         public async Task<ActionResult<List<BankMasterDto>>> Update([FromBody] UpdateBankMasterDto dto)
         {
             var result = await _mediator.Send(new UpdateBankMasterCommand(dto));
             return Ok(result);
         }
         [HttpDelete]
+        [ScreenAccess("BANK", "Delete")]
         public async Task<ActionResult<List<BankMasterDto>>> Delete(int id, [FromQuery] int updatedBy)
         {
             var dto = new DeleteBankMasterDto { Id = id, UpdatedBy = updatedBy };

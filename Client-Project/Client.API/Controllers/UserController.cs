@@ -1,4 +1,5 @@
-﻿using Client.Application.Features.User.Commands;
+﻿using Client.API.Authorization.Attributes;
+using Client.Application.Features.User.Commands;
 using Client.Application.Features.User.Dtos;
 using Client.Application.Features.User.Queries;
 using Client.Application.Interfaces;
@@ -13,6 +14,7 @@ namespace Client.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     //[Authorize]
+
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -25,6 +27,7 @@ namespace Client.API.Controllers
         }
 
         [HttpPost]
+        [ScreenAccess("USER","Create")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
         {
             var result = await _mediator.Send(new CreateUserCommand(dto));
@@ -32,12 +35,14 @@ namespace Client.API.Controllers
         }
 
         [HttpPut]
+        [ScreenAccess("USER", "Edit")]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto dto)
         {
             var allUsers = await _mediator.Send(new UpdateUserCommand(dto));
             return Ok(allUsers);
         }
         [HttpDelete]
+        [ScreenAccess("USER", "Delete")]
         public async Task<IActionResult> DeleteUser(int Id,[FromQuery] int UpdatedBy, [FromQuery]int CompanyId)
         {
             var result = await _mediator.Send(new DeleteUserCommand(Id,UpdatedBy,CompanyId));
@@ -48,6 +53,7 @@ namespace Client.API.Controllers
             return BadRequest(new { message = "Check SP" });
         }
         [HttpPut("toggle-active")]
+        [ScreenAccess("USER", "Edit")]
         public async Task<IActionResult> ToggleActive([FromBody] ToggleUserActiveDto dto)
         {
             var result = await _mediator.Send(new ToggleUserActiveCommand { Dto = dto });

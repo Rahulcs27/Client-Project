@@ -8,6 +8,7 @@ namespace Client.Application.Features.RoleAccessControl.Dtos
 {
     public class UserAccessDto
     {
+
         public int U_userId { get; set; }
         public string U_username { get; set; }
         public string U_email { get; set; }
