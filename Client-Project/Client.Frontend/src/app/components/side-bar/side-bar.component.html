@@ -20,6 +20,8 @@
                         <a class="btn sideBar-nav-inner-links mt-2" data-bs-toggle="modal"
                             data-bs-target="#change-modal">Change
                             Password</a>
+                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-toggle="modal"
+                            data-bs-target="#mail-modal">Send Email</a>
                     </div>
                 </div>
             </div>
@@ -122,6 +124,38 @@
                             digits)</span>
                     </label>
                     <input type="text" class="form-control" placeholder="New Password" formControlName="newPassword">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="add-btn btn btn-outline-primary" type="button" (click)="saveUserGetDto()">Save</button>
+                <button class="btn btn-outline-danger" data-bs-dismiss="modal" aria-label="Close" type="reset"
+                    (click)="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" [formGroup]="userChangeForm" id="mail-modal" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <form class="modal-content">
+            <div class="modal-header d-flex justify-content-between">
+                <h1 style="color: whitesmoke;" class="modal-title fs-5 fw-bolder">
+                    Email</h1>
+                <button type="reset" class="btn close-btn" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="currentPassword" class="mb-1">To Email<span style="color: red;">*</span>
+                        <span *ngIf="
+                    this.userChangeForm.get('currentPassword')?.hasError('required') &&
+                    (this.userChangeForm.get('currentPassword')?.dirty ||
+                      this.userChangeForm.get('currentPassword')?.touched)
+                  " style="color: red">Required</span>
+                    </label>
+                    <input type="text" class="form-control" placeholder="Current Password"
+                        formControlName="currentPassword">
                 </div>
             </div>
             <div class="modal-footer">

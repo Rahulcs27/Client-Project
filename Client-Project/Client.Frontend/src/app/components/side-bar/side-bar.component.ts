@@ -7,6 +7,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { UserMasterService } from '../../services/user-master.service';
 import { UserGetDto } from '../user-master/user-dtos';
 import { AlertService } from '../../services/alert.service';
+import { CompanyMasterServiceService } from '../../services/company-master-service.service';
 
 @Component({
   selector: 'app-side-bar',
@@ -24,7 +25,8 @@ export class SideBarComponent {
   constructor(
     private alert: AlertService,
     private loginService: LoginService,
-    private userService: UserMasterService
+    private userService: UserMasterService,
+    private companyService: CompanyMasterServiceService,
   ) { }
   ngOnInit(): void {
     this.userRole = this.loginService.role();
@@ -46,12 +48,26 @@ export class SideBarComponent {
     }
   );
 
+  emailForm: FormGroup = new FormGroup({
+    companyId: new FormControl(''),
+    toEmail: new FormControl('', [Validators.required,]),
+    ccEmail: new FormControl(''),
+  })
+
   closeModal() {
     this.userChangeForm.reset({
       username: '',
       email: '',
       currentPassword: '',
       newPassword: '',
+    })
+  }
+
+  closeMailModal() {
+    this.emailForm.reset({
+      companyId: '',
+      toEmail: '',
+      ccEmail: '',
     })
   }
 
@@ -68,6 +84,34 @@ export class SideBarComponent {
           this.alert.Toast.fire('Updated Successfully', '', 'success')
           this.closeModal();
           const modalElement = document.getElementById('change-modal');
+          if (modalElement) {
+            const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+            modalInstance.hide();
+          }
+          this.loginService.logout();
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      });
+    }
+  }
+  saveMail() {
+    if (this.emailForm.invalid) {
+      this.emailForm.markAllAsTouched();
+      console.log('Email Form Invalid: ', this.emailForm.value);
+    }
+    else {
+      const form = {
+        companyId: this.companyId,
+        toEmail: this.emailForm.get('toEmail')?.value,
+        ccEmail: null
+      }
+      this.companyService.sendEmail(form).subscribe({
+        next: (response: any) => {
+          this.alert.Toast.fire('Sent Successfully', '', 'success')
+          this.closeModal();
+          const modalElement = document.getElementById('mail-modal');
           if (modalElement) {
             const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
             modalInstance.hide();
