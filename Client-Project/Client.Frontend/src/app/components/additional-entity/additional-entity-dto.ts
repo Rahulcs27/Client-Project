@@ -5,6 +5,7 @@ export interface AdditionalEntityGetDto {
     r_quantity: number;
     r_date: number;
     r_companyId: number;
+    r_subContractorName: string;
     r_subContractorId: number;
 }
 

@@ -12,7 +12,7 @@
         <i class="fa-solid fa-file-excel"></i> Print to Excel
     </button>
     <div class="input-group mb-2">
-        <input #searchInput (input)="setSearchValue(searchInput.value)" type="text" class="form-control input-search" placeholder="Search: Sub-Contractor Name" aria-label="Search by Sub-Contractor Name" aria-describedby="search-btn">
+        <input #searchInput (input)="setSearchValue(searchInput.value)" type="text" class="form-control input-search" placeholder="Search: Sub-Contractor Name OR Type" aria-label="Search by Sub-Contractor Name OR Type" aria-describedby="search-btn">
         <div class="input-group-append">
             <span class="input-group-text btn-search" id="search-btn" (click)="onSearch()">Search</span>
         </div>
@@ -20,6 +20,10 @@
 </div>
 <app-table [data]="data" [displayedColumns]="displayedColumns" [columnsInfo]="columnsInfo">
 </app-table>
+
+<ng-template #dateTemplateRef let-row>
+    {{row.r_date | date : 'dd-MMM-yy'}}
+</ng-template>
 
 <ng-template #actionTemplateRef let-row>
     <i class="fa-regular fa-eye icon" data-bs-toggle="modal" data-bs-target="#AdditionalEntity-modal"

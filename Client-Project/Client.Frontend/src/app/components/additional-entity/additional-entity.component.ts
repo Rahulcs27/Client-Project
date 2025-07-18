@@ -26,7 +26,7 @@ export class AdditionalEntityComponent {
   subContractors: SubContractorGetDto[] = [];
   fullData: AdditionalEntityGetDto[] = []
   data: AdditionalEntityGetDto[] = [];
-  displayedColumns: string[] = ['r_type', 'r_amount', 'r_quantity', 'action'];
+  displayedColumns: string[] = ['r_date', 'r_subContractorName', 'r_type', 'r_quantity', 'r_amount', 'action'];
   columnsInfo: {
     [key: string]: {
       'title'?: string,
@@ -34,6 +34,7 @@ export class AdditionalEntityComponent {
       'templateRef': TemplateRef<any> | null,
     }
   } = {};
+  @ViewChild('dateTemplateRef', { static: true }) dateTemplateRef!: TemplateRef<any>;
   @ViewChild('actionTemplateRef', { static: true }) actionTemplateRef!: TemplateRef<any>;
   constructor(
     private alert: AlertService,
@@ -83,9 +84,9 @@ export class AdditionalEntityComponent {
         'r_date': {
           'title': 'Date',
           'isSort': true,
-          'templateRef': null
+          'templateRef': this.dateTemplateRef
         },
-        'r_subContractorId': {
+        'r_subContractorName': {
           'title': 'Sub-Contractor',
           'isSort': true,
           'templateRef': null
@@ -149,7 +150,7 @@ export class AdditionalEntityComponent {
   }
 
   onSearch() {
-    this.data = this.fullData//.filter(d => d..includes(this.searchVaue));
+    this.data = this.fullData.filter(d => (d.r_subContractorName.includes(this.searchVaue) || d.r_type.includes(this.searchVaue)));
   }
 
   closeModal() {
