@@ -1,4 +1,5 @@
-﻿using Client.Application.Features.RoleAccessControl.Dtos;
+﻿using Client.API.Authorization.Attributes;
+using Client.Application.Features.RoleAccessControl.Dtos;
 using Client.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ namespace Client.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[ScreenAccess("ROLE_ACCESS", "View")]
     public class RoleAccessController : ControllerBase
     {
         private readonly IRoleAccessRepository _accessService;

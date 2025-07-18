@@ -11,6 +11,8 @@ namespace Client.Application.Features.Payment.Dtos
         public int R_id { get; set; }
         public int R_invoiceId { get; set; }
         public DateTime R_paymentDate { get; set; }
+        public DateTime R_fromDate { get; set; }
+        public DateTime R_toDate { get; set; }
         public decimal R_amountPaid { get; set; }
         public string R_paymentMode { get; set; }
         public int R_bankId { get; set; }
