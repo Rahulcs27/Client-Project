@@ -8,17 +8,17 @@ namespace Client.Application.Features.RoleAccessControl.Dtos
 {
     public class UserAccessDto
     {
-        public int UserId { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public int RoleId { get; set; }
-        public string RoleName { get; set; }
-        public string ScreenName { get; set; }
-        public string ScreenCode { get; set; }
-        public bool ViewAccess { get; set; }
-        public bool CreateAccess { get; set; }
-        public bool EditAccess { get; set; }
-        public bool DeleteAccess { get; set; }
+        public int U_userId { get; set; }
+        public string U_username { get; set; }
+        public string U_email { get; set; }
+        public int U_roleId { get; set; }
+        public string U_roleName { get; set; }
+        public string A_screenName { get; set; }
+        public string A_screenCode { get; set; }
+        public bool A_viewAccess { get; set; }
+        public bool A_createAccess { get; set; }
+        public bool A_editAccess { get; set; }
+        public bool A_deleteAccess { get; set; }
     }
 
 }
