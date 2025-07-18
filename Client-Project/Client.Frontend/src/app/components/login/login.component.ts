@@ -6,17 +6,18 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthResponse } from './login-dtos';
 import { NgxCaptchaModule } from 'ngx-captcha';
+import { RoleAccessService } from '../../services/role-access.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule,NgxCaptchaModule],
+  imports: [CommonModule, ReactiveFormsModule, NgxCaptchaModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
   loginPasswordEyeOpen = false;
-  siteKey= '6Ld9bIIrAAAAAP88S3Mdc5TVVnzqKRep7cqRIxli';
+  siteKey = '6Ld9bIIrAAAAAP88S3Mdc5TVVnzqKRep7cqRIxli';
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.required,]),
     password: new FormControl('', [Validators.required, Validators.pattern('^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{4,10}$'),]),
@@ -24,6 +25,7 @@ export class LoginComponent {
   })
 
   constructor(private loginService: LoginService,
+    private roleAccessService: RoleAccessService,
     private alert: AlertService,
     private route: Router) { }
 
@@ -32,7 +34,7 @@ export class LoginComponent {
       this.route.navigate(['/home']);
     }
   }
-  
+
   loginUser() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
