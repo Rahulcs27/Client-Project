@@ -1,4 +1,5 @@
-﻿using Client.Application.Features.Company.Commands;
+﻿using Client.API.Authorization.Attributes;
+using Client.Application.Features.Company.Commands;
 using Client.Application.Features.Company.Dtos;
 using Client.Application.Features.Product.Queries;
 using MediatR;
@@ -9,6 +10,7 @@ namespace Client.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ScreenAccess("COMPANY", "View")]
     public class CompanyController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -23,6 +25,7 @@ namespace Client.API.Controllers
         //    return CreatedAtAction(nameof(GetCompanyById), new { Id = result.Id }, result);
         //}
         [HttpPost("create")]
+        [ScreenAccess("COMPANY", "Create")]
         public async Task<IActionResult> Create([FromBody] CreateCompanyDto dto)
         {
             if (!ModelState.IsValid)
@@ -41,6 +44,7 @@ namespace Client.API.Controllers
         }
 
         [HttpPut("update")]
+        [ScreenAccess("COMPANY", "Edit")]
         public async Task<IActionResult> Update([FromBody] UpdateCompanyDto dto)
         {
             try
@@ -54,6 +58,7 @@ namespace Client.API.Controllers
             }
         }
         [HttpDelete("{id}")]
+        [ScreenAccess("COMPANY", "Delete")]
         public async Task<IActionResult> Delete(int id,[FromQuery]int updatedBy)
         {
             var result = await _mediator.Send(new DeleteCompanyCommand(id,updatedBy));

@@ -1,4 +1,5 @@
-﻿using Client.Application.Features.AdditionalEntity.Commands;
+﻿using Client.API.Authorization.Attributes;
+using Client.Application.Features.AdditionalEntity.Commands;
 using Client.Application.Features.AdditionalEntity.Dtos;
 using Client.Application.Features.AdditionalEntity.Queries;
 using MediatR;
@@ -10,6 +11,8 @@ namespace Client.API.Controllers
 
     [ApiController]
     [Route("api/[controller]")]
+    [ScreenAccess("ADDITIONALENTITY", "View")]
+
     public class AdditionalEntityController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -20,6 +23,8 @@ namespace Client.API.Controllers
         }
 
         [HttpPost]
+        [ScreenAccess("ADDITIONALENTITY", "Create")]
+
         public async Task<IActionResult> Create([FromBody] CreateAdditionalEntityDto dto)
         {
             var result = await _mediator.Send(new CreateAdditionalEntityCommand(dto));
@@ -27,6 +32,8 @@ namespace Client.API.Controllers
         }
 
         [HttpPut]
+        [ScreenAccess("ADDITIONALENTITY", "Edit")]
+
         public async Task<IActionResult> Update([FromBody] UpdateAdditionalEntityDto dto)
         {
             var result = await _mediator.Send(new UpdateAdditionalEntityCommand(dto));
@@ -34,6 +41,8 @@ namespace Client.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ScreenAccess("ADDITIONALENTITY", "Delete")]
+
         public async Task<IActionResult> Delete(int id, [FromQuery] int updatedBy, [FromQuery] int companyId)
         {
             var result = await _mediator.Send(new DeleteAdditionalEntityCommand(id, updatedBy, companyId));

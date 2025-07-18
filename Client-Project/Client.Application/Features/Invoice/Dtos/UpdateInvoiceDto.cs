@@ -9,6 +9,7 @@ namespace Client.Application.Features.Invoice.Dtos
     public class UpdateInvoiceDto
     {
         public int Id { get; set; }
+        public int InvoiceNo { get; set; }
         public int? ProductId { get; set; }
         public int CompanyId { get; set; }
         public DateTime? InvoiceDate { get; set; }

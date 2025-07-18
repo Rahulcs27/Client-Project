@@ -69,10 +69,13 @@ namespace Client.Persistence.Repositories
             parameters.Add("@P_invoiceId", dto.InvoiceId);
             parameters.Add("@P_paymentDate", dto.PaymentDate);
             parameters.Add("@P_amountPaid", dto.AmountPaid);
+            parameters.Add("@p_fromDate", dto.FromDate);  
+            parameters.Add("@p_toDate", dto.ToDate);
             parameters.Add("@P_paymentMode", dto.PaymentMode);
             parameters.Add("@P_bankId", dto.BankId);
             parameters.Add("@P_paymentStatus", dto.PaymentStatus);
             parameters.Add("@P_createdBy", dto.CreatedBy);
+
 
             var result = await _db.QueryFirstOrDefaultAsync<dynamic>(
                 "sp_sbs_paymentDetails_insert",
@@ -96,6 +99,8 @@ namespace Client.Persistence.Repositories
             var parameters = new DynamicParameters();
             parameters.Add("@P_id", dto.Id);
             parameters.Add("@P_paymentDate", dto.PaymentDate);
+            parameters.Add("@P_fromDate", dto.FromDate);
+            parameters.Add("@P_toDate", dto.ToDate);
             parameters.Add("@P_amountPaid", dto.AmountPaid);
             parameters.Add("@P_paymentMode", dto.PaymentMode);
             parameters.Add("@P_bankId", dto.BankId);

@@ -37,6 +37,7 @@ namespace Client.Persistence.Repositories
         public async Task<List<InvoiceDetailsDto>> CreateInvoiceAsync(CreateInvoiceDto dto)
         {
             var insertParams = new DynamicParameters();
+            insertParams.Add("P_invoiceNo", dto.InvoiceNo);
             insertParams.Add("@P_companyId", dto.CompanyId);
             insertParams.Add("@P_subcontractorId", dto.SubcontractorId);
             insertParams.Add("@P_productId", dto.ProductId);
@@ -71,6 +72,7 @@ namespace Client.Persistence.Repositories
         {
             var updateParams = new DynamicParameters();
             updateParams.Add("@P_id", dto.Id);
+            updateParams.Add("@P_invoiceNo", dto.InvoiceNo);
             updateParams.Add("@P_companyId", dto.CompanyId);
             updateParams.Add("@P_productId", dto.ProductId);
             updateParams.Add("@P_invoiceDate", dto.InvoiceDate);

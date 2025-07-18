@@ -1,6 +1,8 @@
 
 using System.Data;
 using System.Text;
+using Client.API.Authorization.Handlers;
+using Client.API.Authorization.Requirements;
 using Client.API.Middlewares;
 using Client.Application;
 using Client.Application.Interfaces;
@@ -9,6 +11,7 @@ using Client.Domain.Models;
 using Client.Persistence;
 using Client.Persistence.Context;
 using Client.Persistence.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -54,7 +57,26 @@ namespace Client.API
                     Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                 };
             });
+            builder.Services.AddAuthorization(options =>
+            {
+                // Define screen codes and permissions
+                var screenCodes = new[]
+                {
+        "INVOICE", "PRODUCT", "SUBCONTRACTOR", "PAYMENT", "ADDITIONALENTITY",
+        "PAIDREPORT", "UNPAIDREPORT", "PRODUCTWISEREPORT", "SUBCONTRACTORWISEREPORT",
+        "COMBINEDREPORT", "COMPANY", "USER", "ROLE", "BANK"
+    };
+                var permissions = new[] { "View", "Create", "Edit", "Delete" };
 
+                foreach (var screenCode in screenCodes)
+                {
+                    foreach (var permission in permissions)
+                    {
+                        options.AddPolicy($"{screenCode}_{permission}",
+                            policy => policy.Requirements.Add(new ScreenAccessRequirement(screenCode, permission)));
+                    }
+                }
+            });
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -67,6 +89,8 @@ namespace Client.API
             //                          .AllowAnyMethod()
             //                          .AllowAnyHeader());
             //});
+            builder.Services.AddScoped<IAuthorizationHandler, ScreenAccessHandler>();
+
 
             var app = builder.Build();
 
