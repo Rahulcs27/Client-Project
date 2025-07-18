@@ -9,7 +9,6 @@ import { PaymentComponent } from './components/payment/payment.component';
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { authGuard } from './auth.guard';
-import { roleGuard } from './role.guard';
 import { PaidReportsComponent } from './components/paid-reports/paid-reports.component';
 import { UnpaidReportsComponent } from './components/unpaid-reports/unpaid-reports.component';
 import { ProductWiseReportComponent } from './components/product-wise-report/product-wise-report.component';
@@ -17,14 +16,15 @@ import { SubContractorWiseReportComponent } from './components/sub-contractor-wi
 import { BankMasterComponent } from './components/bank-master/bank-master.component';
 import { CombinedSubcontractorEntityReportComponent } from './components/combined-subcontractor-entity-report/combined-subcontractor-entity-report.component';
 import { AdditionalEntityComponent } from './components/additional-entity/additional-entity.component';
+import { RoleGuard } from './role.guard';
 
 export const routes: Routes = [
     { path: '', component: LoginComponent },
-    { path: 'home', component: HomeComponent, canActivate: [] },
-    { path: 'invoice', component: InvoiceComponent, canActivate: [] },
-    { path: 'product', component: ProductComponent, canActivate: [] },
-    { path: 'subContractor', component: SubContractorComponent, canActivate: [] },
-    { path: 'payment', component: PaymentComponent, canActivate: [] },
+    { path: 'home', component: HomeComponent, canActivate: [authGuard] },
+    { path: 'invoice', component: InvoiceComponent, canActivate: [authGuard, RoleGuard], data: { screenCode: 'INVOICE' } },
+    { path: 'product', component: ProductComponent, canActivate: [authGuard, RoleGuard], data: { screenCode: 'PRODUCT' }},
+    { path: 'subContractor', component: SubContractorComponent, canActivate: [authGuard, RoleGuard], data: { screenCode: 'SUBCONTRACTOR' } },
+    { path: 'payment', component: PaymentComponent, canActivate: [authGuard, RoleGuard], data: { screenCode: 'PAYMENT' }},
     { path: 'additionalEntity', component: AdditionalEntityComponent, canActivate: [] },
 
     { path: 'paidReport', component: PaidReportsComponent, canActivate: [] },

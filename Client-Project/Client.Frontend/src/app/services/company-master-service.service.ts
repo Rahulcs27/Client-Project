@@ -25,4 +25,8 @@ export class CompanyMasterServiceService {
   deleteCompanyMasterGetDto(companyId: number, userId: number): Observable<CompanyMasterGetDto[]> {
     return this.http.delete<CompanyMasterGetDto[]>(`${apiUrl}/Company/${companyId}?updatedBy=${userId}`);
   }
+
+  sendEmail(form:any): Observable<CompanyMasterGetDto[]> {
+    return this.http.post<CompanyMasterGetDto[]>(`${apiUrl}/Company/send-report-email`,form);
+  }
 }
