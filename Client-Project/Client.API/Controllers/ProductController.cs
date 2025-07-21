@@ -10,7 +10,7 @@ namespace Client.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ScreenAccess("PRODUCT", "View")]
+    //[ScreenAccess("PRODUCT", "View")]
 
     public class ProductController : ControllerBase
     {

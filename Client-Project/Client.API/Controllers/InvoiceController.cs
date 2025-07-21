@@ -10,7 +10,7 @@ namespace Client.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [ScreenAccess("INVOICE", "View")]
+    //[ScreenAccess("INVOICE", "View")]
     public class InvoiceController : ControllerBase
     {
         private readonly IMediator _mediator;

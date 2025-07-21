@@ -58,7 +58,7 @@ namespace Client.API.Controllers
         }
         //combined subcontractor report
         [HttpGet("combined-subcontractor-entity")]
-        [ScreenAccess("COMBINEDREPORT", "View")]
+        //[ScreenAccess("COMBINEDREPORT", "View")]
         public async Task<IActionResult> GetCombinedReport()
         {
             var result = await _mediator.Send(new GetCombinedSubcontractorReportQuery());

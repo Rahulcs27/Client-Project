@@ -10,7 +10,7 @@ namespace Client.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [ScreenAccess("PAYMENT", "View")]
+    //[ScreenAccess("PAYMENT", "View")]
 
     public class PaymentController : ControllerBase
     {
