@@ -10,7 +10,7 @@ namespace Client.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ScreenAccess("BANK", "View")]
+    //[ScreenAccess("BANK", "View")]
 
     public class BankMasterController : ControllerBase
     {

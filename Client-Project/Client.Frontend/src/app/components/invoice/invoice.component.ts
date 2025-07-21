@@ -13,6 +13,8 @@ import { SubContractorService } from '../../services/sub-contractor.service';
 import { DatePickerModule } from 'primeng/datepicker';
 import { LoginService } from '../../services/login.service';
 import { ExportFileService } from '../../services/export-file.service';
+import { ActivatedRoute } from '@angular/router';
+import { RoleAccessService } from '../../services/role-access.service';
 
 @Component({
   selector: 'app-invoice',
@@ -23,7 +25,13 @@ import { ExportFileService } from '../../services/export-file.service';
 export class InvoiceComponent {
   companyId: number | null = null;
   userId: number | null = null;
+  screenCode: string | null = null;
+  createAccess: boolean = false;
+  editAccess: boolean = false;
+  deleteAccess: boolean = false;
   constructor(
+    private roleAccessService: RoleAccessService,
+    private route: ActivatedRoute,
     private exportService: ExportFileService,
     private loginService: LoginService,
     private invoiceService: InvoiceService,
@@ -68,9 +76,10 @@ export class InvoiceComponent {
   );
 
   ngOnInit(): void {
+    this.screenCode = this.route.snapshot.data['screenCode'];
     this.userId = this.loginService.userId();
     this.companyId = this.loginService.companyId();
-    if (this.userId && this.companyId) {
+    if (this.userId && this.companyId && this.screenCode) {
       this.invoiceForm.get('totalAmount')?.disable();
       this.productService.getAllProductGetDto(this.companyId).subscribe({
         next: (response: ProductGetDto[]) => {
@@ -97,6 +106,15 @@ export class InvoiceComponent {
           console.log(error);
         }
       });
+
+      const roleAccessList = this.roleAccessService.getAccessList().find(item => item.a_screenCode === this.screenCode);
+
+      if(roleAccessList){
+        this.createAccess = roleAccessList.a_createAccess;
+        this.editAccess = roleAccessList.a_editAccess;
+        this.deleteAccess = roleAccessList.a_deleteAccess;
+      }
+
       this.columnsInfo = {
         'r_id': {
           'title': 'Invoice No.',

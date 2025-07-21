@@ -1,7 +1,7 @@
 <h2 class="pt-4 fs-1">Invoice</h2>
 
 <div class="btn-container pt-md-5 pt-3 px-md-5 px-3 pb-2">
-    <button data-bs-toggle="modal" data-bs-target="#invoice-modal" class="add-btn btn btn-outline-primary mb-2"
+    <button data-bs-toggle="modal" *ngIf="createAccess" data-bs-target="#invoice-modal" class="add-btn btn btn-outline-primary mb-2"
         (click)="addInvoiceGetDto()">Add
     </button>
     <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="
@@ -25,9 +25,9 @@
 <ng-template #actionTemplateRef let-row>
     <i class="fa-regular fa-eye icon" data-bs-toggle="modal" data-bs-target="#invoice-modal"
         (click)="viewAndEditInvoiceGetDto(row,'view')"></i>
-    <i class="fa-regular fa-pen-to-square icon" data-bs-toggle="modal" data-bs-target="#invoice-modal"
+    <i class="fa-regular fa-pen-to-square icon" data-bs-toggle="modal" *ngIf="editAccess" data-bs-target="#invoice-modal"
         (click)="viewAndEditInvoiceGetDto(row,'edit')"></i>
-    <i class="fa-solid fa-trash icon" (click)="deleteRowData(row.r_id)"></i>
+    <i class="fa-solid fa-trash icon" *ngIf="deleteAccess" (click)="deleteRowData(row.r_id)"></i>
 </ng-template>
 
 <ng-template #invoiceDateTemplateRef let-row>

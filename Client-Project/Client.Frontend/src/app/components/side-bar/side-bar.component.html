@@ -26,8 +26,29 @@
                 </div>
             </div>
         </div>
+        <div class="accordion mt-2" id="config-accordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="config">
+                    <button class="accordion-button userName" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#config-collapse" aria-expanded="true" aria-controls="config-collapse">
+                        Config
+                    </button>
+                </h2>
+                <div id="config-collapse" class="accordion-collapse collapse" aria-labelledby="profile"
+                    data-bs-parent="#config-accordion">
+                    <div class="accordion-body">
+                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
+                            routerLink="/companyMaster">Company</a>
+                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
+                            routerLink="/roleMaster">Role</a>
+                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
+                            routerLink="/">Role Access</a>    
+                    </div>
+                </div>
+            </div>
+        </div>
         <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/home">Home</a>
-        <div class="accordion mt-2" *ngIf="userRole === 'Admin'" id="master-accordion">
+        <div class="accordion mt-2" id="master-accordion">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="master">
                     <button class="accordion-button userName" type="button" data-bs-toggle="collapse"
@@ -39,11 +60,9 @@
                     data-bs-parent="#master-accordion">
                     <div class="accordion-body">
                         <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
-                            routerLink="/companyMaster">Company</a>
-                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
-                            routerLink="/roleMaster">Role</a>
-                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
                             routerLink="/userMaster">User</a>
+                        <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
+                            routerLink="/roleAccessMaster">User Screen Access</a>
                         <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
                             routerLink="/product">Product</a>
                         <a class="btn sideBar-nav-inner-links mt-2" data-bs-dismiss="offcanvas"
@@ -53,7 +72,8 @@
             </div>
         </div>
         <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/invoice">Invoice</a>
-        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/payment">payment</a>
+        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/payment">Payment</a>
+        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/additionalEntity">Additional Entity</a>
         <div class="accordion mt-2" id="report-accordion">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="report">
@@ -135,7 +155,7 @@
     </div>
 </div>
 
-<div class="modal fade" [formGroup]="userChangeForm" id="mail-modal" data-bs-backdrop="static" data-bs-keyboard="false"
+<div class="modal fade" [formGroup]="emailForm" id="mail-modal" data-bs-backdrop="static" data-bs-keyboard="false"
     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <form class="modal-content">
@@ -147,15 +167,15 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label for="currentPassword" class="mb-1">To Email<span style="color: red;">*</span>
+                    <label for="toEmail" class="mb-1">To Email<span style="color: red;">*</span>
                         <span *ngIf="
-                    this.userChangeForm.get('currentPassword')?.hasError('required') &&
-                    (this.userChangeForm.get('currentPassword')?.dirty ||
-                      this.userChangeForm.get('currentPassword')?.touched)
+                    this.emailForm.get('toEmail')?.hasError('required') &&
+                    (this.emailForm.get('toEmail')?.dirty ||
+                      this.emailForm.get('toEmail')?.touched)
                   " style="color: red">Required</span>
                     </label>
-                    <input type="text" class="form-control" placeholder="Current Password"
-                        formControlName="currentPassword">
+                    <input type="text" class="form-control" placeholder="To Email"
+                        formControlName="toEmail">
                 </div>
             </div>
             <div class="modal-footer">

@@ -56,10 +56,10 @@ namespace Client.API.Authorization.Handlers
         {
             return permission switch
             {
-                "View" => access.a_viewAccess,
-                "Create" => access.a_createAccess,
-                "Edit" => access.a_editAccess,
-                "Delete" => access.a_deleteAccess,
+                "View" => access.A_viewAccess,
+                "Create" => access.A_createAccess,
+                "Edit" => access.A_editAccess,
+                "Delete" => access.A_deleteAccess,
                 _ => false
             };
         }

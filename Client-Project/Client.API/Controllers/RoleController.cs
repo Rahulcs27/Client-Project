@@ -10,7 +10,7 @@ namespace Client.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [ScreenAccess("ROLE","View")]
+    //[ScreenAccess("ROLE","View")]
 
     public class RoleController : ControllerBase
     {

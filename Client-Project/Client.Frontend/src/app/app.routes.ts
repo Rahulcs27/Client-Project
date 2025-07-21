@@ -17,6 +17,7 @@ import { BankMasterComponent } from './components/bank-master/bank-master.compon
 import { CombinedSubcontractorEntityReportComponent } from './components/combined-subcontractor-entity-report/combined-subcontractor-entity-report.component';
 import { AdditionalEntityComponent } from './components/additional-entity/additional-entity.component';
 import { RoleGuard } from './role.guard';
+import { RoleAccessComponent } from './components/role-access/role-access.component';
 
 export const routes: Routes = [
     { path: '', component: LoginComponent },
@@ -25,16 +26,17 @@ export const routes: Routes = [
     { path: 'product', component: ProductComponent, canActivate: [authGuard, RoleGuard], data: { screenCode: 'PRODUCT' }},
     { path: 'subContractor', component: SubContractorComponent, canActivate: [authGuard, RoleGuard], data: { screenCode: 'SUBCONTRACTOR' } },
     { path: 'payment', component: PaymentComponent, canActivate: [authGuard, RoleGuard], data: { screenCode: 'PAYMENT' }},
-    { path: 'additionalEntity', component: AdditionalEntityComponent, canActivate: [] },
+    { path: 'additionalEntity', component: AdditionalEntityComponent, canActivate: [authGuard, RoleGuard], data: { screenCode: 'ADDITIONALENTITY' } },
 
-    { path: 'paidReport', component: PaidReportsComponent, canActivate: [] },
-    { path: 'unpaidReport', component: UnpaidReportsComponent, canActivate: [] },
-    { path: 'productWiseReport', component: ProductWiseReportComponent, canActivate: [] },
-    { path: 'subContractorWiseReport', component: SubContractorWiseReportComponent, canActivate: [] },
-    { path: 'combinedSubcontractorEntityReport', component: CombinedSubcontractorEntityReportComponent, canActivate: [] },
+    { path: 'paidReport', component: PaidReportsComponent, canActivate: [authGuard, RoleGuard], data: { screenCode: 'PAIDREPORT' }},
+    { path: 'unpaidReport', component: UnpaidReportsComponent, canActivate: [authGuard, RoleGuard], data: { screenCode: 'UNPAIDREPORT' }},
+    { path: 'productWiseReport', component: ProductWiseReportComponent, canActivate: [authGuard, RoleGuard], data: { screenCode: 'PRODUCTWISEREPORT' }},
+    { path: 'subContractorWiseReport', component: SubContractorWiseReportComponent, canActivate: [authGuard, RoleGuard], data: { screenCode: 'SUBCONTRACTORWISEREPORT' }},
+    { path: 'combinedSubcontractorEntityReport', component: CombinedSubcontractorEntityReportComponent, canActivate: [authGuard, RoleGuard], data: { screenCode: 'COMBINEDREPORT' }},
 
-    { path: 'companyMaster', component: CompanyMasterComponent, canActivate: [] },
-    { path: 'userMaster', component: UserMasterComponent, canActivate: [] },
-    { path: 'roleMaster', component: RoleComponent, canActivate: [] },
-    { path: 'bankMaster', component: BankMasterComponent, canActivate: [] },
+    { path: 'companyMaster', component: CompanyMasterComponent, canActivate: [authGuard, RoleGuard], data: { screenCode: 'COMPANY' }},
+    { path: 'userMaster', component: UserMasterComponent, canActivate: [authGuard, RoleGuard], data: { screenCode: 'USER' }},
+    { path: 'roleMaster', component: RoleComponent, canActivate: [authGuard, RoleGuard], data: { screenCode: 'ROLE' }},
+    { path: 'roleAccessMaster', component: RoleAccessComponent, canActivate: [authGuard]},
+    { path: 'bankMaster', component: BankMasterComponent, canActivate: [authGuard, RoleGuard], data: { screenCode: 'BANK' }},
 ];

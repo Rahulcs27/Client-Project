@@ -10,7 +10,7 @@ namespace Client.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [ScreenAccess("SUBCONTRACTOR", "View")]
+    //[ScreenAccess("SUBCONTRACTOR", "View")]
 
     public class SubContractorController : ControllerBase
     {

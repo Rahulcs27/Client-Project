@@ -11,7 +11,7 @@ namespace Client.API.Controllers
 
     [ApiController]
     [Route("api/[controller]")]
-    [ScreenAccess("ADDITIONALENTITY", "View")]
+    //[ScreenAccess("ADDITIONALENTITY", "View")]
 
     public class AdditionalEntityController : ControllerBase
     {

@@ -47,6 +47,7 @@ export class LoginComponent {
       if (username && password && recaptchaToken) {
         this.loginService.login({ username, password, recaptchaToken }).subscribe({
           next: (response: AuthResponse) => {
+            this.roleAccessService.setAccessList(username);
             sessionStorage.setItem('token', response.token);
             this.alert.Toast.fire('Logged In Successfully', '', 'success')
             this.route.navigate(['/home']);
