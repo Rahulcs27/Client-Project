@@ -1,8 +1,10 @@
 <h2 class="pt-4 fs-1">Role Access</h2>
 <div class="btn-container pt-md-5 pt-3 px-md-5 px-3 pb-2">
     <div class="input-group mb-2">
-        <input #searchInput type="text" class="form-control input-search"
-            placeholder="Search: User Name" aria-label="Search by User Name" aria-describedby="search-btn">
+        <select #searchInput class="form-control input-search">
+            <option value="">--Select--</option>
+            <option *ngFor="let role of roles" value="{{role.id}}">{{role.roleName}}</option>
+        </select>
         <div class="input-group-append">
             <span class="input-group-text btn-search" id="search-btn" (click)="onSearch(searchInput.value)">Search</span>
         </div>

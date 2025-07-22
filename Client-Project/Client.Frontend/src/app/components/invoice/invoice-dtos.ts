@@ -1,6 +1,6 @@
 export interface InvoiceGetDto {
     r_id: number;
-    r_invoiceNo: number;
+    r_invoiceNo: string;
     r_companyId: number;
     r_companyName: string;
     r_subcontractorId: number;
@@ -19,7 +19,7 @@ export interface InvoiceGetDto {
 }
 
 export interface InvoiceCreateDto {
-    invoiceNo: number;
+    invoiceNo: string;
     companyId: number;
     subcontractorId: number;
     productId: number;
@@ -35,7 +35,7 @@ export interface InvoiceCreateDto {
 
 export interface InvoiceUpdateDto {
     id: number;
-    invoiceNo: number;
+    invoiceNo: string;
     companyId: number;
     productId: number;
     invoiceDate: string;

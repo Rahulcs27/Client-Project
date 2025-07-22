@@ -66,7 +66,7 @@ namespace Client.Persistence.Repositories
         public async Task<List<PaymentDetailsDto>> CreatePaymentAsync(CreatePaymentDto dto)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("@P_invoiceId", dto.InvoiceId);
+            parameters.Add("@P_invoiceNo", dto.InvoiceNo);
             parameters.Add("@P_paymentDate", dto.PaymentDate);
             parameters.Add("@P_amountPaid", dto.AmountPaid);
             parameters.Add("@p_fromDate", dto.FromDate);  

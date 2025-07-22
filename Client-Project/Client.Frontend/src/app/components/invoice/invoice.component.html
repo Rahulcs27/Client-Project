@@ -49,17 +49,17 @@
                 <div class="mb-3" *ngIf="modalMode !== 'edit'">
                     <label for="invoiceNo." class="mb-1">Invoice No. <span style="color: red;">*</span>
                         <span *ngIf="modalMode !== 'view' &&
-                    this.invoiceForm.get('invoicNo')?.hasError('required') &&
-                    (this.invoiceForm.get('invoicNo')?.dirty ||
-                      this.invoiceForm.get('invoicNo')?.touched)
+                    this.invoiceForm.get('invoiceNo')?.hasError('required') &&
+                    (this.invoiceForm.get('invoiceNo')?.dirty ||
+                      this.invoiceForm.get('invoiceNo')?.touched)
                   " style="color: red">Required</span>
                         <span *ngIf="modalMode !== 'view' &&
-                    this.invoiceForm.get('invoicNo')?.hasError('pattern') &&
-                    (this.invoiceForm.get('invoicNo')?.dirty ||
-                      this.invoiceForm.get('invoicNo')?.touched)
+                    this.invoiceForm.get('invoiceNo')?.hasError('pattern') &&
+                    (this.invoiceForm.get('invoiceNo')?.dirty ||
+                      this.invoiceForm.get('invoiceNo')?.touched)
                   " style="color: red">Invalid Invoic</span>
                     </label>
-                    <input type="text" id="invoicNo" class="form-control" placeholder="Invoice No." formControlName="invoicNo">
+                    <input type="text" id="invoiceNo" class="form-control" placeholder="Invoice No." formControlName="invoiceNo">
                 </div>
                 <div class="mb-3">
                     <label for="invoiceDate" class="mb-1">Invoice Date <span *ngIf="modalMode !== 'view'"

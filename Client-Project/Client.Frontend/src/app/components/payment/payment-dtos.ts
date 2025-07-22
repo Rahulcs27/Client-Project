@@ -1,6 +1,8 @@
 export interface PaymentGetDto {
     r_id: number;
-    r_invoiceId: number;
+    r_invoiceNo: number;
+    r_fromDate: string;
+    r_toDate: string;
     r_paymentDate: string;
     r_amountPaid: number;
     r_paymentMode: string;
@@ -10,8 +12,10 @@ export interface PaymentGetDto {
 }
 
 export interface PaymentCreateDto {
-    invoiceId: number | null;
+    invoiceNo: number | null;
     companyId: number;
+    fromDate: string | null;
+    toDate: string | null;
     paymentDate: string;
     amountPaid: number;
     paymentMode: string
@@ -23,7 +27,7 @@ export interface PaymentCreateDto {
 export interface PaymentUpdateDto {
     id: number;
     companyId: number;
-    invoiceId: number | null;
+    invoiceNo: number | null;
     paymentDate: string;
     amountPaid: number;
     paymentMode: string

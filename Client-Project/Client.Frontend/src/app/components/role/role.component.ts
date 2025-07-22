@@ -8,6 +8,8 @@ import { RoleGetDto } from './role-dtos';
 import { RoleService } from '../../services/role.service';
 import { ExportFileService } from '../../services/export-file.service';
 import { LoginService } from '../../services/login.service';
+import { ActivatedRoute } from '@angular/router';
+import { RoleAccessService } from '../../services/role-access.service';
 
 @Component({
   selector: 'app-role',
@@ -16,8 +18,14 @@ import { LoginService } from '../../services/login.service';
   styleUrl: '../../../componentStyle.css'
 })
 export class RoleComponent {
+  screenCode: string | null = null;
   userId: number | null = null;
+  createAccess: boolean = false;
+  editAccess: boolean = false;
+  deleteAccess: boolean = false;
   constructor(
+    private route: ActivatedRoute,
+    private roleAccessService: RoleAccessService,
     private loginService: LoginService,
     private exportService: ExportFileService,
     private roleService: RoleService,

@@ -8,6 +8,8 @@ import { CommonModule } from '@angular/common';
 import { TableComponent } from '../utils/table/table.component';
 import { LoginService } from '../../services/login.service';
 import { ExportFileService } from '../../services/export-file.service';
+import { RoleAccessService } from '../../services/role-access.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-sub-contractor',
@@ -16,9 +18,15 @@ import { ExportFileService } from '../../services/export-file.service';
   styleUrl: '../../../componentStyle.css'
 })
 export class SubContractorComponent {
+  screenCode: string | null = null;
+  createAccess: boolean = false;
+  editAccess: boolean = false;
+  deleteAccess: boolean = false;
   companyId: number | null = null;
   userId: number | null = null;
   constructor(
+    private route: ActivatedRoute,
+    private roleAccessService: RoleAccessService,
     private exportService: ExportFileService,
     private loginService: LoginService,
     private subContractorService: SubContractorService,

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { apiUrl } from '../../constant';
-import { RoleAccessDto } from '../components/role-access/role-access-dto';
+import { RoleAccessByRoleIdDto, RoleAccessDto } from '../components/role-access/role-access-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +16,10 @@ export class RoleAccessService {
 
   getUserAccess(username: string): Observable<RoleAccessDto[]> {
     return this.http.get<RoleAccessDto[]>(`${apiUrl}/RoleAccess?username=${username}`)
+  }
+
+  getRoleAccessByRoleId(roleId: number): Observable<RoleAccessByRoleIdDto[]> {
+    return this.http.get<RoleAccessByRoleIdDto[]>(`${apiUrl}/RoleAccess/${roleId}`);
   }
 
   setAccessList(username: string) {

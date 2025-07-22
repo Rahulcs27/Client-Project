@@ -8,7 +8,7 @@ namespace Client.Application.Features.Invoice.Dtos
 {
     public class CreateInvoiceDto
     {
-        public int InvoiceNo { get; set; }
+        public string InvoiceNo { get; set; }
         public int CompanyId { get; set; }
         public int SubcontractorId { get; set; }
         public int ProductId { get; set; }

@@ -8,6 +8,8 @@ import { AlertService } from '../../services/alert.service';
 import { CompanyMasterGetDto } from './company-master-dtos';
 import { LoginService } from '../../services/login.service';
 import { ExportFileService } from '../../services/export-file.service';
+import { ActivatedRoute } from '@angular/router';
+import { RoleAccessService } from '../../services/role-access.service';
 
 @Component({
   selector: 'app-company-master',
@@ -19,7 +21,13 @@ export class CompanyMasterComponent implements OnInit {
   userId: number | null = null;
   companyId: number | null = null;
   searchVaue: string = '';
+  screenCode: string | null = null;
+  createAccess: boolean = false;
+  editAccess: boolean = false;
+  deleteAccess: boolean = false;
   constructor(
+    private route: ActivatedRoute,
+    private roleAccessService: RoleAccessService,
     private exportService: ExportFileService,
     private loginService: LoginService,
     private companyMasterService: CompanyMasterServiceService,

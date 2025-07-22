@@ -8,6 +8,8 @@ import { TableComponent } from "../utils/table/table.component";
 import { CommonModule } from '@angular/common';
 import { LoginService } from '../../services/login.service';
 import { ExportFileService } from '../../services/export-file.service';
+import { ActivatedRoute } from '@angular/router';
+import { RoleAccessService } from '../../services/role-access.service';
 
 @Component({
   selector: 'app-product',
@@ -16,9 +18,15 @@ import { ExportFileService } from '../../services/export-file.service';
   styleUrl: '../../../componentStyle.css'
 })
 export class ProductComponent {
+  screenCode: string | null = null;
   userId: number | null = null;
   companyId: number | null = null;
+  createAccess: boolean = false;
+  editAccess: boolean = false;
+  deleteAccess: boolean = false;
   constructor(
+    private route: ActivatedRoute,
+    private roleAccessService: RoleAccessService,
     private exportService: ExportFileService,
     private loginService: LoginService,
     private productService: ProductService,
