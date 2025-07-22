@@ -37,13 +37,13 @@ namespace Client.Persistence.Repositories
         public async Task<List<InvoiceDetailsDto>> CreateInvoiceAsync(CreateInvoiceDto dto)
         {
             var insertParams = new DynamicParameters();
-            insertParams.Add("P_invoiceNo", dto.InvoiceNo);
+            insertParams.Add("@P_invoiceNo", dto.InvoiceNo);
             insertParams.Add("@P_companyId", dto.CompanyId);
             insertParams.Add("@P_subcontractorId", dto.SubcontractorId);
             insertParams.Add("@P_productId", dto.ProductId);
             insertParams.Add("@P_invoiceDate", dto.InvoiceDate);
             insertParams.Add("@P_quantity", dto.Quantity);
-            insertParams.Add("P_unitAmount", dto.UnitAmount);
+            insertParams.Add("@P_unitAmount", dto.UnitAmount);
             insertParams.Add("@P_totalAmount", dto.TotalAmount);
             insertParams.Add("@P_commissionPercentage", dto.CommissionPercentage);
             insertParams.Add("@P_commissionAmount", dto.CommissionAmount);
@@ -77,7 +77,7 @@ namespace Client.Persistence.Repositories
             updateParams.Add("@P_productId", dto.ProductId);
             updateParams.Add("@P_invoiceDate", dto.InvoiceDate);
             updateParams.Add("@P_quantity", dto.Quantity);
-            updateParams.Add("P_unitAmount", dto.UnitAmount);
+            updateParams.Add("@P_unitAmount", dto.UnitAmount);
             updateParams.Add("@P_totalAmount", dto.TotalAmount);
             updateParams.Add("@P_commissionPercentage", dto.CommissionPercentage);
             updateParams.Add("@P_commissionAmount", dto.CommissionAmount);

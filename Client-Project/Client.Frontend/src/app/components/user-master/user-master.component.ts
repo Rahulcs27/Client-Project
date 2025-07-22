@@ -10,6 +10,8 @@ import { RoleGetDto } from '../role/role-dtos';
 import { RoleService } from '../../services/role.service';
 import { LoginService } from '../../services/login.service';
 import { ExportFileService } from '../../services/export-file.service';
+import { ActivatedRoute } from '@angular/router';
+import { RoleAccessService } from '../../services/role-access.service';
 
 @Component({
   selector: 'app-user-master',
@@ -20,8 +22,14 @@ import { ExportFileService } from '../../services/export-file.service';
 export class UserMasterComponent {
   userId: number | null = null;
   companyID: number | null = null;
+  screenCode: string | null = null;
+  createAccess: boolean = false;
+  editAccess: boolean = false;
+  deleteAccess: boolean = false;
   searchVaue: string = '';
   constructor(
+    private route: ActivatedRoute,
+    private roleAccessService: RoleAccessService,
     private exportService: ExportFileService,
     private loginService: LoginService,
     private userService: UserMasterService,

@@ -11,6 +11,8 @@ import { AdditionalEntityService } from '../../services/additional-entity.servic
 import { SubContractorService } from '../../services/sub-contractor.service';
 import { SubContractorGetDto } from '../sub-contractor/sub-contractor-dtos';
 import { DatePickerModule } from 'primeng/datepicker';
+import { RoleAccessService } from '../../services/role-access.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-additional-entity',
@@ -26,6 +28,10 @@ export class AdditionalEntityComponent {
   subContractors: SubContractorGetDto[] = [];
   fullData: AdditionalEntityGetDto[] = []
   data: AdditionalEntityGetDto[] = [];
+  screenCode: string | null = null;
+  createAccess: boolean = false;
+  editAccess: boolean = false;
+  deleteAccess: boolean = false;
   displayedColumns: string[] = ['r_date', 'r_subContractorName', 'r_type', 'r_quantity', 'r_amount', 'action'];
   columnsInfo: {
     [key: string]: {
@@ -37,6 +43,8 @@ export class AdditionalEntityComponent {
   @ViewChild('dateTemplateRef', { static: true }) dateTemplateRef!: TemplateRef<any>;
   @ViewChild('actionTemplateRef', { static: true }) actionTemplateRef!: TemplateRef<any>;
   constructor(
+    private route: ActivatedRoute,
+    private roleAccessService: RoleAccessService,
     private alert: AlertService,
     private loginService: LoginService,
     private additionalService: AdditionalEntityService,
@@ -47,7 +55,8 @@ export class AdditionalEntityComponent {
   ngOnInit(): void {
     this.userId = this.loginService.userId();
     this.companyId = this.loginService.companyId();
-    if (this.companyId && this.userId) {
+    this.screenCode = this.route.snapshot.data['screenCode'];
+    if (this.companyId && this.userId && this.screenCode) {
       this.additionalService.getAllAdditionalEntityGetDto(this.companyId).subscribe({
         next: (response: AdditionalEntityGetDto[]) => {
           this.data = response;
@@ -95,6 +104,14 @@ export class AdditionalEntityComponent {
           'title': 'Action',
           'templateRef': this.actionTemplateRef
         }
+      }
+
+      const roleAccessList = this.roleAccessService.getAccessList().find(item => item.a_screenCode === this.screenCode);
+
+      if(roleAccessList){
+        this.createAccess = roleAccessList.a_createAccess;
+        this.editAccess = roleAccessList.a_editAccess;
+        this.deleteAccess = roleAccessList.a_deleteAccess;
       }
     }
     else {

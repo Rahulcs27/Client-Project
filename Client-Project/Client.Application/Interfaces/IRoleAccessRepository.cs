@@ -12,5 +12,6 @@ namespace Client.Application.Interfaces
         Task<string> InsertRoleAccessAsync(RoleAccessDto dto);
         Task<string> UpdateRoleAccessAsync(UpdateRoleAccessDto dto);
         Task<List<UserAccessDto>> GetUserAccessAsync(int? userId, string username);
+        Task<List<GetRoleAccessByRoleIdDto>> GetRoleAccessByRoleIdAsync(int id);
     }
 }

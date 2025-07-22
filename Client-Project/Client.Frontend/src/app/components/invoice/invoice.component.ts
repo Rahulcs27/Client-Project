@@ -41,7 +41,7 @@ export class InvoiceComponent {
   ) { }
   searchVaue: string = '';
   modalMode: 'view' | 'edit' | 'add' = 'view';
-  displayedColumns: string[] = ['r_id', 'name', 'r_invoiceDate', 'r_status', 'r_quantity', 'r_totalAmount', 'action'];
+  displayedColumns: string[] = ['r_invoiceNo', 'name', 'r_invoiceDate', 'r_status', 'r_quantity', 'r_totalAmount', 'action'];
   fullData: InvoiceGetDto[] = [];
   data: InvoiceGetDto[] = [];
   products: ProductGetDto[] = [];
@@ -59,6 +59,7 @@ export class InvoiceComponent {
   invoiceForm: FormGroup = new FormGroup(
     {
       id: new FormControl(''),
+      invoiceNo: new FormControl('', [Validators.required,]),
       companyId: new FormControl(''),
       subcontractorId: new FormControl(''),
       productId: new FormControl('', [Validators.required,]),
@@ -116,7 +117,7 @@ export class InvoiceComponent {
       }
 
       this.columnsInfo = {
-        'r_id': {
+        'r_invoiceNo': {
           'title': 'Invoice No.',
           'isSort': true,
           'templateRef': null
@@ -206,6 +207,7 @@ export class InvoiceComponent {
   closeModal() {
     this.invoiceForm.reset({
       id: '',
+      invoicNo: '',
       companyId: '',
       subcontractorId: '',
       productId: '',
@@ -226,6 +228,7 @@ export class InvoiceComponent {
   viewAndEditInvoiceGetDto(obj: InvoiceGetDto, mode: 'view' | 'edit') {
     this.invoiceForm.patchValue({
       id: obj.r_id,
+      invoiceNo: obj.r_invoiceNo,
       companyId: obj.r_companyId,
       subcontractorId: obj.r_subcontractorId,
       productId: obj.r_productId + '_' + obj.unitPrice,

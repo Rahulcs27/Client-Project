@@ -1,5 +1,6 @@
 export interface InvoiceGetDto {
     r_id: number;
+    r_invoiceNo: string;
     r_companyId: number;
     r_companyName: string;
     r_subcontractorId: number;
@@ -18,6 +19,7 @@ export interface InvoiceGetDto {
 }
 
 export interface InvoiceCreateDto {
+    invoiceNo: string;
     companyId: number;
     subcontractorId: number;
     productId: number;
@@ -32,16 +34,17 @@ export interface InvoiceCreateDto {
 }
 
 export interface InvoiceUpdateDto {
-    id: number,
+    id: number;
+    invoiceNo: string;
     companyId: number;
-    productId: number,
-    invoiceDate: string,
+    productId: number;
+    invoiceDate: string;
     unitAmount: number;
-    quantity: number,
+    quantity: number;
     commissionPercentage: number;
     commissionAmount: number;
-    totalAmount: number,
-    paymentMode: string
-    status: string,
-    updatedBy: number,
+    totalAmount: number;
+    paymentMode: string;
+    status: string;
+    updatedBy: number;
 }

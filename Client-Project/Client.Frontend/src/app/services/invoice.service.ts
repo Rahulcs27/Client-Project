@@ -19,6 +19,7 @@ export class InvoiceService {
   }
 
   addInvoiceGetDto(formData: InvoiceCreateDto): Observable<InvoiceGetDto[]> {
+    console.log(formData);
     return this.http.post<InvoiceGetDto[]>(`${apiUrl}/Invoice/create`, formData);
   }
 

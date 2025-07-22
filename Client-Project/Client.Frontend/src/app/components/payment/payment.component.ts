@@ -19,6 +19,8 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { ExportFileService } from '../../services/export-file.service';
 import { BankGetDto } from '../bank-master/bank-dtos';
 import { BankMasterService } from '../../services/bank-master.service';
+import { ActivatedRoute } from '@angular/router';
+import { RoleAccessService } from '../../services/role-access.service';
 
 @Component({
   selector: 'app-payment',
@@ -27,7 +29,13 @@ import { BankMasterService } from '../../services/bank-master.service';
   styleUrl: '../../../componentStyle.css'
 })
 export class PaymentComponent {
+  screenCode: string | null = null;
+  createAccess: boolean = false;
+  editAccess: boolean = false;
+  deleteAccess: boolean = false;
   constructor(
+    private route: ActivatedRoute,
+    private roleAccessService: RoleAccessService,
     private bankService: BankMasterService,
     private exportService: ExportFileService,
     private loginService: LoginService,
@@ -75,7 +83,9 @@ export class PaymentComponent {
   paymentForm: FormGroup = new FormGroup(
     {
       id: new FormControl(''),
-      invoiceId: new FormControl(null),
+      invoiceNo: new FormControl(null),
+      fromDate: new FormControl(null),
+      toDate: new FormControl(null),
       companyId: new FormControl('', [Validators.required,]),
       paymentDate: new FormControl('', [Validators.required, Validators.maxLength(50),]),
       amountPaid: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),]),
@@ -209,14 +219,16 @@ export class PaymentComponent {
   search(event: AutoCompleteCompleteEvent) {
     const query = event.query.toString();
     this.invoiceIds = this.invoices
-      .filter(item => item.r_id.toString().includes(query))
-      .map(item => item.r_id);
+      .filter(item => item.r_invoiceNo.toString().includes(query))
+      .map(item => item.r_invoiceNo);
   }
 
   closeModal() {
     this.paymentForm.reset({
       id: '',
-      invoiceId: null,
+      invoiceNo: null,
+      fromDate: null,
+      toDate: null,
       paymentDate: '',
       amountPaid: '',
       paymentMode: '',
@@ -257,7 +269,9 @@ export class PaymentComponent {
 
   addPaymentGetDto() {
     this.paymentForm.patchValue({
-      invoiceId: null,
+      invoiceNo: null,
+      fromDate: null,
+      toDate: null,
       bankId: '',
       companyId: this.companyId,
       createdBy: this.userId,
@@ -270,8 +284,10 @@ export class PaymentComponent {
     this.paymentForm.patchValue({
       id: obj.r_id,
       companyId: this.companyId,
-      invoiceId: obj.r_invoiceId,
+      invoiceNo: obj.r_invoiceNo,
       paymentDate: new Date(obj.r_paymentDate),
+      fromDate: (obj.r_fromDate) ? new Date(obj.r_fromDate) : null,
+      toDate: (obj.r_toDate) ? new Date(obj.r_toDate) : null,
       amountPaid: obj.r_amountPaid,
       paymentMode: obj.r_paymentMode,
       bankId: (!obj.r_bankId || obj.r_bankId === 0) ? '' : obj.r_bankId,
@@ -286,8 +302,10 @@ export class PaymentComponent {
     this.paymentForm.patchValue({
       id: obj.r_id,
       companyId: this.companyId,
-      invoiceId: obj.r_invoiceId,
+      invoiceNo: obj.r_invoiceNo,
       paymentDate: new Date(obj.r_paymentDate),
+      fromDate: (obj.r_fromDate) ? new Date(obj.r_fromDate) : null,
+      toDate: (obj.r_toDate) ? new Date(obj.r_toDate) : null,
       amountPaid: obj.r_amountPaid,
       paymentMode: obj.r_paymentMode,
       bankId: (!obj.r_bankId || obj.r_bankId === 0) ? '' : obj.r_bankId,
@@ -315,29 +333,14 @@ export class PaymentComponent {
     });
   }
 
-  // invoiceGetDto(invoiceId: number) {
-  //   const invoice = this.invoices.find(i => i.r_id === invoiceId);
-  //   this.invoiceForm.patchValue({
-  //     companyId: invoice?.r_companyId,
-  //     subcontractorId: invoice?.r_subcontractorId,
-  //     productId: invoice?.r_productId,
-  //     invoiceDate: invoice?.r_invoiceDate.split('T')[0],
-  //     status: invoice?.r_status,
-  //     quantity: invoice?.r_quantity,
-  //     totalAmount: invoice?.r_totalAmount,
-  //     paymentMode: invoice?.r_paymentMode,
-  //   })
-  //   this.invoiceForm.disable()
-  // }
-
   savePaymentGetDto() {
     if (this.paymentForm.invalid) {
       this.paymentForm.markAllAsTouched();
       console.log('Payment form invalid', this.paymentForm.value);
     }
     else {
-      if (this.paymentForm.get('invoiceId')?.value === '') {
-        this.paymentForm.get('invoiceId')?.setValue(null);
+      if (this.paymentForm.get('invoiceNo')?.value === '') {
+        this.paymentForm.get('invoiceNo')?.setValue(null);
       }
       if (this.paymentForm.get('bankId')?.value === '') {
         this.paymentForm.get('bankId')?.setValue(null);
@@ -361,6 +364,7 @@ export class PaymentComponent {
         });
       }
       else if (this.modalMode === 'add') {
+        console.log(this.paymentForm.value);
         this.paymentService.addPaymentGetDto(this.paymentForm.value).subscribe(
           {
             next: (response: PaymentGetDto[]) => {

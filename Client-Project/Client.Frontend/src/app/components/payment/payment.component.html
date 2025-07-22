@@ -32,10 +32,6 @@
 </ng-template>
 
 <ng-template #actionTemplateRef let-row>
-    <!-- @if(row.r_invoiceId){
-    <i class="fa-solid fa-file icon" data-bs-toggle="modal" data-bs-target="#invoice-modal"
-        (click)="invoiceGetDto(row.r_invoiceId)"></i>
-    } -->
     <i class="fa-regular fa-eye icon" data-bs-toggle="modal" data-bs-target="#payment-modal"
         (click)="viewPaymentGetDto(row)"></i>
     <i class="fa-regular fa-pen-to-square icon" data-bs-toggle="modal" data-bs-target="#payment-modal"
@@ -56,9 +52,19 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3" *ngIf="modalMode !== 'edit'">
-                    <label for="invoiceId" class="mb-1">Invoice Id </label>
-                    <p-autocomplete placeholder="Search: Invoice Id" formControlName="invoiceId"
+                    <label for="invoiceNo" class="mb-1">Invoice No. </label>
+                    <p-autocomplete placeholder="Search: Invoice No." formControlName="invoiceNo"
                         [suggestions]="invoiceIds" (completeMethod)="search($event)" />
+                </div>
+                <div class="mb-3" *ngIf="modalMode !== 'edit'">
+                    <label for="fromDate" class="mb-1">From Date</label>
+                    <p-datepicker id="fromDate" formControlName="fromDate" placeholder="dd-MM-yy"
+                        dateFormat="dd-mm-yy" />
+                </div>
+                <div class="mb-3" *ngIf="modalMode !== 'edit'">
+                    <label for="toDate" class="mb-1">To Date</label>
+                    <p-datepicker id="toDate" formControlName="toDate" placeholder="dd-MM-yy"
+                        dateFormat="dd-mm-yy" />
                 </div>
                 <div class="mb-3">
                     <label for="paymentDate" class="mb-1">Date <span style="color: red;">*</span>

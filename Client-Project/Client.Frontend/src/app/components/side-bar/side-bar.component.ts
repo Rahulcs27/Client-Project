@@ -2,12 +2,13 @@ declare var bootstrap: any;
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { LoginService } from '../../services/login.service';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserMasterService } from '../../services/user-master.service';
 import { UserGetDto } from '../user-master/user-dtos';
 import { AlertService } from '../../services/alert.service';
 import { CompanyMasterServiceService } from '../../services/company-master-service.service';
+import { RoleAccessService } from '../../services/role-access.service';
 
 @Component({
   selector: 'app-side-bar',
@@ -23,6 +24,8 @@ export class SideBarComponent {
   user: string | null = null;
 
   constructor(
+    private route: ActivatedRoute,
+    private roleAccessService: RoleAccessService,
     private alert: AlertService,
     private loginService: LoginService,
     private userService: UserMasterService,

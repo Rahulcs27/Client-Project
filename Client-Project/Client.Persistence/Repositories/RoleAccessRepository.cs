@@ -76,5 +76,19 @@ namespace Client.Persistence.Repositories
 
             return result.ToList();
         }
+
+        public async Task<List<GetRoleAccessByRoleIdDto>> GetRoleAccessByRoleIdAsync(int id)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@p_roleId", id);
+
+            var result = await _connection.QueryAsync<GetRoleAccessByRoleIdDto>(
+                "sp_sbs_roleAccess_get",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return result.ToList();
+        }
     }
 }

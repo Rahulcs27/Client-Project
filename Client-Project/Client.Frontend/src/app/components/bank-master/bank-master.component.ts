@@ -8,6 +8,8 @@ import { BankMasterService } from '../../services/bank-master.service';
 import { BankGetDto } from './bank-dtos';
 import { ExportFileService } from '../../services/export-file.service';
 import { AlertService } from '../../services/alert.service';
+import { ActivatedRoute } from '@angular/router';
+import { RoleAccessService } from '../../services/role-access.service';
 
 @Component({
   selector: 'app-bank-master',
@@ -22,6 +24,10 @@ export class BankMasterComponent implements OnInit {
   companyId: number | null = null;
   fullData: BankGetDto[] = []
   data: BankGetDto[] = [];
+  screenCode: string | null = null;
+  createAccess: boolean = false;
+  editAccess: boolean = false;
+  deleteAccess: boolean = false;
   displayedColumns: string[] = ['r_bankName', 'r_branch', 'action'];
   columnsInfo: {
     [key: string]: {
@@ -32,6 +38,8 @@ export class BankMasterComponent implements OnInit {
   } = {};
   @ViewChild('actionTemplateRef', { static: true }) actionTemplateRef!: TemplateRef<any>;
   constructor(
+    private route: ActivatedRoute,
+    private roleAccessService: RoleAccessService,
     private alert: AlertService,
     private loginService: LoginService,
     private bankService: BankMasterService,
