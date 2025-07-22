@@ -46,6 +46,21 @@
                     (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
+                <div class="mb-3" *ngIf="modalMode !== 'edit'">
+                    <label for="invoiceNo." class="mb-1">Invoice No. <span style="color: red;">*</span>
+                        <span *ngIf="modalMode !== 'view' &&
+                    this.invoiceForm.get('invoicNo')?.hasError('required') &&
+                    (this.invoiceForm.get('invoicNo')?.dirty ||
+                      this.invoiceForm.get('invoicNo')?.touched)
+                  " style="color: red">Required</span>
+                        <span *ngIf="modalMode !== 'view' &&
+                    this.invoiceForm.get('invoicNo')?.hasError('pattern') &&
+                    (this.invoiceForm.get('invoicNo')?.dirty ||
+                      this.invoiceForm.get('invoicNo')?.touched)
+                  " style="color: red">Invalid Invoic</span>
+                    </label>
+                    <input type="text" id="invoicNo" class="form-control" placeholder="Invoice No." formControlName="invoicNo">
+                </div>
                 <div class="mb-3">
                     <label for="invoiceDate" class="mb-1">Invoice Date <span *ngIf="modalMode !== 'view'"
                             style="color: red;">*</span>

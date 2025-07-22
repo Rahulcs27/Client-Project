@@ -59,6 +59,7 @@ export class InvoiceComponent {
   invoiceForm: FormGroup = new FormGroup(
     {
       id: new FormControl(''),
+      invoicNo: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+'),]),
       companyId: new FormControl(''),
       subcontractorId: new FormControl(''),
       productId: new FormControl('', [Validators.required,]),
