@@ -5,6 +5,7 @@ import { LoginService } from '../../services/login.service';
 import { ReportService } from '../../services/report.service';
 import { TableComponent } from '../utils/table/table.component';
 import { CommonModule } from '@angular/common';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-combined-subcontractor-entity-report',
@@ -37,6 +38,7 @@ export class CombinedSubcontractorEntityReportComponent {
   @ViewChild('balanceTemplateRef', { static: true }) balanceTemplateRef!: TemplateRef<any>;
   @ViewChild('paidTemplateRef', { static: true }) paidTemplateRef!: TemplateRef<any>;
   constructor(
+    private alert: AlertService,
     private exportService: ExportFileService,
     private loginService: LoginService,
     private reportService: ReportService
@@ -49,7 +51,8 @@ export class CombinedSubcontractorEntityReportComponent {
           this.data = response;
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       })
       this.columnsInfo = {

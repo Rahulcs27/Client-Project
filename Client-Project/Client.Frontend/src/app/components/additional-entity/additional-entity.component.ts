@@ -63,7 +63,8 @@ export class AdditionalEntityComponent {
           this.fullData = response;
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       });
       this.subContractorService.getAllSubContractorGetDto(this.companyId).subscribe({
@@ -71,7 +72,8 @@ export class AdditionalEntityComponent {
           this.subContractors = response;
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       })
       this.columnsInfo = {
@@ -108,7 +110,7 @@ export class AdditionalEntityComponent {
 
       const roleAccessList = this.roleAccessService.getAccessList().find(item => item.a_screenCode === this.screenCode);
 
-      if(roleAccessList){
+      if (roleAccessList) {
         this.createAccess = roleAccessList.a_createAccess;
         this.editAccess = roleAccessList.a_editAccess;
         this.deleteAccess = roleAccessList.a_deleteAccess;
@@ -173,7 +175,7 @@ export class AdditionalEntityComponent {
   closeModal() {
     this.additionalEntityForm.reset({
       id: '',
-      type:  '',
+      type: '',
       amount: '',
       quantity: '',
       date: '',
@@ -187,7 +189,7 @@ export class AdditionalEntityComponent {
 
   viewAdditionalEntityGetDto(obj: AdditionalEntityGetDto) {
     this.additionalEntityForm.patchValue({
-      type:  obj.r_type,
+      type: obj.r_type,
       amount: obj.r_amount,
       quantity: obj.r_quantity,
       date: new Date(obj.r_date),
@@ -201,7 +203,7 @@ export class AdditionalEntityComponent {
   editCompanyMasterGetDto(obj: AdditionalEntityGetDto) {
     this.additionalEntityForm.patchValue({
       id: obj.r_id,
-      type:  obj.r_type,
+      type: obj.r_type,
       amount: obj.r_amount,
       quantity: obj.r_quantity,
       date: new Date(obj.r_date),
@@ -223,7 +225,9 @@ export class AdditionalEntityComponent {
             this.alert.Toast.fire('Deleted Successfully', '', 'success');
           },
           error: (error) => {
-            console.log(error);
+            this.alert.Toast.fire((error.message)?error.message:'Something went wrong','','error')
+            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
           }
         });
       }
@@ -236,6 +240,14 @@ export class AdditionalEntityComponent {
       console.log('Additional Entity form invalid', this.additionalEntityForm.value);
     }
     else {
+      function getDateFormat(inputDate: string): string {
+        const date = new Date(inputDate);
+        const dd = String(date.getDate()).padStart(2, '0');
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const yyyy = String(date.getFullYear());
+        return `${yyyy}-${mm}-${dd}`;
+      }
+      this.additionalEntityForm.get('date')?.setValue(getDateFormat(this.additionalEntityForm.get('date')?.value));
       if (this.modalMode === 'edit') {
         this.additionalService.editAdditionalEntityUpdateDto(this.additionalEntityForm.value).subscribe({
           next: (response: AdditionalEntityGetDto[]) => {
@@ -250,7 +262,8 @@ export class AdditionalEntityComponent {
             }
           },
           error: (error) => {
-            console.log(error);
+            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
           }
         });
       }
@@ -269,7 +282,8 @@ export class AdditionalEntityComponent {
               }
             },
             error: (error) => {
-              console.log(error);
+              this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
             }
           }
         );

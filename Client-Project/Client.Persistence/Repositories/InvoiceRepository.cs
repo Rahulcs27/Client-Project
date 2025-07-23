@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using Client.Application.Features.Invoice.Commands;
@@ -48,6 +49,7 @@ namespace Client.Persistence.Repositories
             insertParams.Add("@P_commissionPercentage", dto.CommissionPercentage);
             insertParams.Add("@P_commissionAmount", dto.CommissionAmount);
             insertParams.Add("@P_paymentMode", dto.PaymentMode);
+                insertParams.Add("@P_status", dto.Status);
             insertParams.Add("@P_createdBy", dto.CreatedBy);
 
             var result = await _db.QueryFirstOrDefaultAsync<dynamic>(

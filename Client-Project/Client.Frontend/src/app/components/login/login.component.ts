@@ -53,6 +53,7 @@ export class LoginComponent {
             this.route.navigate(['/home']);
           },
           error: (error) => {
+            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
             console.error(error);
             this.loginForm.reset({
               username: '',

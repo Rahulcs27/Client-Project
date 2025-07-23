@@ -176,38 +176,6 @@
                     </label>
                     <input type="text" id="commissionAmount" class="form-control" formControlName="commissionAmount">
                 </div>
-                <div class="mb-3" *ngIf="modalMode !== 'add'">
-                    <label for="status" class="mb-1">Status <span *ngIf="modalMode !== 'view'"
-                            style="color: red;">*</span>
-                        <span *ngIf="modalMode !== 'view' &&
-                    this.invoiceForm.get('status')?.hasError('required') &&
-                    (this.invoiceForm.get('status')?.dirty ||
-                      this.invoiceForm.get('status')?.touched)
-                  " style="color: red">Required</span>
-                    </label>
-                    <select id="status" class="form-control" formControlName="status">
-                        <option value="">--Select--</option>
-                        <option value="Paid">Paid</option>
-                        <option value="Partially Paid">Partially Paid</option>
-                        <option value="Pending">Pending</option>
-                    </select>
-                </div>
-                <div class="mb-3" *ngIf="modalMode !== 'add'">
-                    <label for="status" class="mb-1">Status <span *ngIf="modalMode !== 'view'"
-                            style="color: red;">*</span>
-                        <span *ngIf="modalMode !== 'view' &&
-                    this.invoiceForm.get('status')?.hasError('required') &&
-                    (this.invoiceForm.get('status')?.dirty ||
-                      this.invoiceForm.get('status')?.touched)
-                  " style="color: red">Required</span>
-                    </label>
-                    <select id="status" class="form-control" formControlName="status">
-                        <option value="">--Select--</option>
-                        <option value="Paid">Paid</option>
-                        <option value="Partially Paid">Partially Paid</option>
-                        <option value="Pending">Pending</option>
-                    </select>
-                </div>
                 <div class="mb-3">
                     <label for="paymentMode" class="mb-1">Payment Mode <span *ngIf="modalMode !== 'view'"
                             style="color: red;">*</span>
@@ -231,6 +199,21 @@
                             Balance
                         </label>
                     </div>
+                </div>
+                <div class="mb-3">
+                    <label for="status" class="mb-1">Status <span *ngIf="modalMode !== 'view'"
+                            style="color: red;">*</span>
+                        <span *ngIf="modalMode !== 'view' &&
+                    this.invoiceForm.get('status')?.hasError('required') &&
+                    (this.invoiceForm.get('status')?.dirty ||
+                      this.invoiceForm.get('status')?.touched)
+                  " style="color: red">Required</span>
+                    </label>
+                    <select id="status" class="form-control" formControlName="status">
+                        <option value="">--Select--</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Pending">Pending</option>
+                    </select>
                 </div>
             </div>
             <div class="modal-footer">

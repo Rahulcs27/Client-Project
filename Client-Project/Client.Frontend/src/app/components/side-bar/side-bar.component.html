@@ -26,7 +26,7 @@
                 </div>
             </div>
         </div>
-        <div class="accordion mt-2" id="config-accordion">
+        <div *ngIf="checkConfigAccess()" class="accordion mt-2" id="config-accordion">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="config">
                     <button class="accordion-button userName" type="button" data-bs-toggle="collapse"
@@ -48,7 +48,7 @@
             </div>
         </div>
         <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/home">Home</a>
-        <div class="accordion mt-2" id="master-accordion">
+        <div *ngIf="checkMasterAccess()" class="accordion mt-2" id="master-accordion">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="master">
                     <button class="accordion-button userName" type="button" data-bs-toggle="collapse"
@@ -71,10 +71,10 @@
                 </div>
             </div>
         </div>
-        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/invoice">Invoice</a>
-        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/payment">Payment</a>
-        <a class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/additionalEntity">Additional Entity</a>
-        <div class="accordion mt-2" id="report-accordion">
+        <a *ngIf="checkNormalAccess()" class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/invoice">Invoice</a>
+        <a *ngIf="checkNormalAccess()" class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/payment">Payment</a>
+        <a *ngIf="checkNormalAccess()" class="btn sideBar-nav-links mt-2" data-bs-dismiss="offcanvas" routerLink="/additionalEntity">Additional Entity</a>
+        <div *ngIf="checkReportAccess()" class="accordion mt-2" id="report-accordion">
             <div class="accordion-item">
                 <h2 class="accordion-header" id="report">
                     <button class="accordion-button userName" type="button" data-bs-toggle="collapse"

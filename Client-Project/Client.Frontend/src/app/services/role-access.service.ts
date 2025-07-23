@@ -2,13 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { apiUrl } from '../../constant';
-import { RoleAccessByRoleIdDto, RoleAccessDto } from '../components/role-access/role-access-dto';
+import { RoleAccessByRoleIdDto, RoleAccessDto, RoleAccessUpdateDto } from '../components/role-access/role-access-dto';
+import { AlertService } from './alert.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RoleAccessService {
   constructor(
+    private alert: AlertService,
     private http: HttpClient
   ) { }
 
@@ -28,7 +30,8 @@ export class RoleAccessService {
         this.accessList = response;
       },
       error: (error) => {
-        console.log(error);
+        this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
       }
     })
   }
@@ -39,5 +42,9 @@ export class RoleAccessService {
 
   getAccessList(): RoleAccessDto[] {
     return this.accessList
+  }
+
+  postRoleAccessForm(formData: RoleAccessUpdateDto) {
+    return this.http.put<any>(`${apiUrl}/RoleAccess`, formData)
   }
 }

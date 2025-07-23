@@ -30,6 +30,7 @@ export interface InvoiceCreateDto {
     quantity: number;
     totalAmount: number;
     paymentMode: string;
+    status: string;
     createdBy: number;
 }
 

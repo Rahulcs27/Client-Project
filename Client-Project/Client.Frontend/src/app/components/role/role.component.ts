@@ -55,13 +55,15 @@ export class RoleComponent {
 
   ngOnInit(): void {
     this.userId = this.loginService.userId();
-    if (this.userId) {
+    this.screenCode = this.route.snapshot.data['screenCode'];
+    if (this.userId && this.screenCode) {
       this.roleService.getAllRoleGetDto().subscribe({
         next: (response: RoleGetDto[]) => {
           this.data = response;
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       });
       this.columnsInfo = {
@@ -79,6 +81,14 @@ export class RoleComponent {
           'title': 'Action',
           'templateRef': this.actionTemplateRef
         }
+      }
+
+      const roleAccessList = this.roleAccessService.getAccessList().find(item => item.a_screenCode === this.screenCode);
+      
+      if(roleAccessList){
+        this.createAccess = roleAccessList.a_createAccess;
+        this.editAccess = roleAccessList.a_editAccess;
+        this.deleteAccess = roleAccessList.a_deleteAccess;
       }
     }
     else {
@@ -121,7 +131,8 @@ export class RoleComponent {
             this.alert.Toast.fire('Deleted Successfully', '', 'success');
           },
           error: (error) => {
-            console.log(error);
+            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
           }
         })
       }
@@ -161,7 +172,8 @@ export class RoleComponent {
             }
           },
           error: (error) => {
-            console.log(error);
+            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
           }
         });
       }
@@ -180,7 +192,8 @@ export class RoleComponent {
               }
             },
             error: (error) => {
-              console.log(error);
+              this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
             }
           }
         );

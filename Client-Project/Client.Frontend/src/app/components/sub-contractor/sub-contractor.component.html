@@ -1,7 +1,7 @@
 <h2 class="pt-4 fs-1">Sub-Contractor</h2>
 
 <div class="btn-container pt-md-5 pt-3 px-md-5 px-3 pb-2">
-    <button data-bs-toggle="modal" data-bs-target="#subContractor-modal" class="add-btn btn btn-outline-primary mb-2"
+    <button *ngIf="createAccess" data-bs-toggle="modal" data-bs-target="#subContractor-modal" class="add-btn btn btn-outline-primary mb-2"
         (click)="addSubContractorGetDto()">Add
     </button>
     <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="
@@ -25,9 +25,9 @@
 <ng-template #actionTemplateRef let-row>
     <i class="fa-regular fa-eye icon" data-bs-toggle="modal" data-bs-target="#subContractor-modal"
     (click)="viewAndEditSubContractorGetDto(row,'view')"></i>
-    <i class="fa-regular fa-pen-to-square icon" data-bs-toggle="modal" data-bs-target="#subContractor-modal"
+    <i *ngIf="editAccess" class="fa-regular fa-pen-to-square icon" data-bs-toggle="modal" data-bs-target="#subContractor-modal"
     (click)="viewAndEditSubContractorGetDto(row,'edit')"></i>
-    <i class="fa-solid fa-trash icon" (click)="deleteRowData(row.id)"></i>
+    <i *ngIf="deleteAccess" class="fa-solid fa-trash icon" (click)="deleteRowData(row.id)"></i>
 </ng-template>
 
 <div class="modal fade" [formGroup]="subContractorForm" id="subContractor-modal" data-bs-backdrop="static"

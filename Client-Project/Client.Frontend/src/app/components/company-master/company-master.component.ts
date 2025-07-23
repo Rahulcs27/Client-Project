@@ -61,14 +61,16 @@ export class CompanyMasterComponent implements OnInit {
   ngOnInit(): void {
     this.companyId = this.loginService.companyId();
     this.userId = this.loginService.userId();
-    if(this.companyId && this.userId) {
+    this.screenCode = this.route.snapshot.data['screenCode'];
+    if(this.companyId && this.userId && this.screenCode) {
       this.companyMasterService.getAllCompanyMasterGetDto().subscribe({
         next: (response: CompanyMasterGetDto[]) => {
           this.data = response;
           this.fullData = response;
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       });
       this.columnsInfo = {
@@ -91,6 +93,14 @@ export class CompanyMasterComponent implements OnInit {
           'title': 'Action',
           'templateRef': this.actionTemplateRef
         }
+      }
+
+      const roleAccessList = this.roleAccessService.getAccessList().find(item => item.a_screenCode === this.screenCode);
+      
+      if(roleAccessList){
+        this.createAccess = roleAccessList.a_createAccess;
+        this.editAccess = roleAccessList.a_editAccess;
+        this.deleteAccess = roleAccessList.a_deleteAccess;
       }
     }
     else {
@@ -177,7 +187,8 @@ export class CompanyMasterComponent implements OnInit {
             this.alert.Toast.fire('Deleted Successfully', '', 'success');
           },
           error: (error) => {
-            console.log(error);
+            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
           }
         });
       }
@@ -204,7 +215,8 @@ export class CompanyMasterComponent implements OnInit {
             }
           },
           error: (error) => {
-            console.log(error);
+            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
           }
         });
       }
@@ -223,7 +235,8 @@ export class CompanyMasterComponent implements OnInit {
               }
             },
             error: (error) => {
-              console.log(error);
+              this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
             }
           }
         );

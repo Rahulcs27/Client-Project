@@ -7,6 +7,7 @@ import { LoginService } from '../../services/login.service';
 import { CommonModule } from '@angular/common';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ExportFileService } from '../../services/export-file.service';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-unpaid-reports',
@@ -30,6 +31,7 @@ export class UnpaidReportsComponent {
     }
   } = {};
   constructor(
+    private alert: AlertService,
     private exportService: ExportFileService,
     private loginService: LoginService,
     private reportService: ReportService
@@ -43,7 +45,8 @@ export class UnpaidReportsComponent {
           this.data = response;
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       })
       this.columnsInfo = {
@@ -136,7 +139,8 @@ export class UnpaidReportsComponent {
           this.data = response;
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       })
     }
