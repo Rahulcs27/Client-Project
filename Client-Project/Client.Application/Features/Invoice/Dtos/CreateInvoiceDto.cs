@@ -18,7 +18,7 @@ namespace Client.Application.Features.Invoice.Dtos
         public decimal TotalAmount { get; set; }
         public decimal CommissionPercentage { get; set; }
         public decimal CommissionAmount { get; set; }
-
+        public string? Status { get; set; }
         public string PaymentMode { get; set; }
         public int CreatedBy { get; set; }
     }

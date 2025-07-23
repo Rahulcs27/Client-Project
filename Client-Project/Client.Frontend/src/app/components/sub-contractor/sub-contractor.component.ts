@@ -59,14 +59,16 @@ export class SubContractorComponent {
   ngOnInit(): void {
     this.companyId = this.loginService.companyId()
     this.userId = this.loginService.userId()
-    if (this.companyId && this.userId) {
+    this.screenCode = this.route.snapshot.data['screenCode'];
+    if (this.companyId && this.userId && this.screenCode) {
       this.subContractorService.getAllSubContractorGetDto(this.companyId).subscribe({
         next: (response: SubContractorGetDto[]) => {
           this.fullData = response;
           this.data = response;
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       });
       this.columnsInfo = {
@@ -79,6 +81,14 @@ export class SubContractorComponent {
           'title': 'Action',
           'templateRef': this.actionTemplateRef
         }
+      }
+
+      const roleAccessList = this.roleAccessService.getAccessList().find(item => item.a_screenCode === this.screenCode);
+      
+      if(roleAccessList){
+        this.createAccess = roleAccessList.a_createAccess;
+        this.editAccess = roleAccessList.a_editAccess;
+        this.deleteAccess = roleAccessList.a_deleteAccess;
       }
     }
     else {
@@ -154,7 +164,8 @@ export class SubContractorComponent {
             this.alert.Toast.fire('Deleted Successfully', '', 'success');
           },
           error: (error) => {
-            console.log(error);
+            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
           }
         })
       }
@@ -181,7 +192,8 @@ export class SubContractorComponent {
             }
           },
           error: (error) => {
-            console.log(error);
+            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
           }
         });
       }
@@ -200,7 +212,8 @@ export class SubContractorComponent {
               }
             },
             error: (error) => {
-              console.log(error);
+              this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
             }
           }
         );

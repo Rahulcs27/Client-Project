@@ -6,6 +6,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { LoginService } from '../../services/login.service';
 import { ExportFileService } from '../../services/export-file.service';
 import { DatePickerModule } from 'primeng/datepicker';
+import { AlertService } from '../../services/alert.service';
 
 @Component({
   selector: 'app-product-wise-report',
@@ -31,6 +32,7 @@ export class ProductWiseReportComponent {
     }
   } = {};
   constructor(
+    private alert: AlertService,
     private loginService: LoginService,
     private exportService: ExportFileService,
     private reportService: ReportService
@@ -43,7 +45,8 @@ export class ProductWiseReportComponent {
           this.data = response;
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       })
       this.columnsInfo = {
@@ -161,7 +164,8 @@ export class ProductWiseReportComponent {
         this.data = response;
       },
       error: (error) => {
-        console.log(error);
+        this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
       }
     })
   }

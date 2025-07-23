@@ -19,3 +19,12 @@ export interface RoleAccessByRoleIdDto {
     a_editAccess: boolean;
     a_deleteAccess: boolean;
 }
+
+export interface RoleAccessUpdateDto {
+  id: number;
+  viewAccess: boolean;
+  createAccess: boolean;
+  editAccess: boolean;
+  deleteAccess: boolean;
+  updatedBy: number;
+}

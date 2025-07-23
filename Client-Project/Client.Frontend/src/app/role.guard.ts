@@ -4,13 +4,18 @@ import { firstValueFrom, Observable } from 'rxjs';
 import { RoleAccessService } from './services/role-access.service';
 import { LoginService } from './services/login.service';
 import { RoleAccessDto } from './components/role-access/role-access-dto';
+import { AlertService } from './services/alert.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class RoleGuard implements CanActivate {
 
-    constructor(private loginService: LoginService, private authService: RoleAccessService, private router: Router) { }
+    constructor(
+        private alert: AlertService,
+        private loginService: LoginService, 
+        private authService: RoleAccessService, 
+        private router: Router) { }
 
     async canActivate(
         next: ActivatedRouteSnapshot,
@@ -35,7 +40,8 @@ export class RoleGuard implements CanActivate {
                     this.authService.roleGuardSetAccessList(response);
                     hasAccess = response.some((item) => item.a_screenCode === screenCode && item.a_viewAccess);
                 }).catch((error) => {
-                    console.log(error);
+                    this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
                 })
                 if (!hasAccess) {
                     this.router.navigate(['/home']);

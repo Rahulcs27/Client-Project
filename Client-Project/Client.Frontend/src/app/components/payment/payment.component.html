@@ -1,7 +1,7 @@
 <h2 class="pt-4 fs-1">Payment</h2>
 
 <div class="btn-container pt-md-5 pt-3 px-md-5 px-3 pb-2">
-    <button data-bs-toggle="modal" data-bs-target="#payment-modal" class="add-btn btn btn-outline-primary mb-2"
+    <button *ngIf="createAccess" data-bs-toggle="modal" data-bs-target="#payment-modal" class="add-btn btn btn-outline-primary mb-2"
         (click)="addPaymentGetDto()">Add
     </button>
     <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="
@@ -34,9 +34,9 @@
 <ng-template #actionTemplateRef let-row>
     <i class="fa-regular fa-eye icon" data-bs-toggle="modal" data-bs-target="#payment-modal"
         (click)="viewPaymentGetDto(row)"></i>
-    <i class="fa-regular fa-pen-to-square icon" data-bs-toggle="modal" data-bs-target="#payment-modal"
+    <i *ngIf="editAccess" class="fa-regular fa-pen-to-square icon" data-bs-toggle="modal" data-bs-target="#payment-modal"
         (click)="editPaymentGetDto(row)"></i>
-    <i class="fa-solid fa-trash icon" (click)="deleteRowData(row.r_id)"></i>
+    <i *ngIf="deleteAccess" class="fa-solid fa-trash icon" (click)="deleteRowData(row.r_id)"></i>
 </ng-template>
 
 <div class="modal fade" [formGroup]="paymentForm" id="payment-modal" data-bs-backdrop="static" data-bs-keyboard="false"
@@ -53,18 +53,18 @@
             <div class="modal-body">
                 <div class="mb-3" *ngIf="modalMode !== 'edit'">
                     <label for="invoiceNo" class="mb-1">Invoice No. </label>
-                    <p-autocomplete placeholder="Search: Invoice No." formControlName="invoiceNo"
-                        [suggestions]="invoiceIds" (completeMethod)="search($event)" />
+                    <p-autocomplete #autoComplete placeholder="Search: Invoice No." formControlName="invoiceNo"
+                        [suggestions]="invoiceIds" (completeMethod)="search($event)" (onSelect)="calculateAmountByInvoiceNo(autoComplete.value)"/>
                 </div>
                 <div class="mb-3" *ngIf="modalMode !== 'edit'">
                     <label for="fromDate" class="mb-1">From Date</label>
                     <p-datepicker id="fromDate" formControlName="fromDate" placeholder="dd-MM-yy"
-                        dateFormat="dd-mm-yy" />
+                        dateFormat="dd-mm-yy" (onSelect)="calculateAmount()"/>
                 </div>
                 <div class="mb-3" *ngIf="modalMode !== 'edit'">
                     <label for="toDate" class="mb-1">To Date</label>
                     <p-datepicker id="toDate" formControlName="toDate" placeholder="dd-MM-yy"
-                        dateFormat="dd-mm-yy" />
+                        dateFormat="dd-mm-yy" (onSelect)="calculateAmount()"/>
                 </div>
                 <div class="mb-3">
                     <label for="paymentDate" class="mb-1">Date <span style="color: red;">*</span>
@@ -132,9 +132,7 @@
                     <select name="paymentStatus" id="paymentStatus" class="form-control"
                         formControlName="paymentStatus">
                         <option value="">--Select--</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Partially Paid">Partial</option>
+                        <option value="Paid">Paid</option>
                     </select>
                 </div>
             </div>
@@ -147,69 +145,3 @@
         </form>
     </div>
 </div>
-
-<!-- <div class="modal fade" [formGroup]="invoiceForm" id="invoice-modal" data-bs-backdrop="static" data-bs-keyboard="false"
-    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
-        <form class="modal-content">
-            <div class="modal-header d-flex justify-content-between">
-                <h1 style="color: whitesmoke;" class="modal-title fs-5 fw-bolder">Invoice Info</h1>
-                <button type="reset" class="btn close-btn" data-bs-dismiss="modal" aria-label="Close"
-                    (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="subcontractorId" class="mb-1">Sub-Contractor</label>
-                    <select id="subcontractorId" class="form-control" formControlName="subcontractorId">
-                        <option value="">--Select--</option>
-                        <option *ngFor="let subContractor of subContractors" value="{{subContractor.id}}">
-                            {{subContractor.name}}</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="productId" class="mb-1">Product</label>
-                    <select id="productId" class="form-control" formControlName="productId">
-                        <option value="">--Select--</option>
-                        <option *ngFor="let product of products" value="{{product.r_id}}">{{product.r_description}}
-                        </option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="invoiceDate" class="mb-1">Invoice Date</label>
-                    <input type="date" id="invoiceDate" class="form-control" formControlName="invoiceDate">
-                </div>
-                <div class="mb-3">
-                    <label for="status" class="mb-1">Status</label>
-                    <select id="status" class="form-control" formControlName="status">
-                        <option value="">--Select--</option>
-                        <option value="Paid">Paid</option>
-                        <option value="Partially Paid">Partially Paid</option>
-                        <option value="Pending">Pending</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="quantity" class="mb-1">Quantity</label>
-                    <input type="text" id="quantity" class="form-control" formControlName="quantity">
-                </div>
-                <div class="mb-3">
-                    <label for="totalAmount" class="mb-1">Total Amount</label>
-                    <input type="text" id="totalAmount" class="form-control" formControlName="totalAmount">
-                </div>
-                <div class="mb-3">
-                    <label for="paymentMode" class="mb-1">Payment Mode</label>
-                    <select id="paymentMode" class="form-control" formControlName="paymentMode">
-                        <option value="">--Select--</option>
-                        <option value="Cash">Cash</option>
-                        <option value="UPI">UPI</option>
-                        <option value="Bank Transfer">Bank Transfer</option>
-                    </select>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-outline-danger" data-bs-dismiss="modal" aria-label="Close" type="reset"
-                    (click)="closeInvoiceModal()">
-                    Close</button>
-            </div>
-        </form>
-    </div>
-</div> -->

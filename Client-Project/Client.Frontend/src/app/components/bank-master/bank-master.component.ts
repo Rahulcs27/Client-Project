@@ -49,14 +49,16 @@ export class BankMasterComponent implements OnInit {
   ngOnInit(): void {
     this.userId = this.loginService.userId();
     this.companyId = this.loginService.companyId();
-    if (this.companyId && this.userId) {
+    this.screenCode = this.route.snapshot.data['screenCode'];
+    if (this.companyId && this.userId && this.screenCode) {
       this.bankService.getAllBankMasterGetDto().subscribe({
         next: (response: BankGetDto[]) => {
           this.data = response;
           this.fullData = response;
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       });
       this.columnsInfo = {
@@ -74,6 +76,13 @@ export class BankMasterComponent implements OnInit {
           'title': 'Action',
           'templateRef': this.actionTemplateRef
         }
+      }
+      const roleAccessList = this.roleAccessService.getAccessList().find(item => item.a_screenCode === this.screenCode);
+      
+      if(roleAccessList){
+        this.createAccess = roleAccessList.a_createAccess;
+        this.editAccess = roleAccessList.a_editAccess;
+        this.deleteAccess = roleAccessList.a_deleteAccess;
       }
     }
     else {
@@ -162,7 +171,8 @@ export class BankMasterComponent implements OnInit {
             this.alert.Toast.fire('Deleted Successfully', '', 'success');
           },
           error: (error) => {
-            console.log(error);
+            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
           }
         });
       }
@@ -189,7 +199,8 @@ export class BankMasterComponent implements OnInit {
             }
           },
           error: (error) => {
-            console.log(error);
+            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
           }
         });
       }
@@ -208,7 +219,8 @@ export class BankMasterComponent implements OnInit {
               }
             },
             error: (error) => {
-              console.log(error);
+              this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
             }
           }
         );

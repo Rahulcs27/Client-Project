@@ -64,7 +64,7 @@ namespace Client.API
                 {
         "INVOICE", "PRODUCT", "SUBCONTRACTOR", "PAYMENT", "ADDITIONALENTITY",
         "PAIDREPORT", "UNPAIDREPORT", "PRODUCTWISEREPORT", "SUBCONTRACTORWISEREPORT",
-        "COMBINEDREPORT", "COMPANY", "USER", "ROLE", "BANK"
+        "COMBINEDREPORT", "COMPANY", "USER", "ROLE", "ROLEACCESS", "BANK"
     };
                 var permissions = new[] { "View", "Create", "Edit", "Delete" };
 

@@ -97,37 +97,27 @@ export class PaymentComponent {
     }
   );
 
-  invoiceForm: FormGroup = new FormGroup(
-    {
-      companyId: new FormControl(''),
-      subcontractorId: new FormControl(''),
-      productId: new FormControl(''),
-      invoiceDate: new FormControl(''),
-      status: new FormControl(''),
-      quantity: new FormControl(''),
-      totalAmount: new FormControl(''),
-      paymentMode: new FormControl(''),
-    }
-  );
-
   ngOnInit(): void {
     this.companyId = this.loginService.companyId();
     this.userId = this.loginService.userId();
-    if (this.companyId && this.userId) {
+    this.screenCode = this.route.snapshot.data['screenCode'];
+    if (this.companyId && this.userId && this.screenCode) {
       this.bankService.getAllBankMasterGetDto().subscribe({
         next: (response: BankGetDto[]) => {
           this.banks = response
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       })
       this.invoiceService.getAllInvoiceGetDto(this.companyId).subscribe({
         next: (response: InvoiceGetDto[]) => {
-          this.invoices = response
+          this.invoices = response;
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       })
       this.productService.getAllProductGetDto(this.companyId).subscribe({
@@ -135,7 +125,8 @@ export class PaymentComponent {
           this.products = response
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       })
       this.subContractorService.getAllSubContractorGetDto(this.companyId).subscribe({
@@ -143,7 +134,8 @@ export class PaymentComponent {
           this.subContractors = response
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       })
       this.paymentService.getAllPaymentGetDto(this.companyId).subscribe({
@@ -152,15 +144,12 @@ export class PaymentComponent {
           this.fullData = response;
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       });
-    }
-    else {
-      console.log('Login First');
-    }
 
-    this.columnsInfo = {
+      this.columnsInfo = {
       'r_paymentDate': {
         'title': 'Date',
         'isSort': true,
@@ -192,6 +181,18 @@ export class PaymentComponent {
         'templateRef': this.actionTemplateRef
       }
     }
+
+      const roleAccessList = this.roleAccessService.getAccessList().find(item => item.a_screenCode === this.screenCode);
+      
+      if(roleAccessList){
+        this.createAccess = roleAccessList.a_createAccess;
+        this.editAccess = roleAccessList.a_editAccess;
+        this.deleteAccess = roleAccessList.a_deleteAccess;
+      }
+    }
+    else {
+      console.log('Login First');
+    }
   }
 
   exportToPdf() {
@@ -214,7 +215,14 @@ export class PaymentComponent {
     ])
   }
 
-  checkViewer = (): boolean => this.loginService.role() !== null; //&& this.loginService.role() === 'Viewer';
+  calculateAmount() {
+    const fromDate = this.paymentForm.get('fromDate')?.value
+    const toDate = this.paymentForm.get('toDate')?.value
+    if(fromDate && toDate){
+      const totalAmount = this.invoices.filter(invoice => (new Date(fromDate) <= new Date(invoice.r_invoiceDate) && new Date(invoice.r_invoiceDate) <= new Date(toDate))).reduce((acc, invoice) => acc + invoice.r_totalAmount,0)
+      this.paymentForm.get('amountPaid')?.setValue(totalAmount)
+    }
+  }
 
   search(event: AutoCompleteCompleteEvent) {
     const query = event.query.toString();
@@ -241,21 +249,13 @@ export class PaymentComponent {
     this.paymentForm.enable();
   }
 
-  // closeInvoiceModal() {
-  //   this.invoiceForm.reset({
-  //     companyId: '',
-  //     subcontractorId: '',
-  //     productId: '',
-  //     invoiceDate: '',
-  //     status: '',
-  //     quantity: '',
-  //     totalAmount: '',
-  //     paymentMode: '',
-  //   })
-  // }
-
   setSearchValue(value: string) {
     this.searchVaue = value;
+  }
+
+  calculateAmountByInvoiceNo(value: string){
+    const totalAmount = this.invoices.find(invoice => invoice.r_invoiceNo === value)?.r_totalAmount;
+    this.paymentForm.get('amountPaid')?.setValue(totalAmount);
   }
 
   onSearch() {
@@ -312,6 +312,7 @@ export class PaymentComponent {
       paymentStatus: obj.r_paymentStatus,
       updatedBy: this.userId
     })
+    console.log(obj.r_paymentStatus);
     this.modalMode = 'edit';
     this.paymentForm.enable();
   }
@@ -326,7 +327,8 @@ export class PaymentComponent {
             this.alert.Toast.fire('Deleted Successfully', '', 'success');
           },
           error: (error) => {
-            console.log(error);
+            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
           }
         });
       } 
@@ -345,6 +347,14 @@ export class PaymentComponent {
       if (this.paymentForm.get('bankId')?.value === '') {
         this.paymentForm.get('bankId')?.setValue(null);
       }
+      function getDateFormat(inputDate: string): string {
+        const date = new Date(inputDate);
+        const dd = String(date.getDate()).padStart(2, '0');
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const yyyy = String(date.getFullYear());
+        return `${yyyy}-${mm}-${dd}`;
+      }
+      this.paymentForm.get('paymentDate')?.setValue(getDateFormat(this.paymentForm.get('paymentDate')?.value));
       if (this.modalMode === 'edit') {
         this.paymentService.editPaymentUpdateDto(this.paymentForm.value).subscribe({
           next: (response: PaymentGetDto[]) => {
@@ -359,7 +369,8 @@ export class PaymentComponent {
             }
           },
           error: (error) => {
-            console.log(error);
+            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
           }
         });
       }
@@ -379,7 +390,8 @@ export class PaymentComponent {
               }
             },
             error: (error) => {
-              console.log(error);
+              this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
             }
           }
         );

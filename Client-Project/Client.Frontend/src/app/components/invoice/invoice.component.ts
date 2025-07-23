@@ -65,7 +65,7 @@ export class InvoiceComponent {
       productId: new FormControl('', [Validators.required,]),
       invoiceDate: new FormControl('', [Validators.required]),
       unitAmount: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),]),
-      status: new FormControl(''),
+      status: new FormControl('', [Validators.required]),
       quantity: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+'),]),
       totalAmount: new FormControl('', [Validators.required]),
       commissionPercentage: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),]),
@@ -87,7 +87,8 @@ export class InvoiceComponent {
           this.products = response
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       })
       this.subContractorService.getAllSubContractorGetDto(this.companyId).subscribe({
@@ -95,7 +96,8 @@ export class InvoiceComponent {
           this.subContractors = response
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       })
       this.invoiceService.getAllInvoiceGetDto(this.companyId).subscribe({
@@ -104,12 +106,13 @@ export class InvoiceComponent {
           this.data = response;
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       });
 
       const roleAccessList = this.roleAccessService.getAccessList().find(item => item.a_screenCode === this.screenCode);
-
+      
       if(roleAccessList){
         this.createAccess = roleAccessList.a_createAccess;
         this.editAccess = roleAccessList.a_editAccess;
@@ -275,7 +278,8 @@ export class InvoiceComponent {
             this.alert.Toast.fire('Deleted Successfully', '', 'success');
           },
           error: (error) => {
-            console.log(error);
+            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
           }
         });
       }
@@ -288,7 +292,15 @@ export class InvoiceComponent {
       console.log('Invoice form invalid', this.invoiceForm.value);
     }
     else {
+      function getDateFormat(inputDate: string): string {
+        const date = new Date(inputDate);
+        const dd = String(date.getDate()).padStart(2, '0');
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const yyyy = String(date.getFullYear());
+        return `${yyyy}-${mm}-${dd}`;
+      }
       const formData = this.invoiceForm.value;
+      formData['invoiceDate'] = getDateFormat(this.invoiceForm.get('invoiceDate')?.value)
       formData['productId'] = (this.invoiceForm.get('productId')?.value).split('_')[0];
       formData['totalAmount'] = this.invoiceForm.get('totalAmount')?.value
       formData['commissionAmount'] = this.invoiceForm.get('commissionAmount')?.value
@@ -306,11 +318,13 @@ export class InvoiceComponent {
             }
           },
           error: (error) => {
-            console.log(error);
+            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
           }
         });
       }
       else if (this.modalMode === 'add') {
+        console.log(formData);
         this.invoiceService.addInvoiceGetDto(formData).subscribe(
           {
             next: (response: InvoiceGetDto[]) => {
@@ -325,7 +339,8 @@ export class InvoiceComponent {
               }
             },
             error: (error) => {
-              console.log(error);
+              this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
             }
           }
         );

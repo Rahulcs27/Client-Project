@@ -2,13 +2,11 @@ declare var bootstrap: any;
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { LoginService } from '../../services/login.service';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserMasterService } from '../../services/user-master.service';
-import { UserGetDto } from '../user-master/user-dtos';
 import { AlertService } from '../../services/alert.service';
 import { CompanyMasterServiceService } from '../../services/company-master-service.service';
-import { RoleAccessService } from '../../services/role-access.service';
 
 @Component({
   selector: 'app-side-bar',
@@ -24,8 +22,6 @@ export class SideBarComponent {
   user: string | null = null;
 
   constructor(
-    private route: ActivatedRoute,
-    private roleAccessService: RoleAccessService,
     private alert: AlertService,
     private loginService: LoginService,
     private userService: UserMasterService,
@@ -38,9 +34,15 @@ export class SideBarComponent {
     this.user = this.loginService.user();
     this.email = this.loginService.email();
     if (!this.companyId || !this.userId || !this.email || !this.user) {
-      this.loginService.logout()
+      this.loginService.logout();
     }
   }
+
+  checkConfigAccess = (): boolean => (this.userRole === 'Super Admin' || this.userRole === 'config_user');
+  checkMasterAccess = (): boolean => (this.userRole === 'Super Admin' || this.userRole === 'Admin' || this.userRole === 'Manager');
+  checkNormalAccess = (): boolean => (this.userRole === 'Super Admin' || this.userRole === 'Admin' || this.userRole === 'Manager' || this.userRole === 'data_user');
+  checkReportAccess = (): boolean => (this.userRole === 'Super Admin' || this.userRole === 'Admin' || this.userRole === 'Manager' || this.userRole === 'report_user');
+
 
   userChangeForm: FormGroup = new FormGroup(
     {
@@ -94,7 +96,8 @@ export class SideBarComponent {
           this.loginService.logout();
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       });
     }
@@ -122,7 +125,8 @@ export class SideBarComponent {
           this.loginService.logout();
         },
         error: (error) => {
-          console.log(error);
+          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            console.error(error);
         }
       });
     }

@@ -20,7 +20,7 @@ namespace Client.API.Controllers
             _mediator = mediator;
         }
         [HttpPost("create")]
-        //[ScreenAccess("INVOICE", "Create")]
+        [ScreenAccess("INVOICE", "Create")]
 
         public async Task<IActionResult> CreateInvoice([FromBody] CreateInvoiceDto dto)
         {
