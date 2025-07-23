@@ -219,7 +219,7 @@ export class PaymentComponent {
     const fromDate = this.paymentForm.get('fromDate')?.value
     const toDate = this.paymentForm.get('toDate')?.value
     if(fromDate && toDate){
-      const totalAmount = this.invoices.filter(invoice => (new Date(fromDate) <= new Date(invoice.r_invoiceDate) && new Date(invoice.r_invoiceDate) <= new Date(toDate))).reduce((acc, invoice) => acc + invoice.r_totalAmount,0)
+      const totalAmount = this.invoices.filter(invoice => (new Date(fromDate) <= new Date(invoice.r_invoiceDate) && new Date(invoice.r_invoiceDate) <= new Date(toDate) && invoice.r_status.toLowerCase() === 'pending')).reduce((acc, invoice) => acc + invoice.r_totalAmount,0)
       this.paymentForm.get('amountPaid')?.setValue(totalAmount)
     }
   }
@@ -227,7 +227,7 @@ export class PaymentComponent {
   search(event: AutoCompleteCompleteEvent) {
     const query = event.query.toString();
     this.invoiceIds = this.invoices
-      .filter(item => item.r_invoiceNo.toString().includes(query))
+      .filter(item => (item.r_invoiceNo.toString().includes(query) && item.r_status.toLowerCase() === 'pending'))
       .map(item => item.r_invoiceNo);
   }
 
