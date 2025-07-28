@@ -8,9 +8,10 @@ using MediatR;
 
 namespace Client.Application.Features.User.Commands
 {
-    public class ToggleUserActiveCommand : IRequest<string>
+    public class ToggleUserActiveCommand : IRequest<List<UserDto>>
     {
         public ToggleUserActiveDto Dto { get; set; }
+        public int CompanyId { get; set; }
     }
 
 }

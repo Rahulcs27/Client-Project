@@ -16,7 +16,7 @@ namespace Client.Application.Interfaces
         Task<bool> VerifyRecaptchaAsync(string token);
         Task<List<UserDto>> GetUsersAsync(int? id, string? search,int companyId);
         Task<string> ChangePasswordAsync(ChangePasswordDto dto);
-        Task<string> ToggleIsActiveAsync(ToggleUserActiveDto dto);
+        Task<List<UserDto>> ToggleIsActiveAsync(ToggleUserActiveDto dto, int companyId);
         Task<LoginResponseDto> ValidateUserAsync(LoginDto dto);
 
 

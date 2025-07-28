@@ -41,9 +41,9 @@ namespace Client.API.Controllers
             var allUsers = await _mediator.Send(new UpdateUserCommand(dto));
             return Ok(allUsers);
         }
-        [HttpDelete]
+        [HttpDelete("{Id}")]
         [ScreenAccess("USER", "Delete")]
-        public async Task<IActionResult> DeleteUser(int Id,[FromQuery] int UpdatedBy, [FromQuery]int CompanyId)
+        public async Task<IActionResult> DeleteUser([FromRoute]int Id,[FromQuery] int UpdatedBy, [FromQuery]int CompanyId)
         {
             var result = await _mediator.Send(new DeleteUserCommand(Id,UpdatedBy,CompanyId));
 
@@ -54,9 +54,9 @@ namespace Client.API.Controllers
         }
         [HttpPut("toggle-active")]
         [ScreenAccess("USER", "Edit")]
-        public async Task<IActionResult> ToggleActive([FromBody] ToggleUserActiveDto dto)
+        public async Task<IActionResult> ToggleActive([FromBody] ToggleUserActiveDto dto, int companyId)
         {
-            var result = await _mediator.Send(new ToggleUserActiveCommand { Dto = dto });
+            var result = await _mediator.Send(new ToggleUserActiveCommand { Dto = dto , CompanyId = companyId});
             return Ok(result);
         }
 
