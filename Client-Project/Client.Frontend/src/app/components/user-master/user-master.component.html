@@ -1,8 +1,8 @@
 <h2 class="pt-4 fs-1">User Master</h2>
 
 <div class="btn-container pt-md-5 pt-3 px-md-5 px-3 pb-2">
-    <button *ngIf="createAccess" data-bs-toggle="modal" data-bs-target="#user-modal" class="add-btn btn btn-outline-primary mb-2"
-        (click)="addUserGetDto()">Add
+    <button *ngIf="createAccess" data-bs-toggle="modal" data-bs-target="#user-modal"
+        class="add-btn btn btn-outline-primary mb-2" (click)="addUserGetDto()">Add
     </button>
     <button class="add-btn btn btn-outline-primary margin-left mb-2" (click)="
         exportToPdf()">
@@ -22,6 +22,12 @@
 
 <app-table [data]="data" [displayedColumns]="displayedColumns" [columnsInfo]="columnsInfo">
 </app-table>
+
+<ng-template #activeTemplateRef let-row>
+    <div class="form-check form-switch">
+        <input #activeInactiveValue class="form-check-input" type="checkbox" (change)="activeInactiveToggle(activeInactiveValue.checked, row.id)" [checked]="row.isActive">
+    </div>
+</ng-template>
 
 <ng-template #actionTemplateRef let-row>
     <i class="fa-regular fa-eye icon" data-bs-toggle="modal" data-bs-target="#user-modal"
@@ -68,7 +74,7 @@
                     this.userForm.get('username')?.hasError('maxlength') &&
                     (this.userForm.get('username')?.dirty ||
                       this.userForm.get('username')?.touched)
-                  " style="color: red">Max 50 Characters</span>
+                  " style="color: red">Max 255 Characters</span>
                     </label>
                     <input type="text" class="form-control" formControlName="username">
                 </div>

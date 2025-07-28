@@ -37,7 +37,7 @@ export class UserMasterComponent {
     private alert: AlertService
   ) { }
   modalMode: 'add' | 'edit' | 'view' = 'view';
-  displayedColumns: string[] = ['username', 'roleName', 'action'];
+  displayedColumns: string[] = ['username', 'roleName', 'isActive', 'action'];
   roles: RoleGetDto[] = [];
   data: UserGetDto[] = [];
   fullData: UserGetDto[] = [];
@@ -49,12 +49,13 @@ export class UserMasterComponent {
     }
   } = {};
   @ViewChild('actionTemplateRef', { static: true }) actionTemplateRef!: TemplateRef<any>;
+  @ViewChild('activeTemplateRef', { static: true }) activeTemplateRef!: TemplateRef<any>;
 
   userForm: FormGroup = new FormGroup(
     {
       id: new FormControl(''),
       roleMasterId: new FormControl('', [Validators.required]),
-      username: new FormControl('', [Validators.required, Validators.maxLength(50)]),
+      username: new FormControl('', [Validators.required, Validators.maxLength(255)]),
       email: new FormControl('', [Validators.required, Validators.email, Validators.maxLength(70)]),
       password: new FormControl(''),
       companyID: new FormControl('', [Validators.required]),
@@ -94,8 +95,8 @@ export class UserMasterComponent {
           this.fullData = response;
         },
         error: (error) => {
-          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
-            console.error(error);
+          this.alert.Toast.fire((error.error) ? error.error : ((error.message) ? error.message : 'Something went wrong'), '', 'error');
+          console.error(error);
         }
       });
 
@@ -110,6 +111,11 @@ export class UserMasterComponent {
           'isSort': true,
           'templateRef': null
         },
+        'isActive': {
+          'title': 'Status',
+          'isSort': true,
+          'templateRef': this.activeTemplateRef
+        },
         'action': {
           'title': 'Action',
           'templateRef': this.actionTemplateRef
@@ -117,8 +123,8 @@ export class UserMasterComponent {
       }
 
       const roleAccessList = this.roleAccessService.getAccessList().find(item => item.a_screenCode === this.screenCode);
-      
-      if(roleAccessList){
+
+      if (roleAccessList) {
         this.createAccess = roleAccessList.a_createAccess;
         this.editAccess = roleAccessList.a_editAccess;
         this.deleteAccess = roleAccessList.a_deleteAccess;
@@ -149,6 +155,29 @@ export class UserMasterComponent {
 
   onSearch() {
     this.data = this.fullData.filter(d => d.username.includes(this.searchVaue));
+  }
+
+  activeInactiveToggle(isActive: boolean, id: number) {
+    if(this.companyID){
+      this.userService.toggleUserUpdateDto({ id, isActive: (isActive) ? 1 : 0 },this.companyID).subscribe({
+        next: (response: UserGetDto[]) => {
+          this.fullData = response;
+          this.onSearch();
+          this.alert.Toast.fire('Status Updated Successfully', '', 'success');
+        },
+        error: (error) => {
+          let errorMsg = "Something went wrong"
+          if(error.error){
+            errorMsg = error.error;
+          }
+          else if(error.message) {
+            errorMsg = error.message;
+          }
+          this.alert.Toast.fire(errorMsg, '', 'error');
+          console.error(error);
+        }
+      })
+    }
   }
 
   closeModal() {
@@ -204,7 +233,7 @@ export class UserMasterComponent {
             this.alert.Toast.fire('Deleted Successfully', '', 'success');
           },
           error: (error) => {
-            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            this.alert.Toast.fire((error.error) ? error.error : ((error.message) ? error.message : 'Something went wrong'), '', 'error');
             console.error(error);
           }
         });
@@ -233,8 +262,23 @@ export class UserMasterComponent {
               }
             },
             error: (error) => {
-              this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
-            console.error(error);
+              let errorMsg = "Something went wrong"
+              if(error.error.message){
+                if(error.error.message.includes('UNIQUE KEY constraint')){
+                  errorMsg = "User already exists"
+                }
+                else{
+                  errorMsg = error.error.message;
+                }
+              }
+              else if(error.error) {
+                errorMsg = error.error;
+              }
+              else if(error.message){
+                errorMsg = error.message;
+              }
+              this.alert.Toast.fire(errorMsg, '', 'error');
+              console.error(error);
             }
           }
         );
@@ -253,7 +297,7 @@ export class UserMasterComponent {
             }
           },
           error: (error) => {
-            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            this.alert.Toast.fire((error.error) ? error.error : ((error.message) ? error.message : 'Something went wrong'), '', 'error');
             console.error(error);
           }
         });

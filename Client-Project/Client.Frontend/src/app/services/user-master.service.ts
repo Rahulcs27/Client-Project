@@ -18,6 +18,10 @@ export class UserMasterService {
     return this.http.put<UserGetDto[]>(`${apiUrl}/User`, formData);
   }
 
+  toggleUserUpdateDto(formData: { id: number, isActive: number }, companyID: number): Observable<UserGetDto[]> {
+    return this.http.put<UserGetDto[]>(`${apiUrl}/User/toggle-active?companyId=${companyID}`, formData);
+  }
+
   changePassword(formData: ChangePasswordDto): Observable<any> {
     return this.http.post<any>(`${apiUrl}/User/change-password`, formData);
   }
@@ -27,6 +31,6 @@ export class UserMasterService {
   }
 
   deleteUserGetDto(id: number, userId: number, companyId: number): Observable<UserGetDto[]> {
-    return this.http.delete<UserGetDto[]>(`${apiUrl}/User?Id=${id}?updatedBy=${userId}&companyId=${companyId}`);
+    return this.http.delete<UserGetDto[]>(`${apiUrl}/User/${id}?updatedBy=${userId}&companyId=${companyId}`);
   }
 }

@@ -256,7 +256,7 @@ namespace Client.Persistence.Repositories
             return await GetUsersAsync(null, null, companyId);
 
         }
-        public async Task<string> ToggleIsActiveAsync(ToggleUserActiveDto dto)
+        public async Task<List<UserDto>> ToggleIsActiveAsync(ToggleUserActiveDto dto, int companyId)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@p_id", dto.Id);
@@ -270,7 +270,7 @@ namespace Client.Persistence.Repositories
             if (result?.R_Status != "SUCCESS")
                 throw new Exception(result?.R_ErrorMessage ?? "Failed to update active status.");
 
-            return "User active status updated successfully.";
+            return await GetUsersAsync(null, null, companyId);
         }
 
         public async Task<string> ChangePasswordAsync(ChangePasswordDto dto)
