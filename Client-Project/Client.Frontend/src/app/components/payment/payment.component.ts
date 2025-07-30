@@ -57,7 +57,6 @@ export class PaymentComponent {
     });
   }
   fullData: PaymentGetDto[] = [];
-  searchVaue: string = '';
   banks: BankGetDto[] = [];
   companyId: number | null = null;
   userId: number | null = null;
@@ -96,6 +95,12 @@ export class PaymentComponent {
       updatedBy: new FormControl(''),
     }
   );
+
+  filterForm: FormGroup = new FormGroup({
+    FromDate: new FormControl(null),
+    ToDate: new FormControl(null),
+    bankName: new FormControl(null),
+  });
 
   ngOnInit(): void {
     this.companyId = this.loginService.companyId();
@@ -195,6 +200,14 @@ export class PaymentComponent {
     }
   }
 
+  resetFilter() {
+    this.filterForm.reset({
+      FromDate: null,
+      ToDate: null,
+      bankName: null,
+    })
+  }
+
   exportToPdf() {
     this.exportService.printToPDF('table', 'payment.pdf', [
       'Date',
@@ -249,22 +262,19 @@ export class PaymentComponent {
     this.paymentForm.enable();
   }
 
-  setSearchValue(value: string) {
-    this.searchVaue = value;
-  }
-
   calculateAmountByInvoiceNo(value: string){
     const totalAmount = this.invoices.find(invoice => invoice.r_invoiceNo === value)?.r_totalAmount;
     this.paymentForm.get('amountPaid')?.setValue(totalAmount);
   }
 
   onSearch() {
-    if(this.searchVaue !== ''){
-      this.data = this.fullData.filter(d => d.r_bankName && d.r_bankName.includes(this.searchVaue));
-    }
-    else{
-      this.data = this.fullData
-    }
+    const fromDate = this.filterForm.get('FromDate')?.value;
+    const toDate = this.filterForm.get('ToDate')?.value;
+    const bankName = this.filterForm.get('bankName')?.value;
+    this.data = this.fullData.filter(d => (
+      ((fromDate && new Date(fromDate) <= new Date(d.r_paymentDate) || !fromDate)) &&
+      ((toDate && new Date(toDate) >= new Date(d.r_paymentDate)) || !toDate) &&
+      ((bankName && (d.r_bankName.includes(bankName) || d.r_bankName.includes(bankName))) || !bankName)));
   }
 
   addPaymentGetDto() {
