@@ -27,7 +27,7 @@ namespace Client.API.Controllers
         }
 
         [HttpPost]
-        [ScreenAccess("USER","Create")]
+        //[ScreenAccess("USER","Create")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
         {
             var result = await _mediator.Send(new CreateUserCommand(dto));

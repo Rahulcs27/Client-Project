@@ -39,7 +39,6 @@ export class InvoiceComponent {
     private subContractorService: SubContractorService,
     private alert: AlertService
   ) { }
-  searchVaue: string = '';
   modalMode: 'view' | 'edit' | 'add' = 'view';
   displayedColumns: string[] = ['r_invoiceNo', 'name', 'r_invoiceDate', 'r_status', 'r_quantity', 'r_totalAmount', 'action'];
   fullData: InvoiceGetDto[] = [];
@@ -76,6 +75,12 @@ export class InvoiceComponent {
     }
   );
 
+  filterForm: FormGroup = new FormGroup({
+    FromDate: new FormControl(null),
+    ToDate: new FormControl(null),
+    subContractorName: new FormControl(null),
+  });
+
   ngOnInit(): void {
     this.screenCode = this.route.snapshot.data['screenCode'];
     this.userId = this.loginService.userId();
@@ -87,8 +92,8 @@ export class InvoiceComponent {
           this.products = response
         },
         error: (error) => {
-          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
-            console.error(error);
+          this.alert.Toast.fire((error.error) ? error.error : ((error.message) ? error.message : 'Something went wrong'), '', 'error');
+          console.error(error);
         }
       })
       this.subContractorService.getAllSubContractorGetDto(this.companyId).subscribe({
@@ -96,8 +101,8 @@ export class InvoiceComponent {
           this.subContractors = response
         },
         error: (error) => {
-          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
-            console.error(error);
+          this.alert.Toast.fire((error.error) ? error.error : ((error.message) ? error.message : 'Something went wrong'), '', 'error');
+          console.error(error);
         }
       })
       this.invoiceService.getAllInvoiceGetDto(this.companyId).subscribe({
@@ -106,14 +111,14 @@ export class InvoiceComponent {
           this.data = response;
         },
         error: (error) => {
-          this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
-            console.error(error);
+          this.alert.Toast.fire((error.error) ? error.error : ((error.message) ? error.message : 'Something went wrong'), '', 'error');
+          console.error(error);
         }
       });
 
       const roleAccessList = this.roleAccessService.getAccessList().find(item => item.a_screenCode === this.screenCode);
-      
-      if(roleAccessList){
+
+      if (roleAccessList) {
         this.createAccess = roleAccessList.a_createAccess;
         this.editAccess = roleAccessList.a_editAccess;
         this.deleteAccess = roleAccessList.a_deleteAccess;
@@ -161,6 +166,14 @@ export class InvoiceComponent {
     }
   }
 
+  resetFilter() {
+    this.filterForm.reset({
+      FromDate: null,
+      ToDate: null,
+      subContractorName: null,
+    })
+  }
+
   exportToPdf() {
     this.exportService.printToPDF('table', 'invoice.pdf', [
       'Invoice No.',
@@ -183,12 +196,14 @@ export class InvoiceComponent {
     ])
   }
 
-  setSearchValue(value: string) {
-    this.searchVaue = value;
-  }
-
   onSearch() {
-    this.data = this.fullData.filter(d => (d.name.includes(this.searchVaue) || (Number(this.searchVaue) && d.r_id === Number(this.searchVaue))));
+    const fromDate = this.filterForm.get('FromDate')?.value;
+    const toDate = this.filterForm.get('ToDate')?.value;
+    const subContractorName = this.filterForm.get('subContractorName')?.value;
+    this.data = this.fullData.filter(d => (
+      ((fromDate && new Date(fromDate) <= new Date(d.r_invoiceDate) || !fromDate)) &&
+      ((toDate && new Date(toDate) >= new Date(d.r_invoiceDate)) || !toDate) &&
+      ((subContractorName && (d.r_invoiceNo.includes(subContractorName) || d.name.includes(subContractorName))) || !subContractorName)));
   }
 
   setUnitAmount(value: string) {
@@ -278,7 +293,7 @@ export class InvoiceComponent {
             this.alert.Toast.fire('Deleted Successfully', '', 'success');
           },
           error: (error) => {
-            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            this.alert.Toast.fire((error.error) ? error.error : ((error.message) ? error.message : 'Something went wrong'), '', 'error');
             console.error(error);
           }
         });
@@ -318,7 +333,7 @@ export class InvoiceComponent {
             }
           },
           error: (error) => {
-            this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
+            this.alert.Toast.fire((error.error) ? error.error : ((error.message) ? error.message : 'Something went wrong'), '', 'error');
             console.error(error);
           }
         });
@@ -339,8 +354,8 @@ export class InvoiceComponent {
               }
             },
             error: (error) => {
-              this.alert.Toast.fire((error.error)?error.error:((error.message)?error.message:'Something went wrong'),'','error');
-            console.error(error);
+              this.alert.Toast.fire((error.error) ? error.error : ((error.message) ? error.message : 'Something went wrong'), '', 'error');
+              console.error(error);
             }
           }
         );
