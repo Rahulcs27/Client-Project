@@ -66,7 +66,7 @@ export class PaymentComponent {
   products: ProductGetDto[] = [];
   companies: CompanyMasterGetDto[] = [];
   subContractors: SubContractorGetDto[] = [];
-  displayedColumns: string[] = ['r_paymentDate', 'r_amountPaid', 'r_paymentMode', 'r_bankName', 'r_paymentStatus', 'action'];
+  displayedColumns: string[] = ['r_invoiceNo', 'r_paymentDate', 'r_amountPaid', 'r_bankName', 'action'];
   data: PaymentGetDto[] = [];
   columnsInfo: {
     [key: string]: {
@@ -88,9 +88,9 @@ export class PaymentComponent {
       companyId: new FormControl('', [Validators.required,]),
       paymentDate: new FormControl('', [Validators.required, Validators.maxLength(50),]),
       amountPaid: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),]),
-      paymentMode: new FormControl('', [Validators.required, Validators.maxLength(50),]),
+      paymentMode: new FormControl('', [/*Validators.required,*/ Validators.maxLength(50),]),
       bankId: new FormControl(''),
-      paymentStatus: new FormControl('', [Validators.required, Validators.maxLength(50),]),
+      paymentStatus: new FormControl('', [/*Validators.required,*/ Validators.maxLength(50),]),
       createdBy: new FormControl(''),
       updatedBy: new FormControl(''),
     }
@@ -166,8 +166,8 @@ export class PaymentComponent {
         'templateRef': null
       },
 
-      'r_paymentMode': {
-        'title': 'Mode',
+      'r_invoiceNo': {
+        'title': 'Invoice No.',
         'isSort': true,
         'templateRef': null
       },
@@ -175,11 +175,6 @@ export class PaymentComponent {
         'title': 'Bank Name',
         'isSort': true,
         'templateRef': this.bankTemplateRef
-      },
-      'r_paymentStatus': {
-        'title': 'Status',
-        'isSort': true,
-        'templateRef': null
       },
       'action': {
         'title': 'Action',
@@ -210,21 +205,21 @@ export class PaymentComponent {
 
   exportToPdf() {
     this.exportService.printToPDF('table', 'payment.pdf', [
+      'Invoice No.',
       'Date',
       'Amount',
       'Mode',
       'Bank Name',
-      'Status',
     ])
   }
 
   exportToExcel() {
     this.exportService.printToExcel('table', 'payment.xlsx', [
+      'Invoice No.',
       'Date',
       'Amount',
       'Mode',
       'Bank Name',
-      'Status',
     ])
   }
 
@@ -240,7 +235,7 @@ export class PaymentComponent {
   search(event: AutoCompleteCompleteEvent) {
     const query = event.query.toString();
     this.invoiceIds = this.invoices
-      .filter(item => (item.r_invoiceNo.toString().includes(query) && item.r_status.toLowerCase() === 'pending'))
+      .filter(item => (item.r_invoiceNo.toString().includes(query)))
       .map(item => item.r_invoiceNo);
   }
 
