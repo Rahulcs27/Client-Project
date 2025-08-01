@@ -1,6 +1,9 @@
 <h2 class="pt-4 fs-1">Payment</h2>
 
 <div class="pt-md-5 pt-3 px-md-5 px-3 pb-2">
+  <button class="add-btn btn btn-outline-primary mb-2" *ngIf="createAccess" (click)="addPaymentGetDto()" data-bs-toggle="modal" data-bs-target="#payment-modal">
+        <i class="fa-solid fa-plus"></i> Add
+    </button>&nbsp;&nbsp;
   <button class="add-btn btn btn-outline-primary mb-2 printPdf" (click)="exportToPdf()">
     <i class="fa-solid fa-file-pdf"></i> Print to PDF
   </button>
@@ -108,7 +111,7 @@
                     <input type="text" id="amountPaid" class="form-control" formControlName="amountPaid"
                         placeholder="Amount">
                 </div>
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <label for="paymentMode" class="mb-1">Payment Mode <span style="color: red;">*</span>
                         <span *ngIf="
                     this.paymentForm.get('paymentMode')?.hasError('required') &&
@@ -121,7 +124,7 @@
                         <option value="CASH">Cash</option>
                         <option value="BALANCE">Balance</option>
                     </select>
-                </div>
+                </div> -->
                 <div class="mb-3"
                     *ngIf="paymentForm.get('paymentMode')?.value !== 'CASH' && paymentForm.get('paymentMode')?.value !== ''">
                     <label for="bankId" class="mb-1">Bank Name <span style="color: red;">*</span>
@@ -136,7 +139,7 @@
                         <option *ngFor="let bank of banks" value="{{bank.r_id}}">{{bank.r_bankName}}</option>
                     </select>
                 </div>
-                <div class="mb-3">
+                <!-- <div class="mb-3">
                     <label for="paymentStatus" class="mb-1">Status <span style="color: red;">*</span>
                         <span *ngIf="
                     this.paymentForm.get('paymentStatus')?.hasError('required') &&
@@ -149,7 +152,7 @@
                         <option value="">--Select--</option>
                         <option value="Paid">Paid</option>
                     </select>
-                </div>
+                </div> -->
             </div>
             <div class="modal-footer">
                 <button class="add-btn btn btn-outline-primary" type="button"

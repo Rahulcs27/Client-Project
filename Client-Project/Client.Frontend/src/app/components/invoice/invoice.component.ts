@@ -40,7 +40,7 @@ export class InvoiceComponent {
     private alert: AlertService
   ) { }
   modalMode: 'view' | 'edit' | 'add' = 'view';
-  displayedColumns: string[] = ['r_invoiceNo', 'name', 'r_invoiceDate', 'r_status', 'r_quantity', 'r_totalAmount', 'action'];
+  displayedColumns: string[] = ['r_invoiceNo', 'r_paymentMode', 'name', 'r_invoiceDate', 'r_unitAmount', 'r_quantity', 'r_totalAmount', 'action'];
   fullData: InvoiceGetDto[] = [];
   data: InvoiceGetDto[] = [];
   products: ProductGetDto[] = [];
@@ -64,11 +64,11 @@ export class InvoiceComponent {
       productId: new FormControl('', [Validators.required,]),
       invoiceDate: new FormControl('', [Validators.required]),
       unitAmount: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),]),
-      status: new FormControl('', [Validators.required]),
+      // status: new FormControl('', [Validators.required]),
       quantity: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+'),]),
       totalAmount: new FormControl('', [Validators.required]),
-      commissionPercentage: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),]),
-      commissionAmount: new FormControl('', [Validators.required,]),
+      commissionPercentage: new FormControl('', [/*Validators.required,*/ Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),]),
+      commissionAmount: new FormControl('', [/*Validators.required,*/ Validators.pattern('^[0-9]+(\.[0-9]{1,2})?$'),]),
       paymentMode: new FormControl('', [Validators.required]),
       createdBy: new FormControl(''),
       updatedBy: new FormControl(''),
@@ -130,6 +130,11 @@ export class InvoiceComponent {
           'isSort': true,
           'templateRef': null
         },
+        'r_paymentMode': {
+          'title': 'Invoice Type',
+          'isSort': true,
+          'templateRef': null
+        },
         'name': {
           'title': 'Sub-Contract Name',
           'isSort': true,
@@ -140,8 +145,8 @@ export class InvoiceComponent {
           'isSort': true,
           'templateRef': this.invoiceDateTemplateRef
         },
-        'r_status': {
-          'title': 'Status',
+        'r_unitAmount': {
+          'title': 'Unit Amount',
           'isSort': true,
           'templateRef': null
         },
@@ -177,9 +182,10 @@ export class InvoiceComponent {
   exportToPdf() {
     this.exportService.printToPDF('table', 'invoice.pdf', [
       'Invoice No.',
+      'Invoice Type',
       'Sub-Contract Name',
       'Invoice Date',
-      'Status',
+      'Unit Amount',
       'Quantity',
       'Total Amount',
     ])
@@ -188,9 +194,10 @@ export class InvoiceComponent {
   exportToExcel() {
     this.exportService.printToExcel('table', 'invoice.xlsx', [
       'Invoice No.',
+      'Invoice Type',
       'Sub-Contract Name',
       'Invoice Date',
-      'Status',
+      'Unit Amount',
       'Quantity',
       'Total Amount',
     ])
@@ -217,9 +224,9 @@ export class InvoiceComponent {
   }
 
   calculateCommissionAmount() {
-    const commissionPercentage = Number(this.invoiceForm.get('commissionPercentage')?.value)
-    const totalAmount = Number(this.invoiceForm.get('totalAmount')?.value)
-    this.invoiceForm.get('commissionAmount')?.setValue((commissionPercentage && totalAmount) ? (Math.floor((commissionPercentage * totalAmount) / 100)) : '')
+    // const commissionPercentage = Number(this.invoiceForm.get('commissionPercentage')?.value)
+    // const totalAmount = Number(this.invoiceForm.get('totalAmount')?.value)
+    // this.invoiceForm.get('commissionAmount')?.setValue((commissionPercentage && totalAmount) ? (Math.floor((commissionPercentage * totalAmount) / 100)) : '')
   }
 
   closeModal() {
@@ -236,7 +243,6 @@ export class InvoiceComponent {
       commissionPercentage: '',
       commissionAmount: '',
       paymentMode: '',
-      status: '',
       createdBy: '',
       updatedBy: '',
     })
@@ -252,7 +258,6 @@ export class InvoiceComponent {
       productId: obj.r_productId + '_' + obj.unitPrice,
       unitAmount: obj.r_unitAmount,
       invoiceDate: new Date(obj.r_invoiceDate),
-      status: obj.r_status,
       quantity: obj.r_quantity,
       totalAmount: obj.r_totalAmount,
       commissionPercentage: obj.r_commissionPercentage,
@@ -266,7 +271,7 @@ export class InvoiceComponent {
     else {
       this.invoiceForm.enable();
       this.invoiceForm.get('totalAmount')?.disable();
-      this.invoiceForm.get('commissionAmount')?.disable();
+      // this.invoiceForm.get('commissionAmount')?.disable();
     }
     this.modalMode = mode;
   }
@@ -279,7 +284,7 @@ export class InvoiceComponent {
     })
     this.invoiceForm.enable();
     this.invoiceForm.get('totalAmount')?.disable();
-    this.invoiceForm.get('commissionAmount')?.disable();
+    // this.invoiceForm.get('commissionAmount')?.disable();
     this.modalMode = 'add';
   }
 
